@@ -46,7 +46,7 @@
 -  
 ##  URL_HOME_LIST = "api/app/doll/room"; //房间列表
 
-1. ```
+1. 	```
     var yelpUrl = 'https://cors-anywhere.herokuapp.com/' + 'https://www.iqi1.com/' + 'api/app/doll/room';
 	var myYelpSecret = '6omr7-7C49v8GwsXDe0DdzfHcN1b6A1B4QBVaxjQOQaz-QiWeeeymAor8vKvw9Xgl6ulBXmOS08yE76nVKfu1HXupzlYjX3bOhyvXwR5HRg4-b5VqGKNQogAZD2nWnYx';
 	var yelpInit = {       
@@ -62,7 +62,8 @@
 	  return response.json();
 	})
 	.then(data => console.log(data)).catch(e => console.log(e));
-```
+	```
+
 ##  URL_HOME_INFO = "api/app/doll/room"; // ?id= 单个房间信息
 1. 相关函数： requestRoomInfo,HttpUtils.getInstance().get()
 2. ```
