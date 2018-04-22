@@ -36,7 +36,9 @@ export default {
     // }
   },
   created () {
-    // this.loadVideo()
+  },
+  mounted () {
+
   }
 }
 </script>

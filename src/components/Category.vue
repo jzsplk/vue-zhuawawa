@@ -32,6 +32,8 @@ export default {
   },
   created () {
     this.loadRooms()
+  },
+  mounted () {
   }
 }
 
