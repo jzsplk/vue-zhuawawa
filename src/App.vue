@@ -1,6 +1,13 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <div class="header">
+      <div class="logo">
+        <router-link to="/"><img class="login-img" src="./assets/logo.png"></router-link>
+      </div>
+      <div class="login">
+        <router-link to="/login"><button>微信登陆</button></router-link>
+      </div>
+    </div>
     <router-view/>
   </div>
 </template>
@@ -11,13 +18,34 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" type="text/css">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  // margin-top: 60px;
+}
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background-color: #E9DF38;
+  width: 100%;
+  height: 100px;
+  .logo {
+    .login-img {
+      width: 90px;
+    }
+  }
+  .login {
+    margin-left: 50px;
+    button {
+      font-size: 20px;
+    }
+  }
+
 }
 </style>

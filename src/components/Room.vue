@@ -2,40 +2,49 @@
   <div class="room">
     <div class="img-wraper">
       <div class="img-container">
-        <img src="https://www.iqi1.com/uploads/2240dfc1c5dcd3959ff982d4c88385b4698a3685.jpg" alt="蒙奇奇公仔">
-        <p class="status">空闲中</p>
+        <img :src="baseURL + room.Doll.Item.AvatarUrl" :alt="room.Name">
+        <p class="status">{{room.Status == 0 ? '空闲中' : '游戏中'}}</p>
       </div>
     </div>
 
     <div class="info">
-      <p>蒙奇奇公仔</p>
-      <span>3/次</span>
-      <button>去捕获</button>
+      <p>{{room.Name}}</p>
+      <p>💎 💰{{room.Coin}} /次</p>
+      <span>{{room.Crowd}} 人在线</span>
+      <router-link to="/play"><button>去捕获</button></router-link>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Room'
+  data () {
+    return {
+      baseURL: 'https://www.iqi1.com/'
+    }
+  },
+  props: ['room']
 }
 </script>
 
 <style scoped lang="scss" type="text/css">
 .room {
-  margin: 0;
+  margin: 10px;
   padding: 0;
-  width: 500px;
+  max-width: 380px;
+  height: 200px;
   background-color: #E5E67E;
   display: flex;
   border-radius: 20px;
   border-style:solid;
-  border-width:5px;
+  border-width:2px;
+  border-color: #FC0073;
   .img-container {
     position: relative;
     img {
       display: block;
-      width: 220px;
+      width: 200px;
+      height: 200px;
       border-radius: 15px 0 0 15px;
     }
     .status {
@@ -50,7 +59,7 @@ export default {
     display: inline-block;
     width: 50%;
     p {
-      margin-top: 80px;
+      margin-top: 2rem;
     }
     button {
       background-color: red;
@@ -59,6 +68,5 @@ export default {
       font-size: 20px;
     }
   }
-
 }
 </style>
