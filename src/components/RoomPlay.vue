@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import playVideo from '../Video.service.js'
 export default {
   data () {
     return {
@@ -38,7 +39,7 @@ export default {
   created () {
   },
   mounted () {
-
+    playVideo.play()
   }
 }
 </script>
