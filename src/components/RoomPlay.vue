@@ -12,6 +12,7 @@
     </div>
     <!-- 详细信息 -->
     <div class="details">
+        <p id="connectionStatus"></p>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -19,6 +20,7 @@
 
 <script>
 import playVideo from '../Video.service.js'
+import MQTT from '../MQTT.service.js'
 export default {
   data () {
     return {
@@ -40,6 +42,8 @@ export default {
   },
   mounted () {
     playVideo.play()
+    MQTT.connect()
+    MQTT.initMQTTClient()
   }
 }
 </script>
@@ -53,6 +57,7 @@ export default {
 
     canvas {
       width: 360px;
+      display: block;
     }
   }
 
