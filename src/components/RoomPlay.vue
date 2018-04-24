@@ -25,6 +25,7 @@
 <script>
 import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
+import _global from './Global'
 export default {
   data () {
     return {
@@ -43,6 +44,8 @@ export default {
     // }
     publish1 () {
       MQTT.initMqttClient()
+      console.log(this.global.client)
+      console.log(this.global.hostname)
     },
     publish2 () {
       MQTT.disconnect()

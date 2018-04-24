@@ -68,13 +68,13 @@ const MQTT = {
     console.log(message)
   },
   subscribeToTopic (c) {
-    let subscriptionTopic = ''
+    let subscriptionTopic = 'notify/' + 'deviceId'
     let qos = 2
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
     c.subscribe(subscriptionTopic, {qos: Number(qos)})
   },
   publish (s) {
-    let topic = ''
+    let topic = 'ctrl/' + 'deviceId'
     let qos = 0
     let message = String(s)
     let retain = false

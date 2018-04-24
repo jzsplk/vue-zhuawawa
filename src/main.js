@@ -6,6 +6,9 @@ import router from './router'
 import WechatAuth from 'vue-wechat-auth'
 import axios from 'axios'
 import VueMqtt from 'vue-mqtt'
+import _global from './components/Global'
+
+Vue.prototype.global = _global
 
 Vue.config.productionTip = false
 
