@@ -8,7 +8,6 @@ const playVideo = {
     // var url = 'ws://'+document.location.hostname+':8084/';
     // eslint-disable-next-line
     let player = new JSMpeg.Player(url, {canvas: canvas})
-    console.log('ffmpeg success')
   }
 }
 

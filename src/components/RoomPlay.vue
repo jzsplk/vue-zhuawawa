@@ -4,15 +4,19 @@
     <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
     <div id="operation-panel" class="operation-panel">
-        <button id="arrow-up" class="arrow-up arrow-key" @click="publish1">⇧</button>
-        <button id="arrow-down" class="arrow-down arrow-key" @click="publish2">⇩</button>
-        <button id="arrow-left" class="arrow-left arrow-key" @click="publish3">⇦</button>
-        <button id="arrow-right" class="arrow-right arrow-key" @click="publish4">⇨</button>
-        <button id="space" class="space arrow-key" @click="publish5">⎋</button>
+        <button id="arrow-up" class="arrow-up arrow-key">⇧</button>
+        <button id="arrow-down" class="arrow-down arrow-key">⇩</button>
+        <button id="arrow-left" class="arrow-left arrow-key">⇦</button>
+        <button id="arrow-right" class="arrow-right arrow-key">⇨</button>
+        <button id="space" class="space arrow-key">⎋</button>
     </div>
     <!-- 详细信息 -->
     <div class="details">
         <p id="connectionStatus"></p>
+        <button @click="publish1">connect</button>
+        <button @click="publish2">disconnect</button>
+        <button @click="publish3">subscribe</button>
+        <button @click="publish4">publish</button>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -20,6 +24,7 @@
 
 <script>
 import playVideo from '../Video.service.js'
+import MQTT from '../MQTT.service.js'
 export default {
   data () {
     return {
@@ -37,23 +42,18 @@ export default {
     //   console.log('ffmpeg success')
     // }
     publish1 () {
-      this.$mqtt.publish('VueMqtt/publish1', 'message to Sub1')
-      console.log('up')
+      MQTT.initMqttClient()
     },
     publish2 () {
-      this.$mqtt.publish('VueMqtt/publish2', 'message to Sub2')
-      console.log('down')
+      MQTT.disconnect()
     },
     publish3 () {
-      this.$mqtt.publish('VueMqtt/publish3', 'message to Sub3')
-      console.log('left')
+      MQTT.subscribeToTopic(window.client)
     },
     publish4 () {
-      this.$mqtt.publish('VueMqtt/publish4', 'message to Sub4')
-      console.log('right')
+      MQTT.publish('height')
     },
     publish5 () {
-      this.$mqtt.publish('VueMqtt/publish5', 'message to Sub5')
       console.log('go')
     }
   },
@@ -61,24 +61,8 @@ export default {
   },
   mounted () {
     playVideo.play()
-    this.$mqtt.subscribe('VueMqtt/#')
-  },
-  mqtt: {
-    'VueMqtt/publish1' (topic, data) {
-      console.log(topic + ': ' + String.fromCharCode.apply(null, data))
-    },
-    'VueMqtt/publish2' (topic, data) {
-      console.log(topic + ': ' + String.fromCharCode.apply(null, data))
-    },
-    'VueMqtt/publish3' (topic, data) {
-      console.log(topic + ': ' + String.fromCharCode.apply(null, data))
-    },
-    'VueMqtt/publish4' (topic, data) {
-      console.log(topic + ': ' + String.fromCharCode.apply(null, data))
-    },
-    'VueMqtt/publish5' (topic, data) {
-      console.log(topic + ': ' + String.fromCharCode.apply(null, data))
-    }
+    MQTT.initMqttClient()
+    MQTT.say()
   }
 }
 </script>
