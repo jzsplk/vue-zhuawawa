@@ -48,6 +48,7 @@ const MQTT = {
     console.log('Client Connected')
     let statusSpan = document.getElementById('connectionStatus')
     statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
+    this.subscribeToTopic(window.client)
   },
   onFail (context) {
     console.log('Failed to connect')
