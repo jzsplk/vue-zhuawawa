@@ -1,3 +1,4 @@
+import _global from './components/Global'
 const MQTT = {
   initMqttClient () {
     console.log('MQTT service', window.Paho)
@@ -40,6 +41,7 @@ const MQTT = {
   },
   say () {
     console.log('say', 'hi')
+    console.log(_global.CMD_UP)
   },
   onConnect (context) {
     // Once a connection has been made, make a subscription and send a message.
@@ -73,18 +75,47 @@ const MQTT = {
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
     c.subscribe(subscriptionTopic, {qos: Number(qos)})
   },
-  publish (s) {
-    let topic = 'ctrl/' + 'deviceId'
-    let qos = 0
-    let message = String(s)
+  publishMessage (object, qos, topic) {
+    let publishMessage = JSON.stringify(object)
     let retain = false
-    console.info('Publishing Message: Topic: ', topic, '. QoS: ' + qos + '. Message: ', message)
-    message = new window.Paho.MQTT.Message(message)
+    console.info('Publishing Message: Topic: ', topic, '. QoS: ' + qos + '. Message: ', publishMessage)
+    let message = new window.Paho.MQTT.Message(publishMessage)
     message.destinationName = topic
     message.qos = Number(qos)
     message.retained = retain
     window.client.send(message)
+  },
+  sendReadyorPassCmd () {
+    let object = {
+      code: 'ready',
+      id: ''
+    }
+    this.publishMessage(object, 0, 'ctrl/' + 'deviceId')
+  },
+  sendControlCmd (action, param, qos) {
+    let object = {
+      param: param,
+      action: action
+    }
+    this.publishMessage(object, qos, 'ctrl/' + 'deviceId')
+  },
+  sendControlEvent (type, param) {
+    switch (type) {
+      case _global.CMD_LEFT:
+        this.sendControlCmd('left', param, 0)
+        break
+      case _global.CMD_RIGHT:
+        this.sendControlCmd('right', param, 0)
+        break
+      case _global.CMD_UP:
+        this.sendControlCmd('up', param, 0)
+        break
+      case _global.CMD_DOWN:
+        this.sendControlCmd('down', param, 0)
+        break
+    }
   }
+
 }
 
 export default MQTT

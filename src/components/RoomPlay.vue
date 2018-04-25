@@ -4,10 +4,10 @@
     <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
     <div id="operation-panel" class="operation-panel">
-        <button id="arrow-up" class="arrow-up arrow-key">⇧</button>
-        <button id="arrow-down" class="arrow-down arrow-key">⇩</button>
-        <button id="arrow-left" class="arrow-left arrow-key">⇦</button>
-        <button id="arrow-right" class="arrow-right arrow-key">⇨</button>
+        <button id="arrow-up" class="arrow-up arrow-key" @click="publish6(2, 100)">⇧</button>
+        <button id="arrow-down" class="arrow-down arrow-key" @click="publish6(0, 100)">⇩</button>
+        <button id="arrow-left" class="arrow-left arrow-key" @click="publish6(1, 100)">⇦</button>
+        <button id="arrow-right" class="arrow-right arrow-key" @click="publish6(3, 100)">⇨</button>
         <button id="space" class="space arrow-key">⎋</button>
     </div>
     <!-- 详细信息 -->
@@ -17,6 +17,7 @@
         <button @click="publish2">disconnect</button>
         <button @click="publish3">subscribe</button>
         <button @click="publish4">publish</button>
+        <button @click="publish5">sendReady</button>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -25,7 +26,6 @@
 <script>
 import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
-import _global from './Global'
 export default {
   data () {
     return {
@@ -54,10 +54,13 @@ export default {
       MQTT.subscribeToTopic(window.client)
     },
     publish4 () {
-      MQTT.publish('height')
+      MQTT.publishMessage({param: 250}, 0, 'ctrl/' + 'deviceId')
     },
     publish5 () {
-      console.log('go')
+      MQTT.sendReadyorPassCmd()
+    },
+    publish6 (type, param) {
+      MQTT.sendControlEvent(type, param)
     }
   },
   created () {

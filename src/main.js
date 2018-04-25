@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import WechatAuth from 'vue-wechat-auth'
 import axios from 'axios'
-import VueMqtt from 'vue-mqtt'
+// import VueMqtt from 'vue-mqtt'
 import _global from './components/Global'
 
 Vue.prototype.global = _global
@@ -38,7 +38,7 @@ Vue.use(WechatAuth, {
   }
 })
 
-Vue.use(VueMqtt, 'ws://iot.eclipse.org/ws', {clientId: 'WebCLient-' + parseInt(Math.random() * 100000), username: 'xc', password: '123456'})
+// Vue.use(VueMqtt, 'ws://iot.eclipse.org/ws', {clientId: 'WebCLient-' + parseInt(Math.random() * 100000), username: 'xc', password: '123456'})
 
 /* eslint-disable no-new */
 new Vue({
