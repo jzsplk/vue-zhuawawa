@@ -5,6 +5,7 @@ const CMD_LEFT = 1
 const CMD_RIGHT = 3
 const CMD_UP = 2
 const CMD_DOWN = 0
+const deviceId = '22128'
 
 export default {
   client,
@@ -12,6 +13,7 @@ export default {
   CMD_LEFT,
   CMD_RIGHT,
   CMD_UP,
-  CMD_DOWN
+  CMD_DOWN,
+  deviceId
 }
 </script>

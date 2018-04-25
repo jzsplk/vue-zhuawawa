@@ -4,20 +4,20 @@
     <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
     <div id="operation-panel" class="operation-panel">
-        <button id="arrow-up" class="arrow-up arrow-key" @click="publish6(2, 100)">⇧</button>
-        <button id="arrow-down" class="arrow-down arrow-key" @click="publish6(0, 100)">⇩</button>
-        <button id="arrow-left" class="arrow-left arrow-key" @click="publish6(1, 100)">⇦</button>
-        <button id="arrow-right" class="arrow-right arrow-key" @click="publish6(3, 100)">⇨</button>
-        <button id="space" class="space arrow-key" @click="publish7()">⎋</button>
+        <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(2, 100)">⇧</button>
+        <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(0, 100)">⇩</button>
+        <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
+        <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100)">⇨</button>
+        <button id="space" class="space arrow-key" @click="sendCmdGo()">⎋</button>
     </div>
     <!-- 详细信息 -->
     <div class="details">
         <p id="connectionStatus"></p>
-        <button @click="publish1">connect</button>
-        <button @click="publish2">disconnect</button>
-        <button @click="publish3">subscribe</button>
-        <button @click="publish4">publish</button>
-        <button @click="publish5">sendReady</button>
+        <button @click="initMqttClient">connect</button>
+        <button @click="disconnect">disconnect</button>
+        <button @click="subscribe">subscribe</button>
+        <button @click="publishTopic">publish</button>
+        <button @click="sendReady">sendReady</button>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -42,27 +42,27 @@ export default {
     //   let player = new JSMpeg.Player(url, {canvas: canvas})
     //   console.log('ffmpeg success')
     // }
-    publish1 () {
+    initMqttClient () {
       MQTT.initMqttClient()
       console.log(this.global.client)
       console.log(this.global.hostname)
     },
-    publish2 () {
+    disconnect () {
       MQTT.disconnect()
     },
-    publish3 () {
+    subscribe () {
       MQTT.subscribeToTopic(window.client)
     },
-    publish4 () {
-      MQTT.publishMessage({param: 250}, 0, 'ctrl/' + 'deviceId')
+    publishTopic () {
+      MQTT.publishMessage({param: 250}, 0, 'ctrl/' + '22128')
     },
-    publish5 () {
+    sendReady () {
       MQTT.sendReadyorPassCmd()
     },
-    publish6 (type, param) {
+    sendControlEvent (type, param) {
       MQTT.sendControlEvent(type, param)
     },
-    publish7 () {
+    sendCmdGo () {
       MQTT.sendControlCmd('go', 200, 2)
     }
   },

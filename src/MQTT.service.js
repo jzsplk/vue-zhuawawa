@@ -70,7 +70,7 @@ const MQTT = {
     console.log(message)
   },
   subscribeToTopic (c) {
-    let subscriptionTopic = 'notify/' + 'deviceId'
+    let subscriptionTopic = 'notify/' + _global.deviceId
     let qos = 2
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
     c.subscribe(subscriptionTopic, {qos: Number(qos)})
@@ -90,14 +90,14 @@ const MQTT = {
       code: 'ready',
       id: ''
     }
-    this.publishMessage(object, 0, 'ctrl/' + 'deviceId')
+    this.publishMessage(object, 0, 'ctrl/' + _global.deviceId)
   },
   sendControlCmd (action, param, qos) {
     let object = {
       param: param,
       action: action
     }
-    this.publishMessage(object, qos, 'ctrl/' + 'deviceId')
+    this.publishMessage(object, qos, 'ctrl/' + _global.deviceId)
   },
   sendControlEvent (type, param) {
     switch (type) {
