@@ -1,7 +1,7 @@
 import _global from './components/Global'
 const MQTT = {
   initMqttClient () {
-    console.log('MQTT service', window.Paho)
+    console.log('MQTT service', Paho)
     let hostname = '47.97.34.46'
     let port = 18000
     let clientId = 'xc' + String(Math.round(Math.random() * 1000))
@@ -17,8 +17,8 @@ const MQTT = {
     // let lastWillRetain = false
     // let lastWillMessage = ''
     console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
-    window.client = new window.Paho.MQTT.Client(hostname, Number(port), path, clientId)
-    console.log('global client', window.client)
+    window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
+    console.log('global Paho', Paho)
     let options = {
       invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
       timeout: timeout,

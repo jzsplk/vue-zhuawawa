@@ -15,6 +15,11 @@ module.exports = {
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md
     'standard'
   ],
+  // globals vars
+  globals: {
+    'JSMpeg': true,
+    'Paho': true
+  },
   // required to lint *.vue files
   plugins: [
     'vue'
