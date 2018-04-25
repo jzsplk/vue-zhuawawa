@@ -8,7 +8,7 @@
         <button id="arrow-down" class="arrow-down arrow-key" @click="publish6(0, 100)">⇩</button>
         <button id="arrow-left" class="arrow-left arrow-key" @click="publish6(1, 100)">⇦</button>
         <button id="arrow-right" class="arrow-right arrow-key" @click="publish6(3, 100)">⇨</button>
-        <button id="space" class="space arrow-key">⎋</button>
+        <button id="space" class="space arrow-key" @click="publish7()">⎋</button>
     </div>
     <!-- 详细信息 -->
     <div class="details">
@@ -61,6 +61,9 @@ export default {
     },
     publish6 (type, param) {
       MQTT.sendControlEvent(type, param)
+    },
+    publish7 () {
+      MQTT.sendControlCmd('go', 200, 2)
     }
   },
   created () {
