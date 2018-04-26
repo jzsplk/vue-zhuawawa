@@ -4,8 +4,8 @@
     <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
     <div id="operation-panel" class="operation-panel">
-        <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(2, 100)">⇧</button>
-        <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(0, 100)">⇩</button>
+        <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)">⇧</button>
+        <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)">⇩</button>
         <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
         <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100)">⇨</button>
         <button id="space" class="space arrow-key" @click="sendCmdGo()">⎋</button>
@@ -15,9 +15,11 @@
         <p id="connectionStatus"></p>
         <button @click="initMqttClient">connect</button>
         <button @click="disconnect">disconnect</button>
-        <button @click="subscribe">subscribe</button>
+        <button @click="subscribe('ctrl/22371')">subscribe</button>
         <button @click="publishTopic">publish</button>
         <button @click="sendReady">sendReady</button>
+        <button @click="PrepareTopic">prepare</button>
+        <button @click="playerStart">playerStart</button>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -46,12 +48,13 @@ export default {
       MQTT.initMqttClient()
       console.log(this.global.client)
       console.log(this.global.hostname)
+      MQTT.parseMQTTResults()
     },
     disconnect () {
       MQTT.disconnect()
     },
-    subscribe () {
-      MQTT.subscribeToTopic(window.client)
+    subscribe (topic) {
+      MQTT.subscribeToTopic(window.client, topic)
     },
     publishTopic () {
       MQTT.publishMessage({param: 250}, 0, 'ctrl/' + '22128')
@@ -64,6 +67,12 @@ export default {
     },
     sendCmdGo () {
       MQTT.sendControlCmd('go', 200, 2)
+    },
+    PrepareTopic () {
+      MQTT.publishMessage({action: 'room_update'}, 0, 'notify/' + '22371')
+    },
+    playerStart () {
+      MQTT.playStart()
     }
   },
   created () {

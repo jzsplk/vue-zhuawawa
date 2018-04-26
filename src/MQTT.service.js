@@ -1,5 +1,7 @@
 import _global from './components/Global'
 const MQTT = {
+  notifyTopic: 'notify/' + _global.deviceId,
+  ctrlTopic: 'ctrl/' + _global.deviceId,
   initMqttClient () {
     console.log('MQTT service', Paho)
     let hostname = '47.97.34.46'
@@ -38,17 +40,21 @@ const MQTT = {
     window.client.connect(options)
     window.client.onConnectionLost = this.onConnectionLost
     window.client.onMessageArrived = this.onMessageArrived
+    window.client.onMessageDelivered = this.onMessageDelivered
   },
   say () {
     console.log('say', 'hi')
     console.log(_global.CMD_UP)
   },
   onConnect (context) {
+    let self = MQTT
+    console.log('self=', self)
     // Once a connection has been made, make a subscription and send a message.
     console.log('Client Connected')
     let statusSpan = document.getElementById('connectionStatus')
     statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
-    this.subscribeToTopic(window.client)
+    let subscriptionTopic = MQTT.notifyTopic
+    self.subscribeToTopic(window.client, subscriptionTopic)
   },
   onFail (context) {
     console.log('Failed to connect')
@@ -68,13 +74,19 @@ const MQTT = {
   },
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
-    console.log(message)
+    // console.log(message)
+    MQTT.parseMQTTResults(message.payloadString)
   },
-  subscribeToTopic (c) {
-    let subscriptionTopic = 'notify/' + _global.deviceId
+  onMessageDelivered (token) {
+    console.log('deliver complete', token.payloadString)
+  },
+  subscribeToTopic (c, topic) {
+    let subscriptionTopic = topic
     let qos = 2
+    let onSubscribeSuccess = () => { console.log('subscribe success!') }
+    let onFailure = (errorMessage) => { console.log('subscribe fail', errorMessage) }
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
-    c.subscribe(subscriptionTopic, {qos: Number(qos)})
+    c.subscribe(subscriptionTopic, {qos: Number(qos), invocationContext: {}, onSuccess: onSubscribeSuccess, onFailure: onFailure})
   },
   publishMessage (object, qos, topic) {
     let publishMessage = JSON.stringify(object)
@@ -89,16 +101,16 @@ const MQTT = {
   sendReadyorPassCmd () {
     let object = {
       code: 'ready',
-      id: ''
+      id: 'kFjWspD0kEfWOJCH'
     }
-    this.publishMessage(object, 0, 'ctrl/' + _global.deviceId)
+    this.publishMessage(object, 0, MQTT.ctrlTopic)
   },
   sendControlCmd (action, param, qos) {
     let object = {
       param: param,
       action: action
     }
-    this.publishMessage(object, qos, 'ctrl/' + _global.deviceId)
+    this.publishMessage(object, qos, MQTT.ctrlTopic)
   },
   sendControlEvent (type, param) {
     switch (type) {
@@ -115,8 +127,114 @@ const MQTT = {
         this.sendControlCmd('down', param, 0)
         break
     }
-  }
+  },
+  parseMQTTResults (json) {
+    let self = this
+    let object = JSON.parse(json)
+    if (json.indexOf('action') !== -1) {
+      self.parseActionResult(object)
+    } else if (json.indexOf('code') !== -1) {
+      self.parseCode(object)
+    } else if (json.indexOf('error') !== -1) {
+      self.parseError(object)
+    }
+  },
+  parseActionResult (object) {
+    let action = object.action
+    console.log('parseMQTTResults action= ' + action)
+    if (action === _global.MQTT_ACTION_SUCCESS) {
+      console.log('恭喜 抓到了')
+    } else if (action === _global.MQTT_ACTION_FAIL) {
+      console.log('可惜了， 没抓到')
+    } else if (action === _global.MQTT_ACTION_PREPARE) {
+      let param = object.param
+      let id = object.id
+      console.log('id = ', id)
+      if (param === '2') {
+        // confirm play
+        console.log('show confirm play')
+      } else if (param === '1') {
+        // start catching
+        console.log('start catching')
+      } else if (param === '3') {
+        // is waiting
+        console.log('is waiting')
+      }
+    } else if (action === _global.MQTT_ACTION_UPDATE) {
+      // refresh room info
+      console.log('refresh room info')
+    } else if (action === _global.MQTT_ACTION_DONE) {
+      let id = object.id
+      // 完成动作
+      console.log('id', id)
+    } else if (action === _global.MQTT_ACTION_TIMEOUT) {
+      // time out action
+      let id = object.id
+      console.log(id)
+    }
+  },
+  parseCode () {
 
+  },
+  parseError () {
+
+  },
+  playStart () {
+    let roomUpdate = {
+      action: 'room_update'
+    }
+    // let prepare3 = {
+    //   action: 'prepare',
+    //   id: 'kFjWspD0kEfWOJCH',
+    //   param: 3
+    // }
+    // let prepare2 = {
+    //   action: 'prepare',
+    //   id: 'kFjWspD0kEfWOJCH',
+    //   param: 2
+    // }
+    // let prepare1 = {
+    //   action: 'prepare',
+    //   id: 'kFjWspD0kEfWOJCH',
+    //   param: 1
+    // }
+    let query = {
+      action: 'query'
+    }
+    // let ready = {
+    //   code: 'ready',
+    //   id: 'kFjWspD0kEfWOJCH'
+    // }
+    let start = {
+      action: 'start',
+      param: 0
+    }
+    // update
+    // MQTT.publishMessage(roomUpdate, 0, MQTT.notifyTopic)
+    // MQTT.publishMessage(prepare3, 0, MQTT.notifyTopic)
+    MQTT.publishMessage(roomUpdate, 0, MQTT.notifyTopic)
+    MQTT.publishMessage(query, 0, MQTT.ctrlTopic)
+    // // MQTT.publishMessage({action: '34', code: '3400', param: '00'}, 0, MQTT.notifyTopic)
+    // MQTT.publishMessage(prepare2, 0, MQTT.notifyTopic)
+    MQTT.sendReadyorPassCmd()
+    MQTT.publishMessage(start, 0, MQTT.ctrlTopic)
+    // MQTT.publishMessage(prepare1, 0, MQTT.notifyTopic)
+    // start move
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'right'}, 0, MQTT.ctrlTopic)
+    MQTT.publishMessage({param: 250, action: 'up'}, 0, MQTT.ctrlTopic)
+  }
 }
 
 export default MQTT
