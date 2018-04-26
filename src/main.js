@@ -42,10 +42,12 @@ Vue.use(WechatAuth, {
 // Vue.use(VueMqtt, 'ws://iot.eclipse.org/ws', {clientId: 'WebCLient-' + parseInt(Math.random() * 100000), username: 'xc', password: '123456'})
 
 /* eslint-disable no-new */
-new Vue({
+var $vm = new Vue({
   el: '#app',
   router,
   store,
   components: { App },
   template: '<App/>'
 })
+
+window.$vm = $vm
