@@ -1,9 +1,17 @@
 <template>
   <div class="player-view">
+    <p class="room-title">宫崎骏龙猫</p>
     <!-- 娃娃机画面 -->
     <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
-    <div id="operation-panel" class="operation-panel">
+    <div v-if="!isReady">
+      <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
+    </div>
+    <div v-if="isReady" class="confirm">
+      <button class="confirm-button">赶紧开始</button>
+      <button class="confirm-button" @click="cancelToPlay">我放弃</button>
+    </div>
+    <div id="operation-panel" class="operation-panel" v-if="false">
         <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)">⇧</button>
         <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)">⇩</button>
         <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
@@ -20,6 +28,8 @@
         <button @click="sendReady">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
+        <button @click="readyToPlay">queueToPlay</button>>
+        <span v-if="isReady">State Ready</span>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -28,6 +38,7 @@
 <script>
 import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -44,6 +55,10 @@ export default {
     //   let player = new JSMpeg.Player(url, {canvas: canvas})
     //   console.log('ffmpeg success')
     // }
+    ...mapActions({
+      readyToPlay: 'queueToPlay',
+      cancelToPlay: 'cancelToPlay'
+    }),
     initMqttClient () {
       MQTT.initMqttClient()
       console.log(this.global.client)
@@ -81,6 +96,9 @@ export default {
     playVideo.play()
     MQTT.initMqttClient()
     MQTT.say()
+  },
+  computed: {
+    ...mapGetters(['isReady'])
   }
 }
 </script>
@@ -88,6 +106,14 @@ export default {
 <style scoped lang="scss" type="text/css">
 .player-view {
   display: block;
+  background-color: #EDC83A;
+  /* 房间标题*/
+  .room-title {
+    margin: 0;
+    font-size: 2rem;
+    padding: 2.0rem
+  }
+  /* 视频画面*/
   .video-canvas {
     width: 360px;
     margin: 0 auto;
@@ -96,7 +122,26 @@ export default {
       width: 360px;
     }
   }
-
+  /* 排队按钮 */
+  .queue-button {
+    margin-top: 20px;
+    background-color: #4D2D05;
+    color: #FFF;
+    font-size: 1.5rem;
+    border-radius: 1.5rem;
+    width: 13rem;
+    padding: 0.5rem;
+  }
+  /* 确认开始游戏按钮*/
+  .confirm-button {
+    margin-top: 20px;
+    background-color: #FFF;
+    color: #4D2D05;
+    font-size: 1.5rem;
+    border-radius: 1.5rem;
+    width: 9rem;
+    padding: 0.5rem;
+  }
   /* 移动设备触摸板*/
   .operation-panel {
       /*display: none;*/
