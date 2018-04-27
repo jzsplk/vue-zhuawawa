@@ -2,16 +2,16 @@
   <div class="player-view">
     <p class="room-title">宫崎骏龙猫</p>
     <!-- 娃娃机画面 -->
-    <div class="video-canvas"><canvas :id="videocanvas"></canvas></div>
+    <div class="video-canvas"><img src="../assets/switch_bg.png"><canvas :id="videocanvas"></canvas></div>
     <!-- 控制面板 -->
     <div v-if="!isReady">
       <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
     </div>
     <div v-if="isReady" class="confirm">
-      <button class="confirm-button">赶紧开始</button>
+      <button class="confirm-button" @click="playerStart">赶紧开始</button>
       <button class="confirm-button" @click="cancelToPlay">我放弃</button>
     </div>
-    <div id="operation-panel" class="operation-panel" v-if="false">
+    <div id="operation-panel" class="operation-panel" v-if="isReady">
         <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)">⇧</button>
         <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)">⇩</button>
         <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
@@ -23,13 +23,17 @@
         <p id="connectionStatus"></p>
         <button @click="initMqttClient">connect</button>
         <button @click="disconnect">disconnect</button>
-        <button @click="subscribe('ctrl/22371')">subscribe</button>
+        <button @click="subscribe('ctrl/22143')">subscribe</button>
         <button @click="publishTopic">publish</button>
         <button @click="sendReady">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
-        <button @click="readyToPlay">queueToPlay</button>>
         <span v-if="isReady">State Ready</span>
+        <div class="detail-nav">
+          <button>排行榜</button>
+          <button>抓中记录</button>
+          <button>我的</button>
+        </div>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
     </div>
   </div>
@@ -118,6 +122,10 @@ export default {
     width: 360px;
     margin: 0 auto;
     canvas {
+      display: block;
+      width: 360px;
+    }
+    img {
       display: block;
       width: 360px;
     }
@@ -218,7 +226,19 @@ export default {
   .details {
     margin: 0 auto;
     width: 360px;
-
+    .detail-nav {
+      display: flex;
+      justify-content: space-around;
+      margin: 0;
+      border-radius: 10px 10px 0 0;
+      background-color: #FFF;
+      button {
+        border-style:none;
+        padding: 1.5rem;
+        background-color: #FFF;
+        font-size: 1rem;
+      } 
+    }
     img {
       width: 100%;
     }
