@@ -12,6 +12,7 @@
   .bottom-nav {
     display: flex;
     justify-content: space-around;
+    margin-top: 1.0rem;
 
     button {
       background-color: #FFF;

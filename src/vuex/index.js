@@ -4,7 +4,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-  isReady: false
+  isReady: false,
+  isPlaying: false
 }
 
 const store = new Vuex.Store({
@@ -12,6 +13,9 @@ const store = new Vuex.Store({
   getters: {
     isReady: (state) => {
       return state.isReady
+    },
+    isPlaying: (state) => {
+      return state.isPlaying
     }
   },
   actions: {
@@ -20,6 +24,9 @@ const store = new Vuex.Store({
     },
     cancelToPlay (context) {
       context.commit('cancelToPlay')
+    },
+    startPlaying (context) {
+      context.commit('startPlaying')
     }
   },
   mutations: {
@@ -28,6 +35,14 @@ const store = new Vuex.Store({
     },
     cancelToPlay (state) {
       state.isReady = false
+      state.isPlaying = false
+    },
+    startPlaying (state) {
+      state.isPlaying = true
+      setTimeout(function () {
+        state.isPlaying = false
+        state.isReady = false
+      }, 30000)
     }
   }
 })

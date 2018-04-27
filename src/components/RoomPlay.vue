@@ -8,10 +8,10 @@
       <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
     </div>
     <div v-if="isReady" class="confirm">
-      <button class="confirm-button" @click="playerStart">赶紧开始</button>
+      <button class="confirm-button" @click="startPlaying">赶紧开始</button>
       <button class="confirm-button" @click="cancelToPlay">我放弃</button>
     </div>
-    <div id="operation-panel" class="operation-panel" v-if="isReady">
+    <div id="operation-panel" class="operation-panel" v-if="isPlaying">
         <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)">⇧</button>
         <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)">⇩</button>
         <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
@@ -61,7 +61,8 @@ export default {
     // }
     ...mapActions({
       readyToPlay: 'queueToPlay',
-      cancelToPlay: 'cancelToPlay'
+      cancelToPlay: 'cancelToPlay',
+      startPlaying: 'startPlaying'
     }),
     initMqttClient () {
       MQTT.initMqttClient()
@@ -102,7 +103,7 @@ export default {
     MQTT.say()
   },
   computed: {
-    ...mapGetters(['isReady'])
+    ...mapGetters(['isReady', 'isPlaying'])
   }
 }
 </script>
@@ -160,7 +161,7 @@ export default {
 /*      left: 55%;*/
       margin: 0 auto;
       user-select: none;
-      background-color: #20140A
+      background-color: none;
   }
 
   .arrow-key {
@@ -230,14 +231,14 @@ export default {
       display: flex;
       justify-content: space-around;
       margin: 0;
-      border-radius: 10px 10px 0 0;
+      border-radius: 20px 20px 0 0;
       background-color: #FFF;
       button {
         border-style:none;
         padding: 1.5rem;
         background-color: #FFF;
         font-size: 1rem;
-      } 
+      }
     }
     img {
       width: 100%;
