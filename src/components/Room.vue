@@ -38,7 +38,7 @@ export default {
   border-radius: 20px;
   border-style:solid;
   border-width:2px;
-  border-color: #FC0073;
+  border-color: #C9B31A;
   .img-container {
     position: relative;
     img {

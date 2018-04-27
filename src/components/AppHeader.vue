@@ -1,12 +1,12 @@
 <template>
 <div>
   <div class="nav">Coming soon...</div>
-  <img class="head-img" src="https://cdn.dribbble.com/users/175710/screenshots/3363945/setapp-arcade2-01_1x.png" alt="claw-game">
+  <img class="head-img" src="../assets/guide.png" alt="claw-game">
 </div>
 </template>
 <style  scoped lang="scss" type="text/css">
 div {
-  background-color: #FC0073;
+  background-color: #C9B31A;
   color: #FFF;
 }
 .nav{
