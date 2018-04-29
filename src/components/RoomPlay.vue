@@ -6,6 +6,7 @@
     <!-- 控制面板 -->
     <div v-if="!isReady">
       <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
+      <span>{{$route.query.id}}</span>
     </div>
     <div v-if="isReady" class="confirm">
       <button class="confirm-button" @click="startPlaying">赶紧开始</button>
@@ -28,6 +29,7 @@
         <button @click="sendReady">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
+        <button @click="queueToplay">排队</button>
         <span v-if="isReady">State Ready</span>
         <div class="detail-nav">
           <button>排行榜</button>
@@ -40,6 +42,7 @@
 </template>
 
 <script>
+import apiService from '../API.service.js'
 import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
@@ -93,6 +96,11 @@ export default {
     },
     playerStart () {
       MQTT.playStart()
+    },
+    queueToplay () {
+      apiService.queueToPlay().then(data => {
+        console.log('queue data', data)
+      })
     }
   },
   created () {

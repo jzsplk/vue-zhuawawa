@@ -14,6 +14,9 @@ const MQTT_ACTION_UPDATE = 'room_update'
 const MQTT_ACTION_DONE = 'done'
 const MQTT_ACTION_TIMEOUT = 'timeout'
 
+// const BASE_URL = 'https://www.iqi1.com/'
+// const URL_ROOM_QUEUE = 'api/app/doll/room/queue'
+
 export default {
   client,
   hostname,

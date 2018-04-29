@@ -27,7 +27,7 @@ export default new Router({
       }
     },
     {
-      path: '/play',
+      path: '/play/',
       name: 'Play',
       component: RoomPlay
     }
