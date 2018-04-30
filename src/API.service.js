@@ -1,4 +1,5 @@
 import axios from 'axios'
+import _global from './components/Global'
 
 axios.defaults.baseURL = 'https://www.iqi1.com/'
 
@@ -13,11 +14,25 @@ const apiService = {
         })
     })
   },
-  queueToPlay () {
+  getRoomInfo (id) {
     return new Promise((resolve) => {
-      axios.get('api/app/doll/room/queue?Id=' + encodeURIComponent('xBw0SzXrxIc0ozW5') + '&', {
+      axios.get('api/app/doll/room?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + 'dkVytEvQvBf1tHoaouJY4Izp53L/C8QKuBl/xcudRhYdrEIjFlgti2OfORULdxqe'
+          'Authorization': 'Base ' + _global.token
+        }
+      })
+        .then(response => {
+          resolve(response.data)
+          console.log('response', response)
+          console.log('response.data', response.data)
+        })
+    })
+  },
+  queueToPlay (id) {
+    return new Promise((resolve) => {
+      axios.get('api/app/doll/room/queue?Id=' + encodeURIComponent(id) + '&', {
+        headers: {
+          'Authorization': 'Base ' + _global.token
         }
       })
         .then(response => {

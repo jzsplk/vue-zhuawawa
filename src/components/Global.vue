@@ -13,6 +13,7 @@ const MQTT_ACTION_PREPARE = 'prepare'
 const MQTT_ACTION_UPDATE = 'room_update'
 const MQTT_ACTION_DONE = 'done'
 const MQTT_ACTION_TIMEOUT = 'timeout'
+const token = 'dkVytEvQvBf1tHoaouJY4Izp53L/C8QKuBl/xcudRhYdrEIjFlgti2OfORULdxqe'
 
 // const BASE_URL = 'https://www.iqi1.com/'
 // const URL_ROOM_QUEUE = 'api/app/doll/room/queue'
@@ -31,6 +32,7 @@ export default {
   MQTT_ACTION_PREPARE,
   MQTT_ACTION_UPDATE,
   MQTT_ACTION_DONE,
-  MQTT_ACTION_TIMEOUT
+  MQTT_ACTION_TIMEOUT,
+  token
 }
 </script>

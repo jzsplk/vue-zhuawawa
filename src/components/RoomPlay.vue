@@ -29,7 +29,7 @@
         <button @click="sendReady">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
-        <button @click="queueToplay">排队</button>
+        <button @click="event => { queueToplay($route.query.id) }">排队</button>
         <span v-if="isReady">State Ready</span>
         <div class="detail-nav">
           <button>排行榜</button>
@@ -97,8 +97,8 @@ export default {
     playerStart () {
       MQTT.playStart()
     },
-    queueToplay () {
-      apiService.queueToPlay().then(data => {
+    queueToplay (id) {
+      apiService.queueToPlay(id).then(data => {
         console.log('queue data', data)
       })
     }
