@@ -1,8 +1,29 @@
 <template>
   <div class="player-view">
     <p class="room-title">宫崎骏龙猫</p>
+
     <!-- 娃娃机画面 -->
-    <div class="video-canvas"><img src="../assets/switch_bg.png"><canvas :id="videocanvas"></canvas></div>
+    <div class="video-canvas">
+      <canvas :id="videocanvas"></canvas>
+      <img src="../assets/switch_bg.png">
+      <!-- 围观头像 -->
+      <div class="tag">
+        <div class="crowd-info">
+          <div class="crowd-count">
+            <span>围观：{{roomData.CrowdCount}}</span>
+          </div>
+          <div class="queue-count">
+            <span>排队：{{roomData.Queued}}</span>
+          </div>
+          <div v-for="user in roomData.Crowd" v-bind:key="user.Id">
+            <div class="crowd">
+              <img :src="user.AvatarUrl" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 控制面板 -->
     <div v-if="!isReady">
       <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
@@ -50,7 +71,8 @@ export default {
   data () {
     return {
       baseURL: 'https://www.iqi1.com/',
-      videocanvas: 'video-canvas'
+      videocanvas: 'video-canvas',
+      roomData: []
     }
   },
   props: ['room'],
@@ -97,6 +119,18 @@ export default {
     playerStart () {
       MQTT.playStart()
     },
+    getRoomInfo (id) {
+      apiService.getRoomInfo(id).then(data => {
+        console.log('room info', data)
+        this.roomData = data
+        console.log('ROOM data update', this.roomData)
+      })
+    },
+    enterRoom (id) {
+      apiService.enterRoom(id).then(data => {
+        console.log('enter room', data)
+      })
+    },
     queueToplay (id) {
       apiService.queueToPlay(id).then(data => {
         console.log('queue data', data)
@@ -109,6 +143,8 @@ export default {
     playVideo.play()
     MQTT.initMqttClient()
     MQTT.say()
+    this.enterRoom(this.$route.query.id)
+    this.getRoomInfo(this.$route.query.id)
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying'])
@@ -137,6 +173,41 @@ export default {
     img {
       display: block;
       width: 360px;
+    }
+  }
+  /* 围观信息*/
+  .tag {
+    position: relative;
+    top: -420px;
+    right: -44.5%;
+  }
+  .crowd-info {
+    display: flex;
+    background-color: #112B44;
+    width: 200px;
+    border-radius:30px 0 0 30px;
+    flex-wrap: wrap;
+    justify-content:center;
+    .crowd-count {
+      color: #FFF;
+      height: 50%;
+    }
+    .queue-count {
+      color: #E67200;
+      height: 50%;
+    }
+    .crowd {
+      overflow:hidden;
+      img{
+        display:inline-block;
+        width:60px;
+        height:60px;
+        border-radius:60px;
+        border:0px solid #fff;
+        overflow:hidden;
+        -webkit-box-shadow:0 0 3px #ccc;
+        box-shadow:0 0 3px #ccc;
+      }
     }
   }
   /* 排队按钮 */
