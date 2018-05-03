@@ -1,6 +1,7 @@
 import _global from './components/Global'
 // import store of vuex
 import store from './vuex/index.js'
+import UserInfo from './Login.service.js'
 
 const MQTT = {
   initMqttClient (To) {
@@ -110,11 +111,11 @@ const MQTT = {
   sendReadyorPassCmd (isReady, Topic) {
     let ready = {
       code: 'ready',
-      id: _global.playerId
+      id: UserInfo.playerId
     }
     let pass = {
       code: 'pass',
-      id: _global.playerId
+      id: UserInfo.playerId
     }
     if (isReady) {
       this.publishMessage(ready, 0, Topic)
@@ -189,7 +190,7 @@ const MQTT = {
       // 完成动作
       console.log('id', id)
       // 停止抓娃娃
-      if (object.id === _global.playerId) {
+      if (object.id === UserInfo.playerId) {
         store.dispatch('stopCatching')
       }
     } else if (action === _global.MQTT_ACTION_TIMEOUT) {
@@ -197,7 +198,7 @@ const MQTT = {
       let id = object.id
       console.log(id)
       // 停止抓娃娃,先判断id是否相同
-      if (object.id === _global.playerId) {
+      if (object.id === UserInfo.playerId) {
         store.dispatch('stopCatching')
       }
     }

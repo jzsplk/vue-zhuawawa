@@ -1,6 +1,7 @@
 import axios from 'axios'
-import _global from './components/Global'
+// import _global from './components/Global'
 import store from './vuex/index.js'
+import UserInfo from './Login.service.js'
 // 新API地址
 axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
 // 旧API地址
@@ -20,7 +21,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {
@@ -34,7 +35,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/enter?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {
@@ -48,7 +49,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/leave?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {
@@ -62,7 +63,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/queue?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {
@@ -82,7 +83,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/leaveQueue?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {
@@ -96,7 +97,7 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/caughtInfo?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + _global.token
+          'Authorization': 'Base ' + UserInfo.token
         }
       })
         .then(response => {

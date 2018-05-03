@@ -6,6 +6,7 @@
       </div>
       <div class="login">
         <router-link to="/login"><button>微信登陆</button></router-link>
+        <button @click="login">游客登陆</button>
       </div>
     </div>
     <router-view/>
@@ -13,8 +14,14 @@
 </template>
 
 <script>
+import UserInfo from './Login.service.js'
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    login () {
+      UserInfo.Login()
+    }
+  }
 }
 </script>
 
