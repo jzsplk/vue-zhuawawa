@@ -15,6 +15,7 @@ const UserInfo = {
       UserInfo.name = data.FirstName
       UserInfo.balance = data.Balance
       console.log('UserInfo playerId: ', UserInfo.playerId)
+      console.log('UserInfo 余额 : ', UserInfo.balance)
     })
   }
 }

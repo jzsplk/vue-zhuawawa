@@ -75,6 +75,8 @@ const apiService = {
           // 如果412错误，显示余额不足
           if (String(e).indexOf('412') !== -1) {
             store.dispatch('InsufficientBalance')
+          } else if (String(e).indexOf('401') !== -1) {
+            // 显示请登陆
           }
         })
     })
@@ -109,7 +111,8 @@ const apiService = {
   login () {
     let UserInfo = {
       AppId: 'wxb4fd13a5f6f5a7c2',
-      MAC: '124578963816'
+      // MAC: '124578963816'
+      MAC: '124578963817'
     }
     return new Promise((resolve) => {
       axios.post('http://zhua.liehuo55.com/api/auth/AuthWith?RefSource=visitor', UserInfo)
