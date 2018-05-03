@@ -1,10 +1,11 @@
 import _global from './components/Global'
+// import store of vuex
+import store from './vuex/index.js'
 
 const MQTT = {
-  notifyTopic: 'notify/' + _global.deviceId,
-  ctrlTopic: 'ctrl/' + _global.deviceId,
   initMqttClient (To) {
     console.log('MQTT service', Paho)
+    console.log('MQTT store', store)
     let hostname = '47.97.34.46'
     let port = 18000
     let clientId = 'ult' + String(Math.round(Math.random() * 1000))
@@ -47,9 +48,8 @@ const MQTT = {
     window.client.onMessageArrived = this.onMessageArrived
     window.client.onMessageDelivered = this.onMessageDelivered
   },
-  say () {
-    console.log('say', 'hi')
-    console.log(_global.CMD_UP)
+  reConnect () {
+    this.initMqttClient(store._vm.roomTopic)
   },
   onConnect (context) {
     let self = MQTT
@@ -75,6 +75,7 @@ const MQTT = {
     if (responseObject.errorCode !== 0) {
       console.log('Connection Lost: ' + responseObject.errorMessage)
     }
+    MQTT.reConnect()
   },
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
@@ -87,7 +88,11 @@ const MQTT = {
   subscribeToTopic (c, topic) {
     let subscriptionTopic = topic
     let qos = 2
-    let onSubscribeSuccess = () => { console.log('subscribe success!') }
+    let onSubscribeSuccess = () => {
+      // show 排队按钮
+      console.log('subscribe success!')
+      store.dispatch('showStartQueue')
+    }
     let onFailure = (errorMessage) => { console.log('subscribe fail', errorMessage) }
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
     c.subscribe(subscriptionTopic, {qos: Number(qos), invocationContext: {}, onSuccess: onSubscribeSuccess, onFailure: onFailure})
@@ -165,9 +170,13 @@ const MQTT = {
       if (param === 2) {
         // confirm play
         console.log('show confirm play')
+        // change roomState to Prepared
+        store.dispatch('showConfirm')
       } else if (param === 1) {
         // start catching
         console.log('start catching')
+        // change roomState to Catching
+        store.dispatch('showPanel')
       } else if (param === 3) {
         // is waiting
         console.log('is waiting')
@@ -179,10 +188,18 @@ const MQTT = {
       let id = object.id
       // 完成动作
       console.log('id', id)
+      // 停止抓娃娃
+      if (object.id === _global.playerId) {
+        store.dispatch('stopCatching')
+      }
     } else if (action === _global.MQTT_ACTION_TIMEOUT) {
-      // time out action
+      // time out action 判断Id是否一致
       let id = object.id
       console.log(id)
+      // 停止抓娃娃,先判断id是否相同
+      if (object.id === _global.playerId) {
+        store.dispatch('stopCatching')
+      }
     }
   },
   parseCode () {

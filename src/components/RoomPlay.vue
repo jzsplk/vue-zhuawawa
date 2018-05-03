@@ -25,14 +25,17 @@
     </div>
 
     <!-- 控制面板 -->
-    <div v-if="!isReady">
-      <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
+    <div v-if="roomState == 'MqttConnected'">
+      <button @click="queue" class="queue-button">预约抓娃娃</button>
     </div>
-    <div v-if="isReady" class="confirm">
-      <button class="confirm-button" @click="startPlaying">赶紧开始</button>
-      <button class="confirm-button" @click="cancelToPlay">我放弃</button>
+    <div v-if="roomState == 'Queueing'">
+      <button class="queueing-button">正在排队</button>
     </div>
-    <div id="operation-panel" class="operation-panel" v-if="isPlaying">
+    <div v-if="roomState == 'Prepared'" class="confirm">
+      <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
+      <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+    </div>
+    <div  v-if="roomState == 'Catching'" id="operation-panel" class="operation-panel">
         <div class="operation-arrow">
           <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100, 'ctrl/' + roomData.DeviceId)"></button>
           <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100, 'ctrl/' + roomData.DeviceId)"></button>
@@ -51,7 +54,7 @@
         <button @click="sendReady(true, roomTopic)">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
-        <button @click="event => { queueToplay($route.query.id) }">排队</button>
+        <button @click="event => { queue() }">排队</button>
         <button @click="login">登陆</button>
         <span v-if="isReady">State Ready</span>
         <div class="detail-nav">
@@ -93,6 +96,10 @@ export default {
     }),
     updateTopic () {
       this.$store.dispatch('initRoomTopic', 'notify/' + this.roomData.DeviceId)
+    },
+    // 排队游戏函数action，触发mutation queueToPlay
+    queue () {
+      this.$store.dispatch('queueToPlay', this.$route.query.id)
     },
     initMqttClient () {
       // 先通过getRoomInfo取得房间deviceId，然后根据deviceId生成对应MQTT client Topci在State中，并注册对应Topic
@@ -168,13 +175,12 @@ export default {
   mounted () {
     // playVideo.play()
     this.initMqttClient()
-    MQTT.say()
     this.enterRoom(this.$route.query.id)
     this.getRoomInfo(this.$route.query.id)
     console.log('DeviceId', this.roomData)
   },
   computed: {
-    ...mapGetters(['isReady', 'isPlaying', 'roomTopic'])
+    ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState'])
   }
 }
 </script>
@@ -242,6 +248,16 @@ export default {
     margin-top: 20px;
     background-color: #4D2D05;
     color: #FFF;
+    font-size: 1.5rem;
+    border-radius: 1.5rem;
+    width: 13rem;
+    padding: 0.5rem;
+  }
+  /* 正在排队 */
+  .queueing-button {
+    margin-top: 20px;
+    background-color: #FFF;
+    color: #4D2D05;
     font-size: 1.5rem;
     border-radius: 1.5rem;
     width: 13rem;

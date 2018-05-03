@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import apiService from '../API.service.js'
+import apiService from '../API.service.js'
 
 Vue.use(Vuex)
 
 const state = {
   isReady: false,
   isPlaying: false,
-  roomTopic: 'notify/'
+  roomTopic: 'notify/',
+  roomState: 'loading'
 }
 
 const store = new Vuex.Store({
@@ -21,11 +22,14 @@ const store = new Vuex.Store({
     },
     roomTopic: (state) => {
       return state.roomTopic
+    },
+    roomState: (state) => {
+      return state.roomState
     }
   },
   actions: {
-    queueToPlay (context) {
-      context.commit('queueToPlay')
+    queueToPlay (context, id) {
+      context.commit('queueToPlay', id)
     },
     cancelToPlay (context) {
       context.commit('cancelToPlay')
@@ -35,11 +39,32 @@ const store = new Vuex.Store({
     },
     initRoomTopic (context, id) {
       context.commit('initRoomTopic', id)
+    },
+    showStartQueue (context) {
+      context.commit('showStartQueue')
+    },
+    showConfirm (context) {
+      context.commit('showConfirm')
+    },
+    showPanel (context) {
+      context.commit('showPanel')
+    },
+    stopCatching (context) {
+      context.commit('stopCatching')
     }
   },
   mutations: {
-    queueToPlay (state) {
+    queueToPlay (state, id) {
       state.isReady = true
+      // 状态变为Queueing
+      state.roomState = 'Queueing'
+      apiService.queueToPlay(id).then(data => {
+        console.log('queue data', data)
+        // 30秒后状态还原
+        setTimeout(function () {
+          state.roomState = 'MqttConnected'
+        }, 30000)
+      })
     },
     cancelToPlay (state) {
       state.isReady = false
@@ -48,12 +73,23 @@ const store = new Vuex.Store({
     startPlaying (state) {
       state.isPlaying = true
       setTimeout(function () {
-        state.isPlaying = false
-        state.isReady = false
+        state.roomState = 'MqttConnected'
       }, 30000)
     },
     initRoomTopic (state, id) {
       state.roomTopic = id
+    },
+    showStartQueue (state) {
+      state.roomState = 'MqttConnected'
+    },
+    showConfirm (state) {
+      state.roomState = 'Prepared'
+    },
+    showPanel (state) {
+      state.roomState = 'Catching'
+    },
+    stopCatching (state) {
+      state.roomState = 'MqttConnected'
     }
   }
 })
