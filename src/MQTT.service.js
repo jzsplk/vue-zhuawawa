@@ -1,12 +1,13 @@
 import _global from './components/Global'
+
 const MQTT = {
   notifyTopic: 'notify/' + _global.deviceId,
   ctrlTopic: 'ctrl/' + _global.deviceId,
-  initMqttClient () {
+  initMqttClient (To) {
     console.log('MQTT service', Paho)
     let hostname = '47.97.34.46'
     let port = 18000
-    let clientId = 'xc' + String(Math.round(Math.random() * 1000))
+    let clientId = 'ult' + String(Math.round(Math.random() * 1000))
     let path = '/'
     let user = 'ultracreation'
     let pass = 'dasboot121212'
@@ -20,14 +21,18 @@ const MQTT = {
     // let lastWillMessage = ''
     console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
     window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
-    console.log('global Paho', Paho)
     let options = {
       invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
       timeout: timeout,
       keepAliveInterval: keepAlive,
       cleanSession: cleanSession,
       useSSL: tls,
-      onSuccess: this.onConnect,
+      onSuccess: function (context) {
+        console.log('Client Connected')
+        let statusSpan = document.getElementById('connectionStatus')
+        statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
+        MQTT.subscribeToTopic(window.client, To)
+      },
       onFailure: this.onFail
     }
     if (user.length > 0) {
@@ -48,13 +53,12 @@ const MQTT = {
   },
   onConnect (context) {
     let self = MQTT
-    console.log('self=', self)
+    console.log('self= ', self)
     // Once a connection has been made, make a subscription and send a message.
     console.log('Client Connected')
     let statusSpan = document.getElementById('connectionStatus')
     statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
-    let subscriptionTopic = MQTT.notifyTopic
-    self.subscribeToTopic(window.client, subscriptionTopic)
+    self.subscribeToTopic(window.client, MQTT.notifyTopic)
   },
   onFail (context) {
     console.log('Failed to connect')
@@ -101,11 +105,11 @@ const MQTT = {
   sendReadyorPassCmd (isReady) {
     let ready = {
       code: 'ready',
-      id: 'DEdnIOAuDOdnW+C6'
+      id: _global.playerId
     }
     let pass = {
       code: 'pass',
-      id: 'DEdnIOAuDOdnW+C6'
+      id: _global.playerId
     }
     if (isReady) {
       this.publishMessage(ready, 0, MQTT.ctrlTopic)
@@ -158,13 +162,13 @@ const MQTT = {
       let param = object.param
       let id = object.id
       console.log('id = ', id)
-      if (param === '2') {
+      if (param === 2) {
         // confirm play
         console.log('show confirm play')
-      } else if (param === '1') {
+      } else if (param === 1) {
         // start catching
         console.log('start catching')
-      } else if (param === '3') {
+      } else if (param === 3) {
         // is waiting
         console.log('is waiting')
       }

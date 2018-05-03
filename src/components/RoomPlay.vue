@@ -91,11 +91,19 @@ export default {
       cancelToPlay: 'cancelToPlay',
       startPlaying: 'startPlaying'
     }),
+    updateTopic () {
+      this.$store.dispatch('initRoomTopic', 'notify/' + this.roomData.DeviceId)
+    },
     initMqttClient () {
-      MQTT.initMqttClient()
-      console.log(this.global.client)
-      console.log(this.global.hostname)
-      MQTT.parseMQTTResults()
+      apiService.getRoomInfo(this.$route.query.id).then(data => {
+        console.log('room info', data)
+        this.roomData = data
+        console.log('ROOM data update')
+        console.log('DeviceId 2', this.roomData.DeviceId)
+        this.updateTopic()
+        MQTT.initMqttClient(this.roomTopic)
+        // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
+      })
     },
     disconnect () {
       MQTT.disconnect()
@@ -125,7 +133,8 @@ export default {
       apiService.getRoomInfo(id).then(data => {
         console.log('room info', data)
         this.roomData = data
-        console.log('ROOM data update', this.roomData)
+        console.log('ROOM data update')
+        console.log('DeviceId 2', this.roomData)
       })
     },
     enterRoom (id) {
@@ -148,13 +157,14 @@ export default {
   },
   mounted () {
     playVideo.play()
-    MQTT.initMqttClient()
+    this.initMqttClient()
     MQTT.say()
     this.enterRoom(this.$route.query.id)
     this.getRoomInfo(this.$route.query.id)
+    console.log('DeviceId', this.roomData)
   },
   computed: {
-    ...mapGetters(['isReady', 'isPlaying'])
+    ...mapGetters(['isReady', 'isPlaying', 'roomTopic'])
   }
 }
 </script>

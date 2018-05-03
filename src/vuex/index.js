@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 const state = {
   isReady: false,
-  isPlaying: false
+  isPlaying: false,
+  roomTopic: 'notify/'
 }
 
 const store = new Vuex.Store({
@@ -17,6 +18,9 @@ const store = new Vuex.Store({
     },
     isPlaying: (state) => {
       return state.isPlaying
+    },
+    roomTopic: (state) => {
+      return state.roomTopic
     }
   },
   actions: {
@@ -28,6 +32,9 @@ const store = new Vuex.Store({
     },
     startPlaying (context) {
       context.commit('startPlaying')
+    },
+    initRoomTopic (context, id) {
+      context.commit('initRoomTopic', id)
     }
   },
   mutations: {
@@ -44,6 +51,9 @@ const store = new Vuex.Store({
         state.isPlaying = false
         state.isReady = false
       }, 30000)
+    },
+    initRoomTopic (state, id) {
+      state.roomTopic = id
     }
   }
 })
