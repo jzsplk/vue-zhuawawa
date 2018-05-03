@@ -10,6 +10,10 @@
 </template>
 <style scoped lang="scss" type="text/css">
   .bottom-nav {
+    position: fixed;
+    bottom: -10px;
+    width: 100%;
+    background-color: #FFF;
     display: flex;
     justify-content: space-around;
     margin-top: 1.0rem;

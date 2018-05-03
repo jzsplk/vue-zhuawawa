@@ -1,6 +1,6 @@
 <template>
   <div class="player-view">
-    <p class="room-title">宫崎骏龙猫</p>
+    <p class="room-title">{{roomData.Name}}</p>
 
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
@@ -27,18 +27,19 @@
     <!-- 控制面板 -->
     <div v-if="!isReady">
       <button @click="readyToPlay" class="queue-button">预约抓娃娃</button>
-      <span>{{$route.query.id}}</span>
     </div>
     <div v-if="isReady" class="confirm">
       <button class="confirm-button" @click="startPlaying">赶紧开始</button>
       <button class="confirm-button" @click="cancelToPlay">我放弃</button>
     </div>
     <div id="operation-panel" class="operation-panel" v-if="isPlaying">
-        <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)">⇧</button>
-        <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)">⇩</button>
-        <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)">⇦</button>
-        <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100)">⇨</button>
-        <button id="space" class="space arrow-key" @click="sendCmdGo()">⎋</button>
+        <div class="operation-arrow">
+          <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)"></button>
+          <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)"></button>
+          <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)"></button>
+          <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100)"></button>
+        </div>
+        <button id="space" class="space arrow-key" @click="sendCmdGo()"></button>
     </div>
     <!-- 详细信息 -->
     <div class="details">
@@ -47,10 +48,11 @@
         <button @click="disconnect">disconnect</button>
         <button @click="subscribe('ctrl/22143')">subscribe</button>
         <button @click="publishTopic">publish</button>
-        <button @click="sendReady">sendReady</button>
+        <button @click="sendReady(true)">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
         <button @click="event => { queueToplay($route.query.id) }">排队</button>
+        <button @click="login">登陆</button>
         <span v-if="isReady">State Ready</span>
         <div class="detail-nav">
           <button>排行榜</button>
@@ -104,8 +106,8 @@ export default {
     publishTopic () {
       MQTT.publishMessage({param: 250}, 0, 'ctrl/' + '22128')
     },
-    sendReady () {
-      MQTT.sendReadyorPassCmd()
+    sendReady (is) {
+      MQTT.sendReadyorPassCmd(is)
     },
     sendControlEvent (type, param) {
       MQTT.sendControlEvent(type, param)
@@ -134,6 +136,11 @@ export default {
     queueToplay (id) {
       apiService.queueToPlay(id).then(data => {
         console.log('queue data', data)
+      })
+    },
+    login () {
+      apiService.login().then(data => {
+        console.log('login info', data)
       })
     }
   },
@@ -242,64 +249,97 @@ export default {
       user-select: none;
       background-color: none;
   }
-
+  /* 控制上下左右*/
+  .operation-arrow {
+    position: relative;
+    background-color: #FFF;
+    width: 150px;
+    height: 150px;
+    border-radius: 150px;
+    top: 10%;
+  }
   .arrow-key {
-      background-color: #24519d;
       color: #fff;
       text-align: center;
       font-size: 48px;
       opacity: 0.7;
       border-radius: 20px;
+      border-style:none;
   }
 
   .arrow-up {
       position: relative;
-      top: 10%;
-      left: 25%;
+      top: 0%;
+      left: 55%;
       margin-left: -50px;
       width: 50px;
       height: 50px;
       line-height: 50px;
+      border:0px;
+      background-color:
+      transparent;
+      background-image:url(../assets/up.png);
+      background-size: 50px;
   }
 
   .arrow-down {
       position: relative;
-      bottom: -50%;
-      left: 23%;
+      bottom: -60%;
+      left: 52%;
       margin-left: -50px;
       width: 50px;
       height: 50px;
       line-height: 50px;
+      border:0px;
+      background-color:
+      transparent;
+      background-image:url(../assets/down.png);
+      background-size: 50px;
   }
 
   .arrow-left {
       position: relative;
-      left: -5%;
+      left: -17%;
       top: 30%;
       margin-top: -50px;
       width: 50px;
       height: 50px;
       line-height: 50px;
+      border:0px;
+      background-color:
+      transparent;
+      background-image:url(../assets/left.png);
+      background-size: 50px;
   }
 
   .arrow-right {
       position: relative;
-      left: 6%;
+      right: -12%;
       top: 30%;
       margin-top: -50px;
       width: 50px;
       height: 50px;
       line-height: 50px;
+      border:0px;
+      background-color:
+      transparent;
+      background-image:url(../assets/right.png);
+      background-size: 50px;
   }
 
   .space {
       position: relative;
-      right: -10%;
-      top: 30%;
+      right: -30%;
+      top: -65px;
       margin-top: -50px;
       width: 100px;
       height: 100px;
       line-height: 100px;
+      border:0px;
+      background-color:
+      transparent;
+      background-image:url(../assets/catch_icon.png);
+      background-size: 100px;
   }
 
   /* 详细信息*/

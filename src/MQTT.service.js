@@ -98,12 +98,20 @@ const MQTT = {
     message.retained = retain
     window.client.send(message)
   },
-  sendReadyorPassCmd () {
-    let object = {
+  sendReadyorPassCmd (isReady) {
+    let ready = {
       code: 'ready',
-      id: 'kFjWspD0kEfWOJCH'
+      id: 'DEdnIOAuDOdnW+C6'
     }
-    this.publishMessage(object, 0, MQTT.ctrlTopic)
+    let pass = {
+      code: 'pass',
+      id: 'DEdnIOAuDOdnW+C6'
+    }
+    if (isReady) {
+      this.publishMessage(ready, 0, MQTT.ctrlTopic)
+    } else {
+      this.publishMessage(pass, 0, MQTT.ctrlTopic)
+    }
   },
   sendControlCmd (action, param, qos) {
     let object = {

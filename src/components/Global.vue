@@ -6,14 +6,14 @@ const CMD_RIGHT = 3
 const CMD_UP = 2
 const CMD_DOWN = 0
 const deviceId = '22143'
-const playerId = 'kFjWspD0kEfWOJCH'
+const playerId = 'DEdnIOAuDOdnW+C6'
 const MQTT_ACTION_SUCCESS = 'succ'
 const MQTT_ACTION_FAIL = 'fail'
 const MQTT_ACTION_PREPARE = 'prepare'
 const MQTT_ACTION_UPDATE = 'room_update'
 const MQTT_ACTION_DONE = 'done'
 const MQTT_ACTION_TIMEOUT = 'timeout'
-const token = 'dkVytEvQvBf1tHoaouJY4A6UUegr1+EyQY+VUmaARN5mEl7tcggvPCYFj6ZyyjV8'
+const token = '3Z5nSXNh0LswhT+IHOopvTgZrtGt21CgYXaz2NuvoiZzLX9Hso51IfOQGZpZo9Pl'
 
 // const BASE_URL = 'https://www.iqi1.com/'
 // const URL_ROOM_QUEUE = 'api/app/doll/room/queue'

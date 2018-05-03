@@ -1,7 +1,7 @@
 import axios from 'axios'
 import _global from './components/Global'
 
-axios.defaults.baseURL = 'https://www.iqi1.com/'
+axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
 
 const apiService = {
   getRooms () {
@@ -81,6 +81,19 @@ const apiService = {
           resolve(response.data)
           console.log('response', response)
           console.log('response.data', response.data)
+        })
+    })
+  },
+  login () {
+    let UserInfo = {
+      AppId: 'wxb4fd13a5f6f5a7c2',
+      MAC: '124578963816'
+    }
+    return new Promise((resolve) => {
+      axios.post('http://zhua.liehuo55.com/api/auth/AuthWith?RefSource=visitor', UserInfo)
+        .then(response => {
+          resolve(response.data)
+          console.log('login response', response)
         })
     })
   }
