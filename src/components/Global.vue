@@ -5,15 +5,18 @@ const CMD_LEFT = 1
 const CMD_RIGHT = 3
 const CMD_UP = 2
 const CMD_DOWN = 0
-const deviceId = '22143'
+// 游客id，token
 const playerId = 'DEdnIOAuDOdnW+C6'
+const token = '3Z5nSXNh0LswhT+IHOopvTgZrtGt21CgYXaz2NuvoiZzLX9Hso51IfOQGZpZo9Pl'
+// 微信id， Token
+// const playerId = 'kFjWspD0kEfWOJCH'
+// const token = 'dkVytEvQvBf1tHoaouJY4JwWAvyQaL42ihHPsvBdcLIuinvFXe+/tN5hTcC4qZig'
 const MQTT_ACTION_SUCCESS = 'succ'
 const MQTT_ACTION_FAIL = 'fail'
 const MQTT_ACTION_PREPARE = 'prepare'
 const MQTT_ACTION_UPDATE = 'room_update'
 const MQTT_ACTION_DONE = 'done'
 const MQTT_ACTION_TIMEOUT = 'timeout'
-const token = '3Z5nSXNh0LswhT+IHOopvTgZrtGt21CgYXaz2NuvoiZzLX9Hso51IfOQGZpZo9Pl'
 
 // const BASE_URL = 'https://www.iqi1.com/'
 // const URL_ROOM_QUEUE = 'api/app/doll/room/queue'
@@ -25,7 +28,6 @@ export default {
   CMD_RIGHT,
   CMD_UP,
   CMD_DOWN,
-  deviceId,
   playerId,
   MQTT_ACTION_SUCCESS,
   MQTT_ACTION_FAIL,

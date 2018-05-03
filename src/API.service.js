@@ -1,8 +1,9 @@
 import axios from 'axios'
 import _global from './components/Global'
-
+// 新API地址
 axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
-
+// 旧API地址
+// axios.defaults.baseURL = 'https://www.iqi1.com/'
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
@@ -81,6 +82,19 @@ const apiService = {
           resolve(response.data)
           console.log('response', response)
           console.log('response.data', response.data)
+        })
+    })
+  },
+  getRoomRank (id) {
+    return new Promise((resolve) => {
+      axios.get('api/app/doll/room/caughtInfo?Id=' + encodeURIComponent(id) + '&', {
+        headers: {
+          'Authorization': 'Base ' + _global.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('排名数据', response)
         })
     })
   },

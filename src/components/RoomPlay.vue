@@ -34,12 +34,12 @@
     </div>
     <div id="operation-panel" class="operation-panel" v-if="isPlaying">
         <div class="operation-arrow">
-          <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100)"></button>
-          <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100)"></button>
-          <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100)"></button>
-          <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100)"></button>
+          <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100, 'ctrl/' + roomData.DeviceId)"></button>
+          <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100, 'ctrl/' + roomData.DeviceId)"></button>
+          <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100, 'ctrl/' + roomData.DeviceId)"></button>
+          <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100, 'ctrl/' + roomData.DeviceId)"></button>
         </div>
-        <button id="space" class="space arrow-key" @click="sendCmdGo()"></button>
+        <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
     </div>
     <!-- 详细信息 -->
     <div class="details">
@@ -48,7 +48,7 @@
         <button @click="disconnect">disconnect</button>
         <button @click="subscribe('ctrl/22143')">subscribe</button>
         <button @click="publishTopic">publish</button>
-        <button @click="sendReady(true)">sendReady</button>
+        <button @click="sendReady(true, roomTopic)">sendReady</button>
         <button @click="PrepareTopic">prepare</button>
         <button @click="playerStart">playerStart</button>
         <button @click="event => { queueToplay($route.query.id) }">排队</button>
@@ -66,7 +66,7 @@
 
 <script>
 import apiService from '../API.service.js'
-import playVideo from '../Video.service.js'
+// import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
 export default {
@@ -95,14 +95,19 @@ export default {
       this.$store.dispatch('initRoomTopic', 'notify/' + this.roomData.DeviceId)
     },
     initMqttClient () {
+      // 先通过getRoomInfo取得房间deviceId，然后根据deviceId生成对应MQTT client Topci在State中，并注册对应Topic
       apiService.getRoomInfo(this.$route.query.id).then(data => {
         console.log('room info', data)
         this.roomData = data
         console.log('ROOM data update')
         console.log('DeviceId 2', this.roomData.DeviceId)
+        // 把State中roomTopic 更新为‘notify/’ + roomData.DeviceId
         this.updateTopic()
+        // 对roomTopic建立MQTT联建并subscribe对应Topic
         MQTT.initMqttClient(this.roomTopic)
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
+        // 获取房间排名数据
+        this.getRoomRank(this.$route.query.id)
       })
     },
     disconnect () {
@@ -114,14 +119,14 @@ export default {
     publishTopic () {
       MQTT.publishMessage({param: 250}, 0, 'ctrl/' + '22128')
     },
-    sendReady (is) {
-      MQTT.sendReadyorPassCmd(is)
+    sendReady (is, topic) {
+      MQTT.sendReadyorPassCmd(is, topic)
     },
-    sendControlEvent (type, param) {
-      MQTT.sendControlEvent(type, param)
+    sendControlEvent (type, param, topic) {
+      MQTT.sendControlEvent(type, param, topic)
     },
-    sendCmdGo () {
-      MQTT.sendControlCmd('go', 200, 2)
+    sendCmdGo (topic) {
+      MQTT.sendControlCmd('go', 200, 2, topic)
     },
     PrepareTopic () {
       MQTT.publishMessage({action: 'room_update'}, 0, 'notify/' + '22371')
@@ -151,12 +156,17 @@ export default {
       apiService.login().then(data => {
         console.log('login info', data)
       })
+    },
+    getRoomRank (id) {
+      apiService.getRoomRank(id).then(data => {
+        console.log('房间排名： ', data)
+      })
     }
   },
   created () {
   },
   mounted () {
-    playVideo.play()
+    // playVideo.play()
     this.initMqttClient()
     MQTT.say()
     this.enterRoom(this.$route.query.id)

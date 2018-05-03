@@ -102,7 +102,7 @@ const MQTT = {
     message.retained = retain
     window.client.send(message)
   },
-  sendReadyorPassCmd (isReady) {
+  sendReadyorPassCmd (isReady, Topic) {
     let ready = {
       code: 'ready',
       id: _global.playerId
@@ -112,31 +112,31 @@ const MQTT = {
       id: _global.playerId
     }
     if (isReady) {
-      this.publishMessage(ready, 0, MQTT.ctrlTopic)
+      this.publishMessage(ready, 0, Topic)
     } else {
-      this.publishMessage(pass, 0, MQTT.ctrlTopic)
+      this.publishMessage(pass, 0, Topic)
     }
   },
-  sendControlCmd (action, param, qos) {
+  sendControlCmd (action, param, qos, topic) {
     let object = {
       param: param,
       action: action
     }
-    this.publishMessage(object, qos, MQTT.ctrlTopic)
+    this.publishMessage(object, qos, topic)
   },
-  sendControlEvent (type, param) {
+  sendControlEvent (type, param, topic) {
     switch (type) {
       case _global.CMD_LEFT:
-        this.sendControlCmd('left', param, 0)
+        this.sendControlCmd('left', param, 0, topic)
         break
       case _global.CMD_RIGHT:
-        this.sendControlCmd('right', param, 0)
+        this.sendControlCmd('right', param, 0, topic)
         break
       case _global.CMD_UP:
-        this.sendControlCmd('up', param, 0)
+        this.sendControlCmd('up', param, 0, topic)
         break
       case _global.CMD_DOWN:
-        this.sendControlCmd('down', param, 0)
+        this.sendControlCmd('down', param, 0, topic)
         break
     }
   },
