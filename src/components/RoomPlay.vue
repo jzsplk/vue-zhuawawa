@@ -35,6 +35,9 @@
       <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
       <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
     </div>
+    <div v-if="roomState == 'InsufficientBalance'">
+      <button class="queueing-button">余额不足</button>
+    </div>
     <div  v-if="roomState == 'Catching'" id="operation-panel" class="operation-panel">
         <div class="operation-arrow">
           <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100, 'ctrl/' + roomData.DeviceId)"></button>
@@ -245,7 +248,7 @@ export default {
   }
   /* 排队按钮 */
   .queue-button {
-    margin-top: 20px;
+    margin-top: -30px;
     background-color: #4D2D05;
     color: #FFF;
     font-size: 1.5rem;
@@ -255,7 +258,7 @@ export default {
   }
   /* 正在排队 */
   .queueing-button {
-    margin-top: 20px;
+    margin-top: -30px;
     background-color: #FFF;
     color: #4D2D05;
     font-size: 1.5rem;
@@ -265,7 +268,7 @@ export default {
   }
   /* 确认开始游戏按钮*/
   .confirm-button {
-    margin-top: 20px;
+    margin-top: -30px;
     background-color: #FFF;
     color: #4D2D05;
     font-size: 1.5rem;

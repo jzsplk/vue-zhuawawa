@@ -51,6 +51,9 @@ const store = new Vuex.Store({
     },
     stopCatching (context) {
       context.commit('stopCatching')
+    },
+    InsufficientBalance (context) {
+      context.commit('InsufficientBalance')
     }
   },
   mutations: {
@@ -61,9 +64,11 @@ const store = new Vuex.Store({
       apiService.queueToPlay(id).then(data => {
         console.log('queue data', data)
         // 30秒后状态还原
-        setTimeout(function () {
-          state.roomState = 'MqttConnected'
-        }, 30000)
+        // setTimeout(function () {
+        //   state.roomState = 'MqttConnected'
+        // }, 30000)
+      }).catch(e => {
+        console.log('queue error', e)
       })
     },
     cancelToPlay (state) {
@@ -90,6 +95,9 @@ const store = new Vuex.Store({
     },
     stopCatching (state) {
       state.roomState = 'MqttConnected'
+    },
+    InsufficientBalance (state) {
+      state.roomState = 'InsufficientBalance'
     }
   }
 })

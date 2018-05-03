@@ -1,5 +1,6 @@
 import axios from 'axios'
 import _global from './components/Global'
+import store from './vuex/index.js'
 // 新API地址
 axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
 // 旧API地址
@@ -65,9 +66,15 @@ const apiService = {
         }
       })
         .then(response => {
+          console.log('queue response', response)
           resolve(response.data)
-          console.log('response', response)
-          console.log('response.data', response.data)
+          console.log('queue response.data', response.data)
+        }).catch(e => {
+          console.log('queue error:', e)
+          // 如果412错误，显示余额不足
+          if (String(e).indexOf('412') !== -1) {
+            store.dispatch('InsufficientBalance')
+          }
         })
     })
   },
