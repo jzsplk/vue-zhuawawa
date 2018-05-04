@@ -15,8 +15,18 @@ const UserInfo = {
       UserInfo.name = data.FirstName
       UserInfo.balance = data.Balance
       console.log('UserInfo playerId: ', UserInfo.playerId)
+      console.log('UserInfo token: ', UserInfo.token)
       console.log('UserInfo 余额 : ', UserInfo.balance)
     })
+  },
+  getInfo (id, token) {
+    UserInfo.playerId = id
+    UserInfo.token = token
+    console.log('getInfo token', token)
+  },
+  updateInfo (id, token) {
+    UserInfo.playerId = id
+    UserInfo.token = token
   }
 }
 

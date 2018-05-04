@@ -1,7 +1,6 @@
 import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
-import UserInfo from './Login.service.js'
 // 新API地址
 axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
 // 旧API地址
@@ -21,7 +20,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          'Authorization': 'Base ' + store._vm.token
+          // 改为由state获取token
         }
       })
         .then(response => {
@@ -35,7 +35,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/enter?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          'Authorization': 'Base ' + store._vm.token
+          // 改为由state获取token
         }
       })
         .then(response => {
@@ -49,7 +50,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/leave?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
         }
       })
         .then(response => {
@@ -63,7 +65,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/queue?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
         }
       })
         .then(response => {
@@ -86,7 +89,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/leaveQueue?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
         }
       })
         .then(response => {
@@ -100,7 +104,8 @@ const apiService = {
     return new Promise((resolve) => {
       axios.get('api/app/doll/room/caughtInfo?Id=' + encodeURIComponent(id) + '&', {
         headers: {
-          'Authorization': 'Base ' + UserInfo.token
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
         }
       })
         .then(response => {
@@ -113,6 +118,7 @@ const apiService = {
     let UserInfo = {
       AppId: 'wxb4fd13a5f6f5a7c2',
       // MAC: '124578963816'
+      // 修改为用户输入
       MAC: '124578963817'
     }
     return new Promise((resolve) => {

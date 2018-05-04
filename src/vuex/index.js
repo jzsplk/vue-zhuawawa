@@ -8,7 +8,9 @@ const state = {
   isReady: false,
   isPlaying: false,
   roomTopic: 'notify/',
-  roomState: 'loading'
+  roomState: 'loading',
+  playerId: '123',
+  token: '456'
 }
 
 const store = new Vuex.Store({
@@ -25,6 +27,12 @@ const store = new Vuex.Store({
     },
     roomState: (state) => {
       return state.roomState
+    },
+    playerId: (state) => {
+      return state.playerId
+    },
+    token: (state) => {
+      return state.token
     }
   },
   actions: {
@@ -54,6 +62,10 @@ const store = new Vuex.Store({
     },
     InsufficientBalance (context) {
       context.commit('InsufficientBalance')
+    },
+    // 更新用户数据action，id跟token
+    updataPlayerInfo (context, obj) {
+      context.commit('updataPlayerInfo', obj)
     }
   },
   mutations: {
@@ -97,6 +109,11 @@ const store = new Vuex.Store({
     },
     InsufficientBalance (state) {
       state.roomState = 'InsufficientBalance'
+    },
+    // 更新用户信息mutation
+    updataPlayerInfo (state, obj) {
+      state.playerId = obj.playerId
+      state.token = obj.token
     }
   }
 })

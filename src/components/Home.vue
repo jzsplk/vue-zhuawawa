@@ -19,7 +19,31 @@ export default {
     'room': Room,
     'category': Category
   },
-  name: 'Home'
+  name: 'Home',
+  methods: {
+    checkLogin () {
+      // 检查是否存在session
+      if (!this.getCookie('zhuawawa')) {
+        // 如果没有登陆状态则跳转到登陆页
+        console.log('no cookie found')
+        this.$router.push('/Tulogin')
+      } else {
+        this.$router.push('/')
+        let data = unescape(this.getCookie('zhuawawa'))
+        console.log('getCookie unescape', data)
+        console.log('getCookie parse: ', JSON.parse(data))
+        // 如果有session把用户数据提取到state中
+        this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+      }
+    }
+  },
+  created () {
+    this.checkLogin()
+  },
+  watch: {
+    // 监听路由变化，检查登陆状态
+    '$route': 'checkLogin'
+  }
 }
 </script>
 <style scoped lang="scss" type="text/css">
