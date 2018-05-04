@@ -9,7 +9,7 @@
 
     <div class="info">
       <p>{{room.Name}}</p>
-      <p>💎 💰{{room.Coin}} /次</p>
+      <p>💎 <img src="../assets/coin.png" alt=""> {{room.Coin}} /次</p>
       <span>{{room.Crowd}} 人在线 {{room.id}}</span>
       <router-link :to="{path:'play',query:{id:room.Id}}"><button>去捕获</button></router-link>
     </div>
@@ -59,6 +59,7 @@ export default {
   .info {
     display: inline-block;
     width: 50%;
+    vertical-align: middle;
     p {
       margin-top: 2rem;
     }
@@ -67,6 +68,11 @@ export default {
       color: white;
       border-radius: 10px;
       font-size: 20px;
+    }
+    img {
+      height: 1rem;
+      width: auto;
+      vertical-align: middle;
     }
   }
 }

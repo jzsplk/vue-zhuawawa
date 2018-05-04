@@ -4,9 +4,9 @@
 
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
-      <canvas :id="videocanvas"></canvas>
       <div class="container">
-        <img class="video" src="../assets/switch_bg.png">
+        <!-- <img class="video" src="../assets/switch_bg.png"> -->
+        <canvas :id="videocanvas"></canvas>
         <!-- 围观头像 -->
         <div class="overlay">
           <div class="crowd-info">
@@ -79,25 +79,46 @@
           <span v-if="isReady">State Ready</span>
         </div>
         <div class="detail-nav">
-          <button>排行榜</button>
-          <button>抓中记录</button>
-          <button>我的</button>
+          <button @click="changeDetailState('Rank')">排行榜</button>
+          <button @click="changeDetailState('Log')">抓中记录</button>
+          <button @click="changeDetailState('Pic')">我的</button>
         </div>
-        <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
-        <ol v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
-            <li>
+        <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
+          <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
+            <div class="avatar">
               <img class="rankAvater" :src="rank.AvatarUrl" alt="">
+            </div>
+            <div class="name">
               <span>{{rank.NickName}}</span>
+            </div>
+            <div class="count">
               <span class="count">{{rank.CaughtCount}}</span>
-            </li>
-        </ol>
+            </div>
+          </li>
+        </div>
+
+        <div v-if="this.$store.state.detailState === 'Log'" class="logs_wrapper">
+          <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
+            <div class="avatar">
+              <img class="rankAvater" :src="log.AvatarUrl" alt="">
+            </div>
+            <div class="name">
+              <span>{{log.NickName}}</span>
+            </div>
+            <div class="time">
+              <span class="count">{{log.Timestamp}}</span>
+            </div>
+          </li>
+        </div>
+
     </div>
   </div>
 </template>
 
 <script>
 import apiService from '../API.service.js'
-// import playVideo from '../Video.service.js'
+import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
 export default {
@@ -198,12 +219,15 @@ export default {
         console.log('房间排名data： ', data.data)
         this.roomRank = data.data
       })
+    },
+    changeDetailState (detail) {
+      this.$store.dispatch('changeDetailState', detail)
     }
   },
   created () {
   },
   mounted () {
-    // playVideo.play()
+    playVideo.play()
     this.initMqttClient()
     this.enterRoom(this.$route.query.id)
     this.getRoomInfo(this.$route.query.id)
@@ -289,6 +313,9 @@ export default {
         top: 0;
         left: 0;
         color: #FFF;
+        .playing_wrapper {
+          background-color: #121F32;
+        }
       }
     }
   }
@@ -450,30 +477,79 @@ export default {
     }
   }
   /* 排行榜 */
-  .rank {
-    background: white;
-    list-style: none;
-    counter-reset: li;
-    li::before {
-      content: counter(li);
-      color: #E2BE46;
-      display: inline-block;
-      width: 1em;
-      margin-left: -1em
-    }
-    li {counter-increment: li}
-    li {
-      height: 40px;
-      background: white;
+  .rank_wrapper {
+    background-color: white;
+    width: 360px;
+    position: relative;
+    height: 132px;
+    overflow: scroll;
+    box-sizing: border-box;
+    .rank {
       display: flex;
-      justify-content: space-between;
-      .rankAvater {
+      font-weight: bold;
+      background-color: white;
+      border-bottom: solid 1px #E6E4E5;
+    }
+    div {
+      display: inline-block;
+      float: left;
+      overflow: hidden;
+      padding: 5px;
+      height: 30px;
+    }
+    .avatar {
+      width: 10%;
+      height: 30px;
+      img {
         height: 30px;
         width: auto;
         border-radius: 30px;
+        border:solid 1px #FFF;
       }
-      .count {
+    }
+    .name {
+      width: 80%;
+    }
+    .count {
+      width: 10%;
+    }
+  }
+  /* 抓中记录 */
+  .logs_wrapper {
+    background-color: white;
+    width: 360px;
+    position: relative;
+    height: 132px;
+    overflow: scroll;
+    box-sizing: border-box;
+    .logs {
+      display: flex;
+      font-weight: bold;
+      background-color: white;
+      border-bottom: solid 1px #E6E4E5;
+    }
+    div {
+      display: inline-block;
+      float: left;
+      overflow: hidden;
+      padding: 5px;
+      height: 40px;
+    }
+    .avatar {
+      width: 10%;
+      height: 30px;
+      img {
+        height: 30px;
+        width: auto;
+        border-radius: 30px;
+        border:solid 1px #FFF;
       }
+    }
+    .name {
+      width: 80%;
+    }
+    .count {
+      width: 10%;
     }
   }
 }

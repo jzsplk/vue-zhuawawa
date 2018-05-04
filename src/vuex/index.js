@@ -14,7 +14,7 @@ const state = {
   playerInfo: {}, // 玩家详细信息
   roomUpdating: false, // 控制房间更新的状态
   isLogin: false, // 是否已登陆，切换登陆页面的按钮
-  detailState: 'rank' //  房间detail的状态
+  detailState: 'Rank' //  房间detail的状态
 }
 
 const store = new Vuex.Store({
@@ -40,6 +40,9 @@ const store = new Vuex.Store({
     },
     roomUpdating: (state) => {
       return state.roomUpdating
+    },
+    changeDetailState: (state) => {
+      return state.detailState
     }
   },
   actions: {
@@ -79,6 +82,10 @@ const store = new Vuex.Store({
     },
     roomStopUpdating (context) {
       context.commit('roomStopUpdating')
+    },
+    // 更换detail状态的action
+    changeDetailState (context, detail) {
+      context.commit('changeDetailState', detail)
     }
   },
   mutations: {
@@ -133,6 +140,10 @@ const store = new Vuex.Store({
     },
     roomStopUpdating (state) {
       state.roomUpdating = false
+    },
+    // 更改detailState的mutation
+    changeDetailState (state, detail) {
+      state.detailState = detail
     }
   }
 })
