@@ -1,20 +1,30 @@
 <template>
   <div class="login">
     <router-link to="/login"><button>微信登陆</button></router-link>
-    <button @click="login">游客登陆</button>
+    <div>
+      <input type="text" v-model="TouristInput" placeholder="请输入您的名字">
+    </div>
+    <button @click="login(TouristInput)">游客登陆</button>
   </div>
 </template>
 <script>
 import UserInfo from '../Login.service.js'
 import apiService from '../API.service.js'
 export default {
+  data () {
+    return {
+      TouristInput: ''
+    }
+  },
   components: {
   },
   methods: {
-    login () {
+    login (name) {
       // 执行post登陆请求
       // UserInfo.Login()
-      apiService.login().then(data => {
+      console.log('input', this.input)
+      apiService.login(name).then(data => {
+        console.log('游客信息', data)
         // 存储得到的数据
         let userData = {
           playerId: data.Id,
@@ -36,6 +46,7 @@ export default {
 </script>
 <style scoped lang="scss" type="text/css">
   .login {
+    background-color: #DBC700;
     button {
       font-size: 3rem;
     }

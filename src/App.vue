@@ -6,6 +6,7 @@
       </div>
       <div class="login">
         <router-link to="/login"><button>微信登陆</button></router-link>
+        <router-link to="/Tulogin"><button>登陆</button></router-link>
       </div>
     </div>
     <router-view/>

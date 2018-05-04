@@ -5,16 +5,19 @@
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
       <canvas :id="videocanvas"></canvas>
-      <img src="../assets/switch_bg.png">
+      <img class="video" src="../assets/switch_bg.png">
       <!-- 围观头像 -->
       <div class="tag">
         <div class="crowd-info">
-          <div class="crowd-count">
-            <span>围观：{{roomData.CrowdCount}}</span>
+          <div class="crowd-num">
+            <div class="crowd-count">
+              <span>围观：{{roomData.CrowdCount}}</span>
+            </div>
+            <div class="queue-count">
+              <span>排队：{{roomData.Queued}}</span>
+            </div>
           </div>
-          <div class="queue-count">
-            <span>排队：{{roomData.Queued}}</span>
-          </div>
+
           <div v-for="user in roomData.Crowd" v-bind:key="user.Id">
             <div class="crowd">
               <img :src="user.AvatarUrl" alt="">
@@ -218,46 +221,49 @@ export default {
     img {
       display: block;
       width: 360px;
+      position: relative;
     }
   }
   /* 围观信息*/
   .tag {
-    position: relative;
-    top: -420px;
-    right: -44.5%;
-  }
-  .crowd-info {
-    display: flex;
-    background-color: #112B44;
-    width: 200px;
-    border-radius:30px 0 0 30px;
-    flex-wrap: wrap;
-    justify-content:center;
-    .crowd-count {
-      color: #FFF;
-      height: 50%;
-    }
-    .queue-count {
-      color: #E67200;
-      height: 50%;
-    }
-    .crowd {
-      overflow:hidden;
-      img{
-        display:inline-block;
-        width:60px;
-        height:60px;
-        border-radius:60px;
-        border:0px solid #fff;
+    position: absolute;
+    top: 420px;
+    right: 30px;
+    min-height: 60px;
+    padding-left: 10px;
+    .crowd-info {
+      display: flex;
+      background-color: #112B44;
+      min-width: 100px;
+      border-radius:30px 0 0 30px;
+      padding-left: 20px;
+      .crowd-count {
+        color: #FFF;
+        height: 50%;
+      }
+      .queue-count {
+        color: #E67200;
+        height: 50%;
+      }
+      .crowd {
         overflow:hidden;
-        -webkit-box-shadow:0 0 3px #ccc;
-        box-shadow:0 0 3px #ccc;
+        img{
+          display:inline-block;
+          width:60px;
+          height:60px;
+          border-radius:60px;
+          border:0px solid #fff;
+          overflow:hidden;
+          -webkit-box-shadow:0 0 3px #ccc;
+          box-shadow:0 0 3px #ccc;
+        }
       }
     }
   }
+
   /* 排队按钮 */
   .queue-button {
-    margin-top: -30px;
+    margin-top: 10px;
     background-color: #4D2D05;
     color: #FFF;
     font-size: 1.5rem;
@@ -267,7 +273,7 @@ export default {
   }
   /* 正在排队 */
   .queueing-button {
-    margin-top: -30px;
+    margin-top: 10px;
     background-color: #FFF;
     color: #4D2D05;
     font-size: 1.5rem;
@@ -277,7 +283,7 @@ export default {
   }
   /* 确认开始游戏按钮*/
   .confirm-button {
-    margin-top: -30px;
+    margin-top: 10px;
     background-color: #FFF;
     color: #4D2D05;
     font-size: 1.5rem;

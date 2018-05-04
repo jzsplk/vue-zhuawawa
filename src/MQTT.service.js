@@ -1,7 +1,7 @@
 import _global from './components/Global'
 // import store of vuex
 import store from './vuex/index.js'
-import UserInfo from './Login.service.js'
+// import UserInfo from './Login.service.js'
 
 const MQTT = {
   initMqttClient (To) {
@@ -123,11 +123,11 @@ const MQTT = {
   sendReadyorPassCmd (isReady, Topic) {
     let ready = {
       code: 'ready',
-      id: UserInfo.playerId
+      id: store._vm.playerId
     }
     let pass = {
       code: 'pass',
-      id: UserInfo.playerId
+      id: store._vm.playerId
     }
     if (isReady) {
       this.publishMessage(ready, 0, Topic)

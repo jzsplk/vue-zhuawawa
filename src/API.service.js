@@ -114,12 +114,13 @@ const apiService = {
         })
     })
   },
-  login () {
+  // 修改login函数接受一个name参数，接受Login.vue中输入的名字
+  login (name) {
     let UserInfo = {
       AppId: 'wxb4fd13a5f6f5a7c2',
       // MAC: '124578963816'
       // 修改为用户输入
-      MAC: '124578963817'
+      MAC: String(name)
     }
     return new Promise((resolve) => {
       axios.post('http://zhua.liehuo55.com/api/auth/AuthWith?RefSource=visitor', UserInfo)
