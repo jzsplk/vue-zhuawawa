@@ -84,6 +84,13 @@
           <button>我的</button>
         </div>
         <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        <ol v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
+            <li>
+              <img class="rankAvater" :src="rank.AvatarUrl" alt="">
+              <span>{{rank.NickName}}</span>
+              <span class="count">{{rank.CaughtCount}}</span>
+            </li>
+        </ol>
     </div>
   </div>
 </template>
@@ -96,9 +103,9 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      baseURL: 'https://www.iqi1.com/',
       videocanvas: 'video-canvas',
-      roomData: []
+      roomData: [],
+      roomRank: [] // 存储房间排名信息的data
     }
   },
   props: ['room'],
@@ -188,7 +195,8 @@ export default {
     },
     getRoomRank (id) {
       apiService.getRoomRank(id).then(data => {
-        console.log('房间排名： ', data)
+        console.log('房间排名data： ', data.data)
+        this.roomRank = data.data
       })
     }
   },
@@ -208,6 +216,7 @@ export default {
     '$store.state.roomUpdating': {
       handler: function (newer, older) {
         this.getRoomInfo(this.$route.query.id) // 执行methods中getRoomInfo方法
+        this.getRoomRank(this.$route.query.id) // 执行更新rank的数据
       },
       deep: true // 开启深度监听
     }
@@ -438,6 +447,33 @@ export default {
     }
     img {
       width: 100%;
+    }
+  }
+  /* 排行榜 */
+  .rank {
+    background: white;
+    list-style: none;
+    counter-reset: li;
+    li::before {
+      content: counter(li);
+      color: #E2BE46;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em
+    }
+    li {counter-increment: li}
+    li {
+      height: 40px;
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      .rankAvater {
+        height: 30px;
+        width: auto;
+        border-radius: 30px;
+      }
+      .count {
+      }
     }
   }
 }

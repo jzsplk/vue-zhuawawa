@@ -110,7 +110,6 @@ const apiService = {
       })
         .then(response => {
           resolve(response)
-          console.log('排名数据', response)
         })
     })
   },

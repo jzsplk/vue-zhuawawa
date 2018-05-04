@@ -20,7 +20,25 @@ export default {
   methods: {
     leaveRoom () {
       MQTT.destoryMQTT()
+    },
+    checkLogin () {
+      // 检查是否存在session
+      if (!this.getCookie('zhuawawa')) {
+        // 如果没有登陆状态则跳转到登陆页
+        console.log('no cookie found')
+        this.$router.push('/Tulogin')
+      } else {
+        // this.$router.push('/')
+        // 如果有session把用户数据提取到state中
+        let data = unescape(this.getCookie('zhuawawa'))
+        console.log('getCookie parse: ', JSON.parse(data))
+        this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+      }
     }
+  },
+  created () {
+    // 执行checklogin
+    this.checkLogin()
   }
 }
 </script>

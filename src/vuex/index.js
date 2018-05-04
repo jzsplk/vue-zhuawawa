@@ -7,11 +7,14 @@ Vue.use(Vuex)
 const state = {
   isReady: false,
   isPlaying: false,
-  roomTopic: 'notify/',
-  roomState: 'loading',
+  roomTopic: 'notify/', // 房间notify topic
+  roomState: 'loading', // 房间状态
   playerId: '123',
   token: '456',
-  roomUpdating: false // 控制房间更新的状态
+  playerInfo: {}, // 玩家详细信息
+  roomUpdating: false, // 控制房间更新的状态
+  isLogin: false, // 是否已登陆，切换登陆页面的按钮
+  detailState: 'rank' //  房间detail的状态
 }
 
 const store = new Vuex.Store({
