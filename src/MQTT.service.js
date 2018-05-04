@@ -9,7 +9,7 @@ const MQTT = {
     console.log('MQTT store', store)
     let hostname = '47.97.34.46'
     let port = 18000
-    let clientId = 'ult' + String(Math.round(Math.random() * 1000))
+    let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
     let path = '/'
     let user = 'ultracreation'
     let pass = 'dasboot121212'
@@ -197,6 +197,8 @@ const MQTT = {
     } else if (action === _global.MQTT_ACTION_UPDATE) {
       // refresh room info
       console.log('refresh room info')
+      // 增加刷新房间的函数，这里通过action先改变state中roomUpdating
+      store.dispatch('roomUpdating')
     } else if (action === _global.MQTT_ACTION_DONE) {
       let id = object.id
       // 完成动作

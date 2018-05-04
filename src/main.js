@@ -40,7 +40,7 @@ Vue.prototype.delCookie = (name) => {
 }
 
 Vue.config.productionTip = false
-
+// 微信登陆
 Vue.use(WechatAuth, {
   router,
   appid: 'wxb4fd13a5f6f5a7c2',
@@ -66,8 +66,6 @@ Vue.use(WechatAuth, {
     })
   }
 })
-
-// Vue.use(VueMqtt, 'ws://iot.eclipse.org/ws', {clientId: 'WebCLient-' + parseInt(Math.random() * 100000), username: 'xc', password: '123456'})
 
 /* eslint-disable no-new */
 var $vm = new Vue({

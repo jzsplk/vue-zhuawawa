@@ -148,8 +148,9 @@ export default {
       apiService.getRoomInfo(id).then(data => {
         console.log('room info', data)
         this.roomData = data
-        console.log('ROOM data update')
+        console.log('ROOM data updateing')
         console.log('DeviceId 2', this.roomData)
+        this.$store.dispatch('roomStopUpdating')
       })
     },
     enterRoom (id) {
@@ -184,6 +185,14 @@ export default {
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState'])
+  },
+  watch: {
+    '$store.state.roomUpdating': {
+      handler: function (newer, older) {
+        this.getRoomInfo(this.$route.query.id) // 执行methods中getRoomInfo方法
+      },
+      deep: true // 开启深度监听
+    }
   }
 }
 </script>

@@ -10,7 +10,8 @@ const state = {
   roomTopic: 'notify/',
   roomState: 'loading',
   playerId: '123',
-  token: '456'
+  token: '456',
+  roomUpdating: false // 控制房间更新的状态
 }
 
 const store = new Vuex.Store({
@@ -33,6 +34,9 @@ const store = new Vuex.Store({
     },
     token: (state) => {
       return state.token
+    },
+    roomUpdating: (state) => {
+      return state.roomUpdating
     }
   },
   actions: {
@@ -63,9 +67,15 @@ const store = new Vuex.Store({
     InsufficientBalance (context) {
       context.commit('InsufficientBalance')
     },
-    // 更新用户数据action，id跟token
+    // 更新用户数据action，id跟token, 注意这里第二个参数要用obj，把需要操作的变量放到obj中
     updataPlayerInfo (context, obj) {
       context.commit('updataPlayerInfo', obj)
+    },
+    roomUpdating (context) {
+      context.commit('roomUpdating')
+    },
+    roomStopUpdating (context) {
+      context.commit('roomStopUpdating')
     }
   },
   mutations: {
@@ -114,6 +124,12 @@ const store = new Vuex.Store({
     updataPlayerInfo (state, obj) {
       state.playerId = obj.playerId
       state.token = obj.token
+    },
+    roomUpdating (state) {
+      state.roomUpdating = true
+    },
+    roomStopUpdating (state) {
+      state.roomUpdating = false
     }
   }
 })

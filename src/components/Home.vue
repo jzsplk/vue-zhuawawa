@@ -29,10 +29,9 @@ export default {
         this.$router.push('/Tulogin')
       } else {
         this.$router.push('/')
-        let data = unescape(this.getCookie('zhuawawa'))
-        console.log('getCookie unescape', data)
-        console.log('getCookie parse: ', JSON.parse(data))
         // 如果有session把用户数据提取到state中
+        let data = unescape(this.getCookie('zhuawawa'))
+        console.log('getCookie parse: ', JSON.parse(data))
         this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
       }
     }
