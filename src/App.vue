@@ -2,7 +2,7 @@
   <div id="app">
     <div class="header">
       <div class="logo">
-        <router-link to="/"><img class="login-img" src="./assets/logo.png"></router-link>
+        <router-link to="/"><img class="login-img" src="./assets/logo.png" @click="leaveRoom"></router-link>
       </div>
       <div class="login">
         <router-link to="/login"><button>微信登陆</button></router-link>
@@ -15,11 +15,15 @@
 
 <script>
 import UserInfo from './Login.service.js'
+import MQTT from './MQTT.service.js'
 export default {
   name: 'App',
   methods: {
     login () {
       UserInfo.Login()
+    },
+    leaveRoom () {
+      MQTT.destoryMQTT()
     }
   }
 }

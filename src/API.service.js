@@ -77,6 +77,7 @@ const apiService = {
             store.dispatch('InsufficientBalance')
           } else if (String(e).indexOf('401') !== -1) {
             // 显示请登陆
+            console.log('请登陆')
           }
         })
     })

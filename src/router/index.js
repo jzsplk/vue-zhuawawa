@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
 import RoomPlay from '@/components/RoomPlay'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ export default new Router({
       meta: {
         auth: true
       }
+    },
+    {
+      path: '/Tulogin',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/play/',

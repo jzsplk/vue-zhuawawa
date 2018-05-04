@@ -72,8 +72,7 @@ const store = new Vuex.Store({
       })
     },
     cancelToPlay (state) {
-      state.isReady = false
-      state.isPlaying = false
+      state.roomState = 'loading'
     },
     startPlaying (state) {
       state.isPlaying = true

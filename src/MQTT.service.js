@@ -72,11 +72,23 @@ const MQTT = {
     var statusSpan = document.getElementById('connectionStatus')
     statusSpan.innerHTML = 'Connection - Disconnected.'
   },
+  destoryMQTT () {
+    console.log('destory MQTT')
+    if (window.client !== null && store._vm.roomState === 'MqttConnected') {
+      if (store._vm.roomState === 'MqttConnected') {
+        window.client.unsubscribe(store._vm.roomTopic)
+      }
+      window.client.disconnect()
+      store.dispatch('cancelToPlay')
+    }
+  },
   onConnectionLost (responseObject) {
     if (responseObject.errorCode !== 0) {
       console.log('Connection Lost: ' + responseObject.errorMessage)
     }
-    MQTT.reConnect()
+    if (store._vm.roomState !== 'MqttConnected') {
+      MQTT.reConnect()
+    }
   },
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
