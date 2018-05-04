@@ -53,6 +53,7 @@ export default {
       color: white;
       right: 20px;
       top: 20px;
+      padding: 4px;
     }
   }
   .info {

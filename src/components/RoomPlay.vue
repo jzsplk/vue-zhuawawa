@@ -5,26 +5,39 @@
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
       <canvas :id="videocanvas"></canvas>
-      <img class="video" src="../assets/switch_bg.png">
-      <!-- 围观头像 -->
-      <div class="tag">
-        <div class="crowd-info">
-          <div class="crowd-num">
-            <div class="crowd-count">
-              <span>围观：{{roomData.CrowdCount}}</span>
+      <div class="container">
+        <img class="video" src="../assets/switch_bg.png">
+        <!-- 围观头像 -->
+        <div class="overlay">
+          <div class="crowd-info">
+            <div class="crowd-num">
+              <div class="crowd-count">
+                <span>围观：{{roomData.CrowdCount}}</span>
+              </div>
+              <div class="queue-count">
+                <span>排队：{{roomData.Queued}}</span>
+              </div>
             </div>
-            <div class="queue-count">
-              <span>排队：{{roomData.Queued}}</span>
-            </div>
-          </div>
 
-          <div v-for="user in roomData.Crowd" v-bind:key="user.Id">
-            <div class="crowd">
-              <img :src="user.AvatarUrl" alt="">
+            <div v-for="user in roomData.Crowd" v-bind:key="user.Id">
+              <div class="crowd">
+                <img class="crowd_Avatar" :src="user.AvatarUrl" alt="">
+              </div>
             </div>
           </div>
         </div>
+        <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
+          <div class="playing_wrapper">
+            <span>玩家 排队中</span>
+          </div>
+        </div>
+        <div v-if="$store.state.roomState === 'Catching'" class="overlay-playing">
+          <div class="playing_wrapper">
+            <span>玩家 热玩中</span>
+          </div>
+        </div>
       </div>
+
     </div>
 
     <!-- 控制面板 -->
@@ -52,17 +65,19 @@
     </div>
     <!-- 详细信息 -->
     <div class="details">
-        <p id="connectionStatus"></p>
-        <button @click="initMqttClient">connect</button>
-        <button @click="disconnect">disconnect</button>
-        <button @click="subscribe('ctrl/22143')">subscribe</button>
-        <button @click="publishTopic">publish</button>
-        <button @click="sendReady(true, roomTopic)">sendReady</button>
-        <button @click="PrepareTopic">prepare</button>
-        <button @click="playerStart">playerStart</button>
-        <button @click="event => { queue() }">排队</button>
-        <button @click="login">登陆</button>
-        <span v-if="isReady">State Ready</span>
+        <div class="test">
+          <p id="connectionStatus"></p>
+          <button @click="initMqttClient">connect</button>
+          <button @click="disconnect">disconnect</button>
+          <button @click="subscribe('ctrl/22143')">subscribe</button>
+          <button @click="publishTopic">publish</button>
+          <button @click="sendReady(true, roomTopic)">sendReady</button>
+          <button @click="PrepareTopic">prepare</button>
+          <button @click="playerStart">playerStart</button>
+          <button @click="event => { queue() }">排队</button>
+          <button @click="login">登陆</button>
+          <span v-if="isReady">State Ready</span>
+        </div>
         <div class="detail-nav">
           <button>排行榜</button>
           <button>抓中记录</button>
@@ -218,45 +233,53 @@ export default {
       display: block;
       width: 360px;
     }
-    img {
-      display: block;
-      width: 360px;
+    .container {
       position: relative;
-    }
-  }
-  /* 围观信息*/
-  .tag {
-    position: absolute;
-    top: 420px;
-    right: 30px;
-    min-height: 60px;
-    padding-left: 10px;
-    .crowd-info {
-      display: flex;
-      background-color: #112B44;
-      min-width: 100px;
-      border-radius:30px 0 0 30px;
-      padding-left: 20px;
-      .crowd-count {
-        color: #FFF;
-        height: 50%;
+      img {
+        display: block;
+        width: 360px;
+        position: relative;
       }
-      .queue-count {
-        color: #E67200;
-        height: 50%;
-      }
-      .crowd {
-        overflow:hidden;
-        img{
-          display:inline-block;
-          width:60px;
-          height:60px;
-          border-radius:60px;
-          border:0px solid #fff;
-          overflow:hidden;
-          -webkit-box-shadow:0 0 3px #ccc;
-          box-shadow:0 0 3px #ccc;
+      .overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        /* 围观信息*/
+        .crowd-info {
+          display: flex;
+          background-color: #112B44;
+          min-width: 100px;
+          border-radius:30px 0 0 30px;
+          padding-left: 20px;
+          .crowd-count {
+            color: #FFF;
+            height: 50%;
+          }
+          .queue-count {
+            color: #E67200;
+            height: 50%;
+          }
+          .crowd {
+            overflow:hidden;
+            img{
+              display:inline-block;
+              width:60px;
+              height:60px;
+              border-radius:60px;
+              border:0px solid #fff;
+              overflow:hidden;
+              -webkit-box-shadow:0 0 3px #ccc;
+              box-shadow:0 0 3px #ccc;
+              border:2px solid white;
+            }
+          }
         }
+      }
+      .overlay-playing {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #FFF;
       }
     }
   }
@@ -398,7 +421,7 @@ export default {
 
   /* 详细信息*/
   .details {
-    margin: 0 auto;
+    margin: 70px auto;
     width: 360px;
     .detail-nav {
       display: flex;
