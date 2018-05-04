@@ -202,7 +202,7 @@ const MQTT = {
       // 完成动作
       console.log('id', id)
       // 停止抓娃娃
-      if (object.id === UserInfo.playerId) {
+      if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }
     } else if (action === _global.MQTT_ACTION_TIMEOUT) {
@@ -210,7 +210,7 @@ const MQTT = {
       let id = object.id
       console.log(id)
       // 停止抓娃娃,先判断id是否相同
-      if (object.id === UserInfo.playerId) {
+      if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }
     }
