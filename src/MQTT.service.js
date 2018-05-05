@@ -5,8 +5,8 @@ import store from './vuex/index.js'
 
 const MQTT = {
   initMqttClient (To) {
-    console.log('MQTT service', Paho)
-    console.log('MQTT store', store)
+    // console.log('MQTT service', Paho)
+    // console.log('MQTT store', store)
     let hostname = '47.97.34.46'
     let port = 18000
     let clientId = 'ult' + String(Math.round(Math.random() * 1000000))

@@ -21,7 +21,7 @@ export default {
     loadRooms () {
       apiService.getRooms().then(data => {
         this.rooms = data
-        console.log('data', data)
+        console.log('get Rooms data', data)
       })
     }
   },

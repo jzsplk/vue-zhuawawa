@@ -11,8 +11,8 @@ const apiService = {
       axios.get('api/app/doll/room')
         .then(response => {
           resolve(response.data)
-          console.log('response', response)
-          console.log('response.data', response.data)
+          console.log('get Rooms response', response)
+          console.log('get Rooms response.data', response.data)
         })
     })
   },
@@ -26,8 +26,7 @@ const apiService = {
       })
         .then(response => {
           resolve(response.data)
-          console.log('response', response)
-          console.log('response.data', response.data)
+          console.log(' getRoomInfo response.data', response.data)
         })
     })
   },
@@ -41,8 +40,8 @@ const apiService = {
       })
         .then(response => {
           resolve(response)
-          console.log('response', response)
-          console.log('response.data', response.data)
+          console.log('enterRoom response', response)
+          console.log('enterRoom response.data', response.data)
         })
     })
   },
@@ -56,8 +55,8 @@ const apiService = {
       })
         .then(response => {
           resolve(response.data)
-          console.log('response', response)
-          console.log('response.data', response.data)
+          console.log('leaveRoom response', response)
+          console.log('leaveRoom response.data', response.data)
         })
     })
   },

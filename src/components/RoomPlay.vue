@@ -107,7 +107,7 @@
               <span>{{log.NickName}}</span>
             </div>
             <div class="time">
-              <span class="count">{{log.Timestamp}}</span>
+              <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
             </div>
           </li>
         </div>
@@ -155,8 +155,8 @@ export default {
       apiService.getRoomInfo(this.$route.query.id).then(data => {
         console.log('room info', data)
         this.roomData = data
-        console.log('ROOM data update')
-        console.log('DeviceId 2', this.roomData.DeviceId)
+        console.log('ROOM data init')
+        console.log('get Room DeviceId: ', this.roomData.DeviceId)
         // 把State中roomTopic 更新为‘notify/’ + roomData.DeviceId
         this.updateTopic()
         // 对roomTopic建立MQTT联建并subscribe对应Topic
@@ -195,7 +195,8 @@ export default {
         console.log('room info', data)
         this.roomData = data
         console.log('ROOM data updateing')
-        console.log('DeviceId 2', this.roomData)
+        console.log('updated data', this.roomData)
+        // 改变状态为roomUpdating false
         this.$store.dispatch('roomStopUpdating')
       })
     },
@@ -216,12 +217,25 @@ export default {
     },
     getRoomRank (id) {
       apiService.getRoomRank(id).then(data => {
-        console.log('房间排名data： ', data.data)
+        console.log('当前房间排名信息:', data.data)
         this.roomRank = data.data
       })
     },
     changeDetailState (detail) {
       this.$store.dispatch('changeDetailState', detail)
+    },
+    utcTimeConvert (time) {
+      let date = new Date(time)
+      let options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+      return date.toLocaleDateString('zh-cn', options)
+      // return date
     }
   },
   created () {
@@ -546,10 +560,10 @@ export default {
       }
     }
     .name {
-      width: 80%;
+      width: 50%;
     }
-    .count {
-      width: 10%;
+    .time {
+      width: 40%;
     }
   }
 }

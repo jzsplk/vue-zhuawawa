@@ -15,12 +15,12 @@ Vue.prototype.setCookie = (cName, value, expiredays) => {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
   document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
-  console.log('set cookie: ', document.cookie)
+  // console.log('set cookie: ', document.cookie)
 }
 // 获取cookie、
 function getCookie (name) {
   let reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-  console.log('get cookie', document.cookie.match(reg)[2])
+  // console.log('get cookie', document.cookie.match(reg)[2])
   let arr = document.cookie.match(reg)
   if (arr) {
     return arr[2]
