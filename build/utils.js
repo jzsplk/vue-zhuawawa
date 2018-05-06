@@ -47,7 +47,9 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        fallback: 'vue-style-loader'
+        fallback: 'vue-style-loader',
+        // Alex 增加css背景图片引用设置
+        publicPath: '../../',
       })
     } else {
       return ['vue-style-loader'].concat(loaders)

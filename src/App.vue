@@ -2,7 +2,7 @@
   <div id="app">
     <div class="header">
       <div class="logo">
-        <router-link to="/"><img class="login-img" src="./assets/logo.png" @click="leaveRoom"></router-link>
+        <router-link to="/"><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
       </div>
       <div class="login">
         <router-link to="/login"><button>微信登陆</button></router-link>

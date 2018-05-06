@@ -18,7 +18,8 @@ module.exports = {
   // globals vars
   globals: {
     'JSMpeg': true,
-    'Paho': true
+    'Paho': true,
+    'Fingerprint2': true
   },
   // required to lint *.vue files
   plugins: [

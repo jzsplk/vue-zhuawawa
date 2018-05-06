@@ -2,9 +2,9 @@
   <div class="login">
     <!-- <router-link to="/login"><button>微信登陆</button></router-link> -->
     <div class="login-wrapper">
-      <img src="../assets/icon.png" alt="">
+      <img src="../../static/pic/icon.png" alt="">
       <input type="text" v-model="TouristInput" placeholder="请输入您的名字">
-      <button @click="login(TouristInput)">游客登陆</button>
+      <button @click="login(UserUUID)">游客登陆</button>
     </div>
 
   </div>
@@ -15,16 +15,22 @@ import apiService from '../API.service.js'
 export default {
   data () {
     return {
-      TouristInput: ''
+      TouristInput: '',
+      UserUUID: ''
     }
   },
   components: {
   },
   methods: {
     login (name) {
+      // 先执行footprint 函数，取得用户device fingerprint
+      new Fingerprint2().get(function (result, components) {
+        console.log('User UUid: ', result)
+        this.UserUUID = result
+      })
       // 执行post登陆请求
       // UserInfo.Login()
-      console.log('input', this.input)
+      console.log('input', this.TouristInput)
       apiService.login(name).then(data => {
         console.log('游客信息', data)
         // 存储得到的数据

@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="nav">Coming soon...</div>
-  <img class="head-img" src="../assets/guide.png" alt="claw-game">
+  <img class="head-img" src="../../static/pic/guide.png" alt="claw-game">
 </div>
 </template>
 <style  scoped lang="scss" type="text/css">

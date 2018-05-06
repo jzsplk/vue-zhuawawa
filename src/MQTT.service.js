@@ -31,8 +31,8 @@ const MQTT = {
       useSSL: tls,
       onSuccess: function (context) {
         console.log('Client Connected')
-        let statusSpan = document.getElementById('connectionStatus')
-        statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
+        // let statusSpan = document.getElementById('connectionStatus')
+        // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
         MQTT.subscribeToTopic(window.client, To)
       },
       onFailure: this.onFail
@@ -57,20 +57,20 @@ const MQTT = {
     console.log('self= ', self)
     // Once a connection has been made, make a subscription and send a message.
     console.log('Client Connected')
-    let statusSpan = document.getElementById('connectionStatus')
-    statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
+    // let statusSpan = document.getElementById('connectionStatus')
+    // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
     self.subscribeToTopic(window.client, MQTT.notifyTopic)
   },
   onFail (context) {
     console.log('Failed to connect')
-    let statusSpan = document.getElementById('connectionStatus')
-    statusSpan.innerHTML = 'Failed to connect: ' + context.errorMessage
+    // let statusSpan = document.getElementById('connectionStatus')
+    // statusSpan.innerHTML = 'Failed to connect: ' + context.errorMessage
   },
   disconnect () {
     console.info('Disconnecting from Server')
     window.client.disconnect()
-    var statusSpan = document.getElementById('connectionStatus')
-    statusSpan.innerHTML = 'Connection - Disconnected.'
+    // var statusSpan = document.getElementById('connectionStatus')
+    // statusSpan.innerHTML = 'Connection - Disconnected.'
   },
   destoryMQTT () {
     console.log('destory MQTT')

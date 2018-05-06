@@ -9,7 +9,7 @@
 
     <div class="info">
       <p>{{room.Name}}</p>
-      <p>💎 <img src="../assets/coin.png" alt=""> {{room.Coin}} /次</p>
+      <p>💎 <img src="/static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
       <span>{{room.Crowd}} 人在线 {{room.id}}</span>
       <router-link :to="{path:'play',query:{id:room.Id}}"><button>去捕获</button></router-link>
     </div>

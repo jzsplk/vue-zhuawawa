@@ -5,7 +5,7 @@
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
       <div class="container">
-        <!-- <img class="video" src="../assets/switch_bg.png"> -->
+        <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
         <canvas :id="videocanvas"></canvas>
         <!-- 围观头像 -->
         <div class="overlay">
@@ -65,7 +65,7 @@
     </div>
     <!-- 详细信息 -->
     <div class="details">
-        <div class="test">
+        <div v-if="false" class="test">
           <p id="connectionStatus"></p>
           <button @click="initMqttClient">connect</button>
           <button @click="disconnect">disconnect</button>
@@ -405,7 +405,7 @@ export default {
       border:0px;
       background-color:
       transparent;
-      background-image:url(../assets/up.png);
+      background-image:url(../../static/pic/up.png);
       background-size: 50px;
   }
 
@@ -420,7 +420,7 @@ export default {
       border:0px;
       background-color:
       transparent;
-      background-image:url(../assets/down.png);
+      background-image:url(../../static/pic/down.png);
       background-size: 50px;
   }
 
@@ -435,7 +435,7 @@ export default {
       border:0px;
       background-color:
       transparent;
-      background-image:url(../assets/left.png);
+      background-image:url(../../static/pic/left.png);
       background-size: 50px;
   }
 
@@ -450,7 +450,7 @@ export default {
       border:0px;
       background-color:
       transparent;
-      background-image:url(../assets/right.png);
+      background-image:url(../../static/pic/right.png);
       background-size: 50px;
   }
 
@@ -465,7 +465,7 @@ export default {
       border:0px;
       background-color:
       transparent;
-      background-image:url(../assets/catch_icon.png);
+      background-image:url(../../static/pic/catch_icon.png);
       background-size: 100px;
   }
 
