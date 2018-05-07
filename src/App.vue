@@ -2,11 +2,11 @@
   <div id="app">
     <div class="header">
       <div class="logo">
-        <router-link to="/"><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
+        <router-link :to="{path: '/'}" ><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
       </div>
       <div class="login">
         <router-link to="/login"><button>微信登陆</button></router-link>
-        <router-link to="/Tulogin"><button>登陆</button></router-link>
+        <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
     </div>
     <router-view/>
@@ -64,11 +64,21 @@ export default {
     .login-img {
       width: 90px;
     }
+    .login-img:hover {
+      background-color: white;
+    }
   }
   .login {
     margin-left: 50px;
     button {
+      border-style:none;
+      padding: 0.8rem;
+      background-color: #E9DF38;
+      font-size: 1rem;
       font-size: 20px;
+    }
+    button:hover {
+      background-color: #FFF;
     }
   }
 

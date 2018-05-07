@@ -1,7 +1,10 @@
 <template>
   <div class="player-view">
-    <p class="room-title">{{roomData.Name}}</p>
-
+    <!-- 房间header 返回按钮、房间标题 -->
+    <div class="roomplay_header">
+      <button class="back_to_home"></button>
+      <p class="room-title">{{roomData.Name}}</p>
+    </div>
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
       <div class="container">
@@ -12,10 +15,10 @@
           <div class="crowd-info">
             <div class="crowd-num">
               <div class="crowd-count">
-                <span>围观：{{roomData.CrowdCount}}</span>
+                <span>围观:{{roomData.CrowdCount}}</span>
               </div>
               <div class="queue-count">
-                <span>排队：{{roomData.Queued}}</span>
+                <span>排队:{{roomData.Queued}}</span>
               </div>
             </div>
 
@@ -26,6 +29,7 @@
             </div>
           </div>
         </div>
+        <!-- 屏幕左上，玩家状态 -->
         <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
           <div class="playing_wrapper">
             <span>玩家 排队中</span>
@@ -35,6 +39,10 @@
           <div class="playing_wrapper">
             <span>玩家 热玩中</span>
           </div>
+        </div>
+        <!-- 切换摄像头按钮 -->
+        <div class="overlay-camera">
+          <button class="camera_toggle"></button>
         </div>
       </div>
 
@@ -56,10 +64,11 @@
     </div>
     <div  v-if="roomState == 'Catching'" id="operation-panel" class="operation-panel">
         <div class="operation-arrow">
-          <button id="arrow-up" class="arrow-up arrow-key" @click="sendControlEvent(0, 100, 'ctrl/' + roomData.DeviceId)"></button>
-          <button id="arrow-down" class="arrow-down arrow-key" @click="sendControlEvent(2, 100, 'ctrl/' + roomData.DeviceId)"></button>
-          <button id="arrow-left" class="arrow-left arrow-key" @click="sendControlEvent(1, 100, 'ctrl/' + roomData.DeviceId)"></button>
-          <button id="arrow-right" class="arrow-right arrow-key" @click="sendControlEvent(3, 100, 'ctrl/' + roomData.DeviceId)"></button>
+          <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
+          <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
+          <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
+          <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
+          <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
         </div>
         <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
     </div>
@@ -178,8 +187,46 @@ export default {
     sendReady (is, topic) {
       MQTT.sendReadyorPassCmd(is, topic)
     },
-    sendControlEvent (type, param, topic) {
+    // 鼠标单击房间控制事件
+    sendControlEventHandler (type, param, topic) {
       MQTT.sendControlEvent(type, param, topic)
+    },
+    // 为setInterval定义window中的sendControlEventHandler函数
+    _sendControlEventHandler (type, param, topic) {
+      window.sendControlEventHandler = function (type, param, topic) {
+        MQTT.sendControlEvent(type, param, topic)
+      }
+      return function () {
+        // 返回windows中的sendControlEventHandler函数
+        this.sendControlEventHandler(type, param, topic)
+      }
+    },
+    // 持续点击或tap方向控制函数
+    longTapControlEventHandler (type, param, topic) {
+      MQTT.sendControlEvent(type, param, topic)
+      // 持续定时输出控制命令
+      window.tap = setInterval(this._sendControlEventHandler(type, 200, topic), 100)
+    },
+    // 给tap事件传参的控制函数
+    tapControlWithParam (type, param, topic) {
+      return function (event, start, end) {
+        window.sendControlEventHandler = function (type, param, topic) {
+          MQTT.sendControlEvent(type, param, topic)
+        }
+        window.sendControlEventHandler(type, param, topic)
+      }
+    },
+    // 长按的响应事件
+    longtapControlWithParam (type, param, topic) {
+      return function (event, start, end) {
+        window.sendControlEventHandler = function (type, param, topic) {
+          MQTT.sendControlEvent(type, param, topic)
+        }
+        window.sendControlEventHandler(type, param, topic)
+      }
+    },
+    stopMovingHandler () {
+      clearInterval(window.tap)
     },
     sendCmdGo (topic) {
       MQTT.sendControlCmd('go', 200, 2, topic)
@@ -224,6 +271,7 @@ export default {
     changeDetailState (detail) {
       this.$store.dispatch('changeDetailState', detail)
     },
+    // 事件格式转换
     utcTimeConvert (time) {
       let date = new Date(time)
       let options = {
@@ -266,10 +314,25 @@ export default {
 .player-view {
   display: block;
   background-color: #EDC83A;
+  /* 房间header */
+  .roomplay_header {
+    margin: 0 auto;
+    width: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .back_to_home {
+      border-style: none;
+      width: 40px;
+      height: 40px;
+      background: url(../../static/pic/goback.png) no-repeat;
+      background-size: cover;
+    }
+  }
   /* 房间标题*/
   .room-title {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.5rem;
     padding: 2.0rem
   }
   /* 视频画面*/
@@ -310,9 +373,9 @@ export default {
             overflow:hidden;
             img{
               display:inline-block;
-              width:60px;
-              height:60px;
-              border-radius:60px;
+              width:40px;
+              height:40px;
+              border-radius:40px;
               border:0px solid #fff;
               overflow:hidden;
               -webkit-box-shadow:0 0 3px #ccc;
@@ -329,6 +392,24 @@ export default {
         color: #FFF;
         .playing_wrapper {
           background-color: #121F32;
+        }
+      }
+      .overlay-camera {
+        position: absolute;
+        top: 50%;
+        right: -2px;
+        background-color: #E2BE46;
+        height: 50px;
+        width: 50px;
+        border-right: none;
+        z-index: 999;
+        background: url(../../static/pic/switch_button.png) no-repeat scroll top right transparent;
+        background-size: cover;
+        .camera_toggle {
+          border-style: none;
+          background: none;
+          width: 100%;
+          height: 100%;
         }
       }
     }
@@ -364,6 +445,10 @@ export default {
     width: 9rem;
     padding: 0.5rem;
   }
+  .confirm-button:hover {
+    background-color: #FFF;
+    color: #4D2D05;
+  }
   /* 移动设备触摸板*/
   .operation-panel {
       /*display: none;*/
@@ -393,7 +478,15 @@ export default {
       border-radius: 20px;
       border-style:none;
   }
-
+  .arrow-key:hover {
+      color: #fff;
+      text-align: center;
+      font-size: 48px;
+      opacity: 0.7;
+      border-radius: 20px;
+      border-style:none;
+      background-color: #000;
+  }
   .arrow-up {
       position: relative;
       top: 0%;

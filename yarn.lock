@@ -6614,6 +6614,10 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
+vue-directive-touch@^1.0.10:
+  version "1.0.10"
+  resolved "http://registry.npm.taobao.org/vue-directive-touch/download/vue-directive-touch-1.0.10.tgz#64dab33a158f17dc26780922d46319770fdcbf40"
+
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
   resolved "http://registry.npm.taobao.org/vue-eslint-parser/download/vue-eslint-parser-2.0.3.tgz#c268c96c6d94cfe3d938a5f7593959b0ca3360d1"
@@ -6685,6 +6689,10 @@ vue-wechat-auth@^1.0.2:
   dependencies:
     vue "^2.2.2"
     vue-router "^2.2.0"
+
+vue2-touch-events@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/vue2-touch-events/download/vue2-touch-events-1.0.0.tgz#e1bf077d04ac93c46d1e811eafc6db6c75cb49d5"
 
 vue@^2.2.2, vue@^2.5.2:
   version "2.5.16"

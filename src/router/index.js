@@ -4,11 +4,20 @@ import HelloWorld from '@/components/HelloWorld'
 import Home from '@/components/Home'
 import RoomPlay from '@/components/RoomPlay'
 import Login from '@/components/Login'
+import Mydoll from '@/components/Mydoll'
 
 Vue.use(Router)
 
+// 获取目前路由路径
+function getAbsolutePath () {
+  let path = location.pathname
+  console.log('absolutePath', path.substring(0, path.lastIndexOf('/') + 1))
+  return path.substring(0, path.lastIndexOf('/') + 1)
+}
+
 export default new Router({
-  mode: 'hash',
+  mode: 'history',
+  base: getAbsolutePath(), // 设置获取的绝对路由
   routes: [
     {
       path: '/',
@@ -36,6 +45,11 @@ export default new Router({
       path: '/play/',
       name: 'Play',
       component: RoomPlay
+    },
+    {
+      path: '/mydoll',
+      name: 'Mydoll',
+      component: Mydoll
     }
   ]
 })

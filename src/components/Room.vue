@@ -54,6 +54,7 @@ export default {
       right: 20px;
       top: 20px;
       padding: 4px;
+      border-radius: 10px;
     }
   }
   .info {
@@ -68,6 +69,10 @@ export default {
       color: white;
       border-radius: 10px;
       font-size: 20px;
+    }
+    button:hover {
+      background-color: white;
+      color: red;
     }
     img {
       height: 1rem;

@@ -3,10 +3,9 @@
     <!-- <router-link to="/login"><button>微信登陆</button></router-link> -->
     <div class="login-wrapper">
       <img src="../../static/pic/icon.png" alt="">
-      <input type="text" v-model="TouristInput" placeholder="请输入您的名字">
+      <!-- <input type="text" v-model="TouristInput" placeholder="请输入您的名字"> -->
       <button @click="login(UserUUID)">游客登陆</button>
     </div>
-
   </div>
 </template>
 <script>
@@ -21,13 +20,22 @@ export default {
   },
   components: {
   },
+  created () {
+    this.getUUid()
+  },
   methods: {
-    login (name) {
+    getUUid () {
       // 先执行footprint 函数，取得用户device fingerprint
+      let _this = this
       new Fingerprint2().get(function (result, components) {
         console.log('User UUid: ', result)
-        this.UserUUID = result
+        let subUUid = result.substring(0, 12)
+        console.log('sub UUid: ', subUUid)
+        _this.UserUUID = subUUid
+        console.log('new UUid', _this.UserUUID)
       })
+    },
+    login (name) {
       // 执行post登陆请求
       // UserInfo.Login()
       console.log('input', this.TouristInput)
