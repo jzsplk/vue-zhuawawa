@@ -2,7 +2,9 @@
   <div class="player-view">
     <!-- 房间header 返回按钮、房间标题 -->
     <div class="roomplay_header">
-      <button class="back_to_home"></button>
+      <router-link :to="{path: '/'}">
+        <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
+      </router-link>
       <p class="room-title">{{roomData.Name}}</p>
     </div>
     <!-- 娃娃机画面 -->
@@ -250,6 +252,12 @@ export default {
     enterRoom (id) {
       apiService.enterRoom(id).then(data => {
         console.log('enter room', data)
+      })
+    },
+    leaveRoom (id) {
+      MQTT.destoryMQTT()
+      apiService.leaveRoom(id).then(data => {
+        console.log('leave room', data)
       })
     },
     queueToplay (id) {
