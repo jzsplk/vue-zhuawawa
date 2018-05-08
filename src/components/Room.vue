@@ -77,9 +77,20 @@ a {
       margin-top: 0.5rem;
     }
     button {
-      background-color: red;
-      color: white;
-      border-radius: 10px;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+      background-color: #E64340;
+      display: inline-block;
+      padding: 0 1.32em;
+      line-height: 2.3;
+      font-size: 13px;
+      color: #FFFFFF;
+      border-radius: 5px;
+      border-width:0;
+      overflow: hidden;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
     img {
       height: 1rem;
