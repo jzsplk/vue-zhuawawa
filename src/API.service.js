@@ -127,6 +127,20 @@ const apiService = {
           console.log('login response', response)
         })
     })
+  },
+  getUserBalance () {
+    return new Promise((resolve) => {
+      axios.get('api/balance', {
+        headers: {
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('user balance', response)
+        })
+    })
   }
 }
 

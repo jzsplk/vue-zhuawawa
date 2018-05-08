@@ -1,4 +1,5 @@
 <template>
+  <router-link :to="{path:'play',query:{id:room.Id}}">
   <div class="room">
     <div class="img-wraper">
       <div class="img-container">
@@ -11,9 +12,10 @@
       <p>{{room.Name}}</p>
       <p>💎 <img src="/static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
       <span>{{room.Crowd}} 人在线 {{room.id}}</span>
-      <router-link :to="{path:'play',query:{id:room.Id}}"><button>去捕获</button></router-link>
+      <button>去捕获</button>
     </div>
   </div>
+  </router-link>
 </template>
 
 <script>
@@ -28,11 +30,18 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+a {
+  text-decoration: none;
+  color: #000;
+}
+.router-link-active {
+  text-decoration: none;
+}
 .room {
   margin: 10px;
   padding: 0;
-  max-width: 380px;
-  height: 200px;
+  max-width: 350px;
+  height: 100px;
   background-color: #E5E67E;
   display: flex;
   border-radius: 20px;
@@ -43,36 +52,34 @@ export default {
     position: relative;
     img {
       display: block;
-      width: 200px;
-      height: 200px;
+      width: 100px;
+      height: 100px;
       border-radius: 15px 0 0 15px;
     }
     .status {
       position: absolute;
       background-color: black;
       color: white;
-      right: 20px;
-      top: 20px;
-      padding: 4px;
+      right: 0;
+      top: 0;
+      padding: 2px;
       border-radius: 10px;
+      font-size: 0.2rem;
     }
   }
   .info {
     display: inline-block;
-    width: 50%;
+    width: 160px;
     vertical-align: middle;
+    font-size: 0.2rem;
+    text-decoration: none;
     p {
-      margin-top: 2rem;
+      margin-top: 0.5rem;
     }
     button {
       background-color: red;
       color: white;
       border-radius: 10px;
-      font-size: 20px;
-    }
-    button:hover {
-      background-color: white;
-      color: red;
     }
     img {
       height: 1rem;

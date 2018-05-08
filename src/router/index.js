@@ -5,6 +5,7 @@ import Home from '@/components/Home'
 import RoomPlay from '@/components/RoomPlay'
 import Login from '@/components/Login'
 import Mydoll from '@/components/Mydoll'
+import MyInfo from '@/components/MyInfo'
 
 Vue.use(Router)
 
@@ -50,6 +51,11 @@ export default new Router({
       path: '/mydoll',
       name: 'Mydoll',
       component: Mydoll
+    },
+    {
+      path: '/myinfo',
+      name: 'MyInfo',
+      component: MyInfo
     }
   ]
 })
