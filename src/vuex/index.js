@@ -140,6 +140,8 @@ const store = new Vuex.Store({
     updataPlayerInfo (state, obj) {
       state.playerId = obj.playerId
       state.token = obj.token
+      state.playerInfo.name = obj.name
+      state.playerInfo.AvatarUrl = obj.AvatarUrl
     },
     roomUpdating (state) {
       state.roomUpdating = true

@@ -44,7 +44,9 @@ export default {
         // 存储得到的数据
         let userData = {
           playerId: data.Id,
-          token: data.Token
+          token: data.Token,
+          AvatarUrl: data.AvatarUrl,
+          name: data.FirstName
         }
         // 存储游客信息到UserInfo
         UserInfo.getInfo(data.Id, data.Token)

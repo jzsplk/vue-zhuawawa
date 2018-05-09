@@ -1,12 +1,18 @@
 <template>
   <div class="UserInfo_wrapper">
-    <div class="user_header">
-      <div class="avter">
-        <img src="" alt="">
-      </div>
-      <div>Name: </div>
-      <div>余额:{{userInfo.balance}}</div>
-    </div>
+    <el-container>
+      <el-header>
+        <div class="user_header">
+          <div class="avter">
+            <img src="" alt="">
+          </div>
+          <div>Name: </div>
+          <div>余额:{{userInfo.balance}}</div>
+        </div>
+      </el-header>
+      <el-main>Main</el-main>
+      <el-footer>Footer</el-footer>
+    </el-container>
   </div>
 </template>
 
@@ -35,5 +41,11 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+  .user_header {
+    width: 100%;
+    height: 500px;
+    background: url(../../static/pic/mine_header_bg.png) no-repeat;
+    background-size: 100% 30%;
 
+  }
 </style>
