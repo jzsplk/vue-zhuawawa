@@ -15,7 +15,7 @@ import apiService from '../API.service.js'
 export default {
   data () {
     return {
-      userInfo: {}
+      userInfo: {balance: ''}
     }
   },
   methods: {

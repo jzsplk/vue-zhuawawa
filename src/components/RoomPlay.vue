@@ -50,8 +50,18 @@
     </div>
 
     <!-- 控制面板 -->
-    <div v-if="roomState == 'MqttConnected'">
-      <button @click="queue" class="queue-button">预约抓娃娃</button>
+    <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
+      <div class="balance_info">
+        <p>本次:<span>{{roomData.Coin}}CP</span></p>
+        <p>余额:<span>{{balance}}CP</span></p>
+      </div>
+      <div class="queue">
+        <button @click="queue" class="queue-button">预约抓娃娃</button>
+      </div>
+      <div class="charge">
+        <img src="../../static/pic/coin.png" alt="">
+        <button>充值</button>
+      </div>
     </div>
     <div v-if="roomState == 'Queueing'">
       <button class="queueing-button">正在排队</button>
@@ -149,7 +159,8 @@ export default {
     return {
       videocanvas: 'video-canvas',
       roomData: [],
-      roomRank: [] // 存储房间排名信息的data
+      roomRank: [],
+      balance: 0 // 存储房间排名信息的data
     }
   },
   props: ['room'],
@@ -263,6 +274,11 @@ export default {
         // 改变状态为roomUpdating false
         this.$store.dispatch('roomStopUpdating')
       })
+      apiService.getUserBalance().then(
+        data => {
+          console.log('balance', data.data)
+          this.balance = data.data
+        })
     },
     enterRoom (id) {
       apiService.enterRoom(id).then(data => {
@@ -447,18 +463,60 @@ export default {
     }
   }
 
-  /* 排队按钮 */
-  .queue-button {
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 0 1.32em;
-    line-height: 2.3;
-    font-size: 1rem;
-    margin-top: 10px;
-    border-radius: 1.5rem;
-    background-color: #4d2d05;
-    color: #fff;
+  /* 排队wrapper */
+  .connected_wrapper {
+    display: flex;
+    width: 360px;
+    max-width: 100%;
+    height: 50px;
+    margin: 0 auto;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    .balance_info {
+      font-size: 13px;
+      margin: 0;
+      p {
+        padding: 0;
+        margin: 0;
+      }
+      span {
+        color: #FFFFFF;
+      }
+    }
+    .queue {
+      .queue-button {
+        box-sizing: border-box;
+        display: inline-block;
+        padding: 0 1.32em;
+        line-height: 2.3;
+        font-size: 1rem;
+        border-radius: 1.5rem;
+        background-color: #4d2d05;
+        color: #fff;
+      }
+    }
+    .charge {
+      display: flex;
+      align-items: center;
+      background-color: #112b44;
+      max-width: 100%;
+      border-radius: 30px 0 0 30px;
+      padding: 0.2em 0.32em;
+      padding-right: 0.2em;
+      opacity: 0.8;
+      img {
+        width: 20px;
+        height: 20px;
+      }
+      button {
+        box-sizing: border-box;
+        background: none;
+        color: #FFFFFF;
+      }
+    }
   }
+
   /* 正在排队 */
   .queueing-button {
     box-sizing: border-box;
@@ -466,7 +524,7 @@ export default {
     padding: 0 1.32em;
     line-height: 2.3;
     font-size: 1rem;
-    margin-top: 10px;
+    margin-top: 20px;
     border-radius: 1.5rem;
     background-color: #fff;
     color: #4d2d05;
@@ -478,7 +536,7 @@ export default {
     padding: 0 1.32em;
     line-height: 2.3;
     font-size: 1rem;
-    margin-top: 10px;
+    margin-top: 20px;
     border-radius: 1.5rem;
     background-color: #fff;
     color: #4d2d05;
@@ -633,9 +691,12 @@ export default {
     width: 360px;
     max-width: 100%;
     position: relative;
-    height: 132px;
+    height: 100%;
+    max-height: 80%;
     overflow: scroll;
     box-sizing: border-box;
+    border: 0 0 10px 10px;
+    margin-bottom: 10px;
     .rank {
       display: flex;
       font-weight: bold;
@@ -675,7 +736,6 @@ export default {
     width: 360px;
     max-width: 100%;
     position: relative;
-    height: 132px;
     overflow: scroll;
     box-sizing: border-box;
     .logs {
