@@ -476,6 +476,7 @@ export default {
     .balance_info {
       font-size: 13px;
       margin: 0;
+      text-align: left;
       p {
         padding: 0;
         margin: 0;

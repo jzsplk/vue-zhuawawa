@@ -5,6 +5,8 @@ import App from './App'
 import store from './vuex/index.js'
 import router from './router'
 import WechatAuth from 'vue-wechat-auth'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import touch from 'vue-directive-touch' // 引入vue2-touch-evnets
 // import VueMqtt from 'vue-mqtt'
@@ -43,6 +45,8 @@ Vue.prototype.delCookie = (name) => {
 Vue.config.productionTip = false
 // 使用移动tap事件插件
 Vue.use(touch)
+// 使用ElementUI
+Vue.use(ElementUI)
 // 微信登陆
 Vue.use(WechatAuth, {
   router,

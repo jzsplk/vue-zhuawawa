@@ -1,6 +1,8 @@
 <template>
 <div>
-  <div class="nav">Coming soon...</div>
+  <div class="nav">
+    <i class="el-icon-loading"></i> Coming soon...
+  </div>
   <img class="head-img" src="../../static/pic/guide.png" alt="claw-game">
 </div>
 </template>
