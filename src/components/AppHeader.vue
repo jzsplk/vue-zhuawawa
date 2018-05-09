@@ -10,7 +10,7 @@ div {
   color: #FFF;
 }
 .nav{
-  font-size: 3rem;
+  font-size: 1.5rem;
   background-color: #FFF;
   color: #000;
 }

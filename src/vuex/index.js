@@ -52,6 +52,9 @@ const store = new Vuex.Store({
     cancelToPlay (context) {
       context.commit('cancelToPlay')
     },
+    leaveRoom (context) {
+      context.commit('leaveRoom')
+    },
     startPlaying (context) {
       context.commit('startPlaying')
     },
@@ -105,6 +108,9 @@ const store = new Vuex.Store({
     },
     cancelToPlay (state) {
       state.roomState = 'loading'
+    },
+    leaveRoom (state) {
+      state.roomState = 'leave'
     },
     startPlaying (state) {
       state.isPlaying = true

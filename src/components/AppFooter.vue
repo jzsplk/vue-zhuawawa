@@ -15,7 +15,7 @@
 <style scoped lang="scss" type="text/css">
   .bottom-nav {
     position: fixed;
-    bottom: -10px;
+    bottom: -15px;
     width: 100%;
     background-color: #FFF;
     display: flex;
@@ -23,8 +23,12 @@
     margin-top: 1.0rem;
 
     button {
-      background-color: #FFF;
+      background-color: #FFFFFF;
       border-style:none;
+      p {
+        margin-top: 0;
+        padding: 0;
+      }
     }
   }
 </style>

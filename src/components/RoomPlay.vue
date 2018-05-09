@@ -47,7 +47,6 @@
           <button class="camera_toggle"></button>
         </div>
       </div>
-
     </div>
 
     <!-- 控制面板 -->
@@ -65,14 +64,27 @@
       <button class="queueing-button">余额不足</button>
     </div>
     <div  v-if="roomState == 'Catching'" id="operation-panel" class="operation-panel">
-        <div class="operation-arrow">
-          <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
+        <div class="direction-wrapper">
+          <div class="operation-arrow">
+          </div>
+          <div class="overlay-arrow-up">
+            <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
+            </button>
+          </div>
           <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
-          <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
-          <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
-          <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler"></button>
+          <div class="overlay-arrow-down">
+            <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+          </div>
+          <div class="overlay-arrow-left">
+            <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+          </div>
+          <div class="overlay-arrow-right">
+            <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+          </div>
         </div>
-        <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
+        <div class="operation-space">
+          <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
+        </div>
     </div>
     <!-- 详细信息 -->
     <div class="details">
@@ -90,9 +102,9 @@
           <span v-if="isReady">State Ready</span>
         </div>
         <div class="detail-nav">
+          <button @click="changeDetailState('Pic')">娃娃详情</button>
           <button @click="changeDetailState('Rank')">排行榜</button>
           <button @click="changeDetailState('Log')">抓中记录</button>
-          <button @click="changeDetailState('Pic')">我的</button>
         </div>
         <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
         <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
@@ -184,7 +196,7 @@ export default {
       MQTT.subscribeToTopic(window.client, topic)
     },
     publishTopic () {
-      MQTT.publishMessage({param: 250}, 0, 'ctrl/' + '22128')
+      MQTT.publishMessage({ param: 250 }, 0, 'ctrl/' + '22128')
     },
     sendReady (is, topic) {
       MQTT.sendReadyorPassCmd(is, topic)
@@ -207,7 +219,10 @@ export default {
     longTapControlEventHandler (type, param, topic) {
       MQTT.sendControlEvent(type, param, topic)
       // 持续定时输出控制命令
-      window.tap = setInterval(this._sendControlEventHandler(type, 200, topic), 100)
+      window.tap = setInterval(
+        this._sendControlEventHandler(type, 200, topic),
+        100
+      )
     },
     // 给tap事件传参的控制函数
     tapControlWithParam (type, param, topic) {
@@ -234,7 +249,7 @@ export default {
       MQTT.sendControlCmd('go', 200, 2, topic)
     },
     PrepareTopic () {
-      MQTT.publishMessage({action: 'room_update'}, 0, 'notify/' + '22371')
+      MQTT.publishMessage({ action: 'room_update' }, 0, 'notify/' + '22371')
     },
     playerStart () {
       MQTT.playStart()
@@ -294,8 +309,7 @@ export default {
       // return date
     }
   },
-  created () {
-  },
+  created () {},
   mounted () {
     playVideo.play()
     this.initMqttClient()
@@ -321,43 +335,50 @@ export default {
 <style scoped lang="scss" type="text/css">
 .player-view {
   display: block;
-  background-color: #EDC83A;
+  background-color: #edc83a;
   /* 房间header */
   .roomplay_header {
     margin: 0 auto;
     width: 350px;
+    max-width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     .back_to_home {
       border-style: none;
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       background: url(../../static/pic/goback.png) no-repeat;
       background-size: cover;
+      flex-grow: 0;
     }
-  }
-  /* 房间标题*/
-  .room-title {
-    margin: 0;
-    font-size: 1.5rem;
-    padding: 2.0rem
+    /* 房间标题*/
+    .room-title {
+      flex-grow: 1;
+      margin: 0;
+      font-size: 1rem;
+      padding: 2rem;
+    }
   }
   /* 视频画面*/
   .video-canvas {
     width: 360px;
+    max-width: 100%;
     margin: 0 auto;
     canvas {
       display: block;
       width: 360px;
+      max-width: 100%;
     }
     .container {
       position: relative;
       img {
         display: block;
         width: 360px;
+        max-width: 100%;
         position: relative;
       }
+      /* 叠加在视频上的叠加层*/
       .overlay {
         position: absolute;
         top: 0;
@@ -365,30 +386,32 @@ export default {
         /* 围观信息*/
         .crowd-info {
           display: flex;
-          background-color: #112B44;
-          min-width: 100px;
-          border-radius:30px 0 0 30px;
-          padding-left: 20px;
+          background-color: #112b44;
+          max-width: 100%;
+          border-radius: 30px 0 0 30px;
+          padding: 0.2em 1.32em;
+          padding-right: 0.2em;
           .crowd-count {
-            color: #FFF;
+            color: #fff;
             height: 50%;
+            font-size: 0.5rem;
           }
           .queue-count {
-            color: #E67200;
+            color: #e67200;
             height: 50%;
+            font-size: 0.5rem;
           }
           .crowd {
-            overflow:hidden;
-            img{
-              display:inline-block;
-              width:40px;
-              height:40px;
-              border-radius:40px;
-              border:0px solid #fff;
-              overflow:hidden;
-              -webkit-box-shadow:0 0 3px #ccc;
-              box-shadow:0 0 3px #ccc;
-              border:2px solid white;
+            overflow: hidden;
+            img {
+              display: inline-block;
+              width: 25px;
+              height: 25px;
+              border-radius: 40px;
+              overflow: hidden;
+              -webkit-box-shadow: 0 0 3px #ccc;
+              box-shadow: 0 0 3px #ccc;
+              border: 2px solid white;
             }
           }
         }
@@ -397,27 +420,28 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
-        color: #FFF;
+        color: #fff;
         .playing_wrapper {
-          background-color: #121F32;
+          background-color: #121f32;
         }
       }
       .overlay-camera {
         position: absolute;
         top: 50%;
         right: -2px;
-        background-color: #E2BE46;
-        height: 50px;
-        width: 50px;
+        background-color: #e2be46;
+        height: 32px;
+        width: 32px;
         border-right: none;
         z-index: 999;
-        background: url(../../static/pic/switch_button.png) no-repeat scroll top right transparent;
+        background: url(../../static/pic/switch_button.png) no-repeat scroll top
+          right transparent;
         background-size: cover;
         .camera_toggle {
           border-style: none;
           background: none;
-          width: 100%;
-          height: 100%;
+          width: 48px;
+          height: 48px;
         }
       }
     }
@@ -425,166 +449,178 @@ export default {
 
   /* 排队按钮 */
   .queue-button {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0 1.32em;
+    line-height: 2.3;
+    font-size: 1rem;
     margin-top: 10px;
-    background-color: #4D2D05;
-    color: #FFF;
-    font-size: 1.5rem;
     border-radius: 1.5rem;
-    width: 13rem;
-    padding: 0.5rem;
+    background-color: #4d2d05;
+    color: #fff;
   }
   /* 正在排队 */
   .queueing-button {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0 1.32em;
+    line-height: 2.3;
+    font-size: 1rem;
     margin-top: 10px;
-    background-color: #FFF;
-    color: #4D2D05;
-    font-size: 1.5rem;
     border-radius: 1.5rem;
-    width: 13rem;
-    padding: 0.5rem;
+    background-color: #fff;
+    color: #4d2d05;
   }
   /* 确认开始游戏按钮*/
   .confirm-button {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0 1.32em;
+    line-height: 2.3;
+    font-size: 1rem;
     margin-top: 10px;
-    background-color: #FFF;
-    color: #4D2D05;
-    font-size: 1.5rem;
     border-radius: 1.5rem;
-    width: 9rem;
-    padding: 0.5rem;
+    background-color: #fff;
+    color: #4d2d05;
   }
   .confirm-button:hover {
-    background-color: #FFF;
-    color: #4D2D05;
+    background-color: #fff;
+    color: #4d2d05;
   }
   /* 移动设备触摸板*/
   .operation-panel {
-      /*display: none;*/
+    /*display: none;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 360px;
+    max-width: 100%;
+    height: 100px;
+    bottom: 10px;
+    /*      left: 55%;*/
+    margin: 0 auto;
+    user-select: none;
+    background-color: none;
+    .direction-wrapper{
+      /* 控制上下左右*/
       position: relative;
-      width: 360px;
-      height: 180px;
-      bottom: 10px;
-/*      left: 55%;*/
-      margin: 0 auto;
-      user-select: none;
-      background-color: none;
+      .operation-arrow {
+        position: relative;
+        background-color: #fff;
+        width: 100px;
+        // max-width: 50%;
+        height: 100px;
+        border-radius: 100px;
+        margin-left: 0px
+      }
+      .overlay-arrow-up {
+        position: absolute;
+        top: 0;
+        left: 35px;
+        background-color: #e2be46;
+        width: 32px;
+        height: 32px;
+        z-index: 999;
+        // background-color: transparent;
+        background: url(../../static/pic/up.png) no-repeat;
+        background-size: cover;
+        .arrow-up {
+          border-style: none;
+          background: none;
+          width: 32px;
+          height: 32px;
+        }
+      }
+      .overlay-arrow-down {
+        position: absolute;
+        top: 70%;
+        left: 35px;
+        background-color: #e2be46;
+        width: 32px;
+        height: 32px;
+        z-index: 999;
+        // background-color: transparent;
+        background: url(../../static/pic/down.png) no-repeat;
+        background-size: cover;
+        .arrow-down {
+          border-style: none;
+          background: none;
+          width: 32px;
+          height: 32px;
+        }
+      }
+      .overlay-arrow-left {
+        position: absolute;
+        top: 35%;
+        left: 0px;
+        background-color: #e2be46;
+        width: 32px;
+        height: 32px;
+        z-index: 999;
+        // background-color: transparent;
+        background: url(../../static/pic/left.png) no-repeat;
+        background-size: cover;
+        .arrow-left {
+          border-style: none;
+          background: none;
+          width: 32px;
+          height: 32px;
+        }
+      }
+      .overlay-arrow-right {
+        position: absolute;
+        top: 35%;
+        left: 70px;
+        background-color: #e2be46;
+        width: 32px;
+        height: 32px;
+        z-index: 999;
+        // background-color: transparent;
+        background: url(../../static/pic/right.png) no-repeat;
+        background-size: cover;
+        .arrow-right {
+          border-style: none;
+          background: none;
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
   }
-  /* 控制上下左右*/
-  .operation-arrow {
-    position: relative;
-    background-color: #FFF;
-    width: 150px;
-    height: 150px;
-    border-radius: 150px;
-    top: 10%;
-  }
-  .arrow-key {
-      color: #fff;
-      text-align: center;
-      font-size: 48px;
-      opacity: 0.7;
-      border-radius: 20px;
-      border-style:none;
-  }
-  .arrow-key:hover {
-      color: #fff;
-      text-align: center;
-      font-size: 48px;
-      opacity: 0.7;
-      border-radius: 20px;
-      border-style:none;
-      background-color: #000;
-  }
-  .arrow-up {
-      position: relative;
-      top: 0%;
-      left: 55%;
-      margin-left: -50px;
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
-      border:0px;
-      background-color:
-      transparent;
-      background-image:url(../../static/pic/up.png);
-      background-size: 50px;
-  }
-
-  .arrow-down {
-      position: relative;
-      bottom: -60%;
-      left: 52%;
-      margin-left: -50px;
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
-      border:0px;
-      background-color:
-      transparent;
-      background-image:url(../../static/pic/down.png);
-      background-size: 50px;
-  }
-
-  .arrow-left {
-      position: relative;
-      left: -17%;
-      top: 30%;
-      margin-top: -50px;
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
-      border:0px;
-      background-color:
-      transparent;
-      background-image:url(../../static/pic/left.png);
-      background-size: 50px;
-  }
-
-  .arrow-right {
-      position: relative;
-      right: -12%;
-      top: 30%;
-      margin-top: -50px;
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
-      border:0px;
-      background-color:
-      transparent;
-      background-image:url(../../static/pic/right.png);
-      background-size: 50px;
-  }
-
-  .space {
-      position: relative;
-      right: -30%;
-      top: -65px;
-      margin-top: -50px;
-      width: 100px;
-      height: 100px;
-      line-height: 100px;
-      border:0px;
-      background-color:
-      transparent;
-      background-image:url(../../static/pic/catch_icon.png);
-      background-size: 100px;
+  .operation-space {
+    background-color: #FFFFFF;
+    width: 90px;
+    height: 90px;
+    z-index: 999;
+    // background-color: transparent;
+    background: url(../../static/pic/catch_icon.png) no-repeat;
+    background-size: contain;
+    margin-right: 30px;
+    .space {
+      border-style: none;
+      background: none;
+      width: 90px;
+      height: 90px;
+    }
   }
 
   /* 详细信息*/
   .details {
     margin: 70px auto;
     width: 360px;
+    max-width: 100%;
     .detail-nav {
       display: flex;
       justify-content: space-around;
       margin: 0;
-      border-radius: 20px 20px 0 0;
-      background-color: #FFF;
+      border-radius: 10px 10px 0 0;
+      background-color: #fff;
       button {
-        border-style:none;
-        padding: 1.5rem;
-        background-color: #FFF;
+        border-style: none;
+        padding: 0.7em 1.32em;
+        background-color: #fff;
         font-size: 1rem;
+        border-radius: 10px;
       }
     }
     img {
@@ -595,6 +631,7 @@ export default {
   .rank_wrapper {
     background-color: white;
     width: 360px;
+    max-width: 100%;
     position: relative;
     height: 132px;
     overflow: scroll;
@@ -603,36 +640,40 @@ export default {
       display: flex;
       font-weight: bold;
       background-color: white;
-      border-bottom: solid 1px #E6E4E5;
-    }
-    div {
-      display: inline-block;
-      float: left;
-      overflow: hidden;
-      padding: 5px;
-      height: 30px;
-    }
-    .avatar {
-      width: 10%;
-      height: 30px;
-      img {
+      border-bottom: solid 1px #e6e4e5;
+      div {
+        // display: inline-block;
+        overflow: hidden;
+        padding: 5px;
         height: 30px;
-        width: auto;
-        border-radius: 30px;
-        border:solid 1px #FFF;
       }
-    }
-    .name {
-      width: 80%;
-    }
-    .count {
-      width: 10%;
+      .avatar {
+        width: 30px;
+        height: 30px;
+        flex-grow: 0;
+        img {
+          height: 30px;
+          width: auto;
+          border-radius: 30px;
+          border: solid 1px #fff;
+        }
+      }
+      .name {
+        width: 60%;
+        flex-grow: 0;
+        text-align: left;
+      }
+      .count {
+        width: 20%;
+        flex-grow: 1;
+      }
     }
   }
   /* 抓中记录 */
   .logs_wrapper {
     background-color: white;
     width: 360px;
+    max-width: 100%;
     position: relative;
     height: 132px;
     overflow: scroll;
@@ -641,30 +682,33 @@ export default {
       display: flex;
       font-weight: bold;
       background-color: white;
-      border-bottom: solid 1px #E6E4E5;
-    }
-    div {
-      display: inline-block;
-      float: left;
-      overflow: hidden;
-      padding: 5px;
-      height: 40px;
-    }
-    .avatar {
-      width: 10%;
-      height: 30px;
-      img {
-        height: 30px;
-        width: auto;
-        border-radius: 30px;
-        border:solid 1px #FFF;
+      border-bottom: solid 1px #e6e4e5;
+      div {
+        display: inline-block;
+        overflow: hidden;
+        padding: 5px;
+        height: 40px;
       }
-    }
-    .name {
-      width: 50%;
-    }
-    .time {
-      width: 40%;
+      .avatar {
+        width: 30px;
+        height: 30px;
+        flex-grow: 0;
+        img {
+          height: 30px;
+          width: auto;
+          border-radius: 30px;
+          border: solid 1px #fff;
+        }
+      }
+      .name {
+        width: 40%;
+        flex-grow: 0;
+        text-align: left;
+      }
+      .time {
+        width: 40%;
+        flex-grow: 1;
+      }
     }
   }
 }

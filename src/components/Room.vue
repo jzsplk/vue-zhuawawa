@@ -10,7 +10,7 @@
 
     <div class="info">
       <p>{{room.Name}}</p>
-      <p>💎 <img src="/static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
+      <p><!-- 💎 --> <img src="/static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
       <span>{{room.Crowd}} 人在线 {{room.id}}</span>
       <button>去捕获</button>
     </div>
@@ -38,13 +38,13 @@ a {
   text-decoration: none;
 }
 .room {
-  margin: 10px;
+  margin: 4px 2px 2px 4px;
   padding: 0;
-  max-width: 350px;
+  max-width: 100%;
   height: 100px;
   background-color: #E5E67E;
   display: flex;
-  border-radius: 20px;
+  border-radius: 10px;
   border-style:solid;
   border-width:2px;
   border-color: #C9B31A;
@@ -54,27 +54,30 @@ a {
       display: block;
       width: 100px;
       height: 100px;
-      border-radius: 15px 0 0 15px;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
     }
     .status {
       position: absolute;
       background-color: black;
+      opacity: 0.7;
       color: white;
-      right: 0;
-      top: 0;
+      right: 2px;
+      top: -10px;
       padding: 2px;
-      border-radius: 10px;
-      font-size: 0.2rem;
+      border-radius: 5px;
+      font-size: 13px;
     }
   }
   .info {
     display: inline-block;
     width: 160px;
     vertical-align: middle;
-    font-size: 0.2rem;
+    font-size: 13px;
     text-decoration: none;
     p {
-      margin-top: 0.5rem;
+      margin: 0;
+      padding: 0.3em 1.32em;
     }
     button {
       position: relative;

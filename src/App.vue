@@ -5,7 +5,7 @@
         <router-link :to="{path: '/'}" ><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
       </div>
       <div class="login">
-        <router-link to="/login"><button>微信登陆</button></router-link>
+        <router-link to="/login"><button>X微信登陆</button></router-link>
         <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
     </div>
@@ -45,12 +45,24 @@ export default {
 
 <style lang="scss" type="text/css">
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   // margin-top: 60px;
+  button {
+    border-width: 0;
+  }
+  img, embed, object, video, canvas {
+    max-width: 100%;
+  }
+  nav a {
+    padding: 1.5em;
+  }
+  nav a, button {
+    min-width: 48px;
+  }
 }
 .header {
   display: flex;
@@ -69,13 +81,13 @@ export default {
     }
   }
   .login {
-    margin-left: 50px;
+    margin-left: 0.5rem;
     button {
       border-style:none;
-      padding: 0.8rem;
+      padding: 0.5rem;
       background-color: #E9DF38;
+      font-size: 0.8rem;
       font-size: 1rem;
-      font-size: 20px;
     }
     button:hover {
       background-color: #FFF;

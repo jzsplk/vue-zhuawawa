@@ -73,20 +73,21 @@ const MQTT = {
     // statusSpan.innerHTML = 'Connection - Disconnected.'
   },
   destoryMQTT () {
+    store.dispatch('leaveRoom')
     console.log('destory MQTT')
     if (window.client !== null && store._vm.roomState === 'MqttConnected') {
       if (store._vm.roomState === 'MqttConnected') {
         window.client.unsubscribe(store._vm.roomTopic)
       }
       window.client.disconnect()
-      store.dispatch('cancelToPlay')
     }
   },
   onConnectionLost (responseObject) {
     if (responseObject.errorCode !== 0) {
       console.log('Connection Lost: ' + responseObject.errorMessage)
     }
-    if (store._vm.roomState !== 'MqttConnected') {
+    store.dispatch('cancelToPlay')
+    if (store._vm.roomState !== 'MqttConnected' && store._vm.roomState !== 'leave') {
       MQTT.reConnect()
     }
   },
@@ -173,13 +174,17 @@ const MQTT = {
     let action = object.action
     console.log('parseMQTTResults action= ' + action)
     if (action === _global.MQTT_ACTION_SUCCESS) {
-      console.log('恭喜 抓到了')
+      console.log('恭喜 ' + object.Name + ' 抓到了!')
     } else if (action === _global.MQTT_ACTION_FAIL) {
-      console.log('可惜了， 没抓到')
+      console.log('可惜了 ' + object.Name + ' 没抓到')
     } else if (action === _global.MQTT_ACTION_PREPARE) {
       let param = object.param
       let id = object.id
       console.log('id = ', id)
+      // 如果id不一样，返回
+      if (object.id !== store._vm.playerId) {
+        return
+      }
       if (param === 2) {
         // confirm play
         console.log('show confirm play')
