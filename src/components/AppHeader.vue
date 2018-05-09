@@ -8,7 +8,7 @@
 </template>
 <style  scoped lang="scss" type="text/css">
 div {
-  background-color: #C9B31A;
+  background-color: #FFFFFF;
   color: #FFF;
 }
 .nav{

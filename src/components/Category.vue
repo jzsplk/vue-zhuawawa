@@ -40,6 +40,8 @@ export default {
 </script>
 <style scoped lang="scss" type="text/css">
   .category {
+    max-width: 750px;
+    margin: 0 auto;
     background-color: #E7E0DD;
     display: flex;
     flex-wrap: wrap;

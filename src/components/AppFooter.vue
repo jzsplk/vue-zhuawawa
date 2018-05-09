@@ -1,17 +1,59 @@
 <template>
   <div class="footer">
-    <div class="bottom-nav">
-      <button><img src="/static/pic/home_select.png" alt=""><p>首页</p></button>
-      <router-link :to="{path: '/mydoll'}">
+<!--     <div class="bottom-nav">
+      <router-link :to="{path: './'}"><button><img src="/static/pic/home_select.png" alt=""><p>首页</p></button></router-link>
+      <router-link :to="{path: './mydoll'}">
         <button><img src="/static/pic/prize_normal.png" alt=""><p>我的娃娃</p></button>
       </router-link>
-      <router-link :to="{path: '/myinfo'}">
+      <router-link :to="{path: './myinfo'}">
         <button><img src="/static/pic/mine_normal.png" alt=""><p>我的</p></button>
       </router-link>
     </div>
-    <div>一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div>
+    <div v-if="false" class="copyright">一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div> -->
+    <el-menu
+      :default-acitve="activeIndex"
+      class="el-menu-demo"
+      mode="horizontal"
+      @select="handleSelect"
+      background-color="#FFFFFF"
+      text-color="#000000"
+      active-text-color="#FFD04B">
+        <el-menu-item index="./">
+          <img src="/static/pic/home_select.png" alt="">
+          <span>首页</span>
+        </el-menu-item>
+        <el-menu-item index="./mydoll">
+            <img src="/static/pic/prize_normal.png" alt="">
+            <span>我的娃娃</span>
+        </el-menu-item>
+        <el-menu-item index="./myinfo">
+          <img src="/static/pic/mine_normal.png" alt="">
+          <span>我的背包</span>
+        </el-menu-item>
+    </el-menu>
   </div>
 </template>
+<script>
+export default {
+  data () {
+    return {
+      activeIndex: './'
+    }
+  },
+  methods: {
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
+      if (key === './') {
+        this.$router.push({path: './'})
+      } else if (key === './mydoll') {
+        this.$router.push({path: './mydoll'})
+      } else if (key === './myinfo') {
+        this.$router.push({path: './myinfo'})
+      }
+    }
+  }
+}
+</script>
 <style scoped lang="scss" type="text/css">
   .bottom-nav {
     position: fixed;
@@ -27,6 +69,32 @@
       border-style:none;
       p {
         margin-top: 0;
+        padding: 0;
+      }
+    }
+  }
+  .el-menu {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    .el-menu-item {
+      height: 50px;
+      line-height: 50px;
+      a {
+        text-decoration: none;
+      }
+      p {
+        margin-top: 0;
+        padding: 0;
+        color: #000;
+        line-height: 0;
+        font-size: 13px;
+      }
+      img {
+        width: 30px;
+        margin-bottom: 0;
         padding: 0;
       }
     }

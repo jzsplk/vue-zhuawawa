@@ -32,16 +32,18 @@
           </div>
         </div>
         <!-- 屏幕左上，玩家状态 -->
-        <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
-          <div class="playing_wrapper">
-            <span>玩家 排队中</span>
+        <transition name="el-fade-in-linear">
+          <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
+            <div class="playing_wrapper">
+              <span>玩家 排队中</span>
+            </div>
           </div>
-        </div>
-        <div v-if="$store.state.roomState === 'Catching'" class="overlay-playing">
-          <div class="playing_wrapper">
-            <span>玩家 热玩中</span>
+          <div v-if="$store.state.roomState === 'Catching'" class="overlay-playing">
+            <div class="playing_wrapper">
+              <span>玩家 热玩中</span>
+            </div>
           </div>
-        </div>
+        </transition>
         <!-- 切换摄像头按钮 -->
         <div class="overlay-camera">
           <button class="camera_toggle"></button>
@@ -50,26 +52,32 @@
     </div>
 
     <!-- 控制面板 -->
-    <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
-      <div class="balance_info">
-        <p>本次:<span>{{roomData.Coin}}CP</span></p>
-        <p>余额:<span>{{balance}}CP</span></p>
+    <transition name="el-fade-in">
+      <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
+        <div class="balance_info">
+          <p>本次:<span>{{roomData.Coin}}CP</span></p>
+          <p>余额:<span>{{balance}}CP</span></p>
+        </div>
+        <div class="queue">
+          <button @click="queue" class="queue-button">预约抓娃娃</button>
+        </div>
+        <div class="charge">
+          <img src="../../static/pic/coin.png" alt="">
+          <button>充值</button>
+        </div>
       </div>
-      <div class="queue">
-        <button @click="queue" class="queue-button">预约抓娃娃</button>
+    </transition>
+    <transition name="el-fade-in">
+      <div v-if="roomState == 'Queueing'">
+        <button class="queueing-button">正在排队</button>
       </div>
-      <div class="charge">
-        <img src="../../static/pic/coin.png" alt="">
-        <button>充值</button>
+    </transition>
+    <transition name="el-fade-in">
+      <div v-if="roomState == 'Prepared'" class="confirm">
+        <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
+        <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
       </div>
-    </div>
-    <div v-if="roomState == 'Queueing'">
-      <button class="queueing-button">正在排队</button>
-    </div>
-    <div v-if="roomState == 'Prepared'" class="confirm">
-      <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
-      <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
-    </div>
+    </transition>
     <div v-if="roomState == 'InsufficientBalance'">
       <button class="queueing-button">余额不足</button>
     </div>
@@ -116,35 +124,39 @@
           <button @click="changeDetailState('Rank')">排行榜</button>
           <button @click="changeDetailState('Log')">抓中记录</button>
         </div>
-        <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
-        <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
-          <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
-            <div class="avatar">
-              <img class="rankAvater" :src="rank.AvatarUrl" alt="">
-            </div>
-            <div class="name">
-              <span>{{rank.NickName}}</span>
-            </div>
-            <div class="count">
-              <span class="count">{{rank.CaughtCount}}</span>
-            </div>
-          </li>
-        </div>
-
-        <div v-if="this.$store.state.detailState === 'Log'" class="logs_wrapper">
-          <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
-            <div class="avatar">
-              <img class="rankAvater" :src="log.AvatarUrl" alt="">
-            </div>
-            <div class="name">
-              <span>{{log.NickName}}</span>
-            </div>
-            <div class="time">
-              <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
-            </div>
-          </li>
-        </div>
-
+        <transition name="el-zoom-in-top">
+          <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        </transition>
+        <transition name="el-zoom-in-top">
+          <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
+            <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
+              <div class="avatar">
+                <img class="rankAvater" :src="rank.AvatarUrl" alt="">
+              </div>
+              <div class="name">
+                <span>{{rank.NickName}}</span>
+              </div>
+              <div class="count">
+                <span class="count">{{rank.CaughtCount}}</span>
+              </div>
+            </li>
+          </div>
+        </transition>
+        <transition name="el-zoom-in-top">
+          <div v-if="this.$store.state.detailState === 'Log'" class="logs_wrapper">
+            <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
+              <div class="avatar">
+                <img class="rankAvater" :src="log.AvatarUrl" alt="">
+              </div>
+              <div class="name">
+                <span>{{log.NickName}}</span>
+              </div>
+              <div class="time">
+                <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
+              </div>
+            </li>
+          </div>
+        </transition>
     </div>
   </div>
 </template>
