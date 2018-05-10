@@ -100,8 +100,44 @@
           <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
         </div>
     </div>
+    <!-- 测试Tab -->
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="娃娃详情" name="first">
+        <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+      </el-tab-pane>
+      <el-tab-pane label="排行榜" name="second">
+        <div class="rank_wrapper">
+          <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
+            <div class="avatar">
+              <img class="rankAvater" :src="rank.AvatarUrl" alt="">
+            </div>
+            <div class="name">
+              <span>{{rank.NickName}}</span>
+            </div>
+            <div class="count">
+              <span class="count">{{rank.CaughtCount}}</span>
+            </div>
+          </li>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="抓中记录" name="third">
+        <div class="logs_wrapper">
+          <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
+            <div class="avatar">
+              <img class="rankAvater" :src="log.AvatarUrl" alt="">
+            </div>
+            <div class="name">
+              <span>{{log.NickName}}</span>
+            </div>
+            <div class="time">
+              <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
+            </div>
+          </li>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
     <!-- 详细信息 -->
-    <div class="details">
+    <div v-show="false" class="details">
         <div v-if="false" class="test">
           <p id="connectionStatus"></p>
           <button @click="initMqttClient">connect</button>
@@ -187,8 +223,10 @@ export default {
     }),
     closeZoom () {
       document.addEventListener('touchmove', function (event) {
-        if (event.scale !== 1) {
-          event.preventDefault()
+        if (event.scale) {
+          if (event.scale !== 1) {
+            event.preventDefault()
+          }
         }
       }, { passive: false })
     },
@@ -368,6 +406,20 @@ export default {
 
 <style scoped lang="scss" type="text/css">
 .player-view {
+  /*  测试tabs */
+  .el-tabs {
+    background-color: #FFFFFF;
+    width: 350px;
+    max-width: 100%;
+    height: 500px;
+    border-radius: 10px;
+    margin: 10px auto;
+    .el-tabs__header {
+      .el-tabs__nav {
+        margin: 0 auto;
+      }
+    }
+  }
   display: block;
   background-color: #edc83a;
   max-width: 100%;
@@ -683,7 +735,7 @@ export default {
       height: 90px;
     }
   }
-
+  /*  测试tabs */
   /* 详细信息*/
   .details {
     margin: 70px auto;

@@ -54,7 +54,7 @@ Vue.use(WechatAuth, {
   responseType: 'code',
   scope: 'snsapi_login',
   getCodeCallback (code, next) {
-    axios.get('https://open.weixin.qq.com/connect/qrconnect', {
+    axios.get('https://open.weixin.qq.com/connect/oauth2/authorize', {
       params: {
         code,
         state: ''

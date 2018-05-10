@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="header">
+<!--     <div class="header">
       <div class="logo">
         <router-link :to="{path: '/'}" ><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
       </div>
@@ -8,16 +8,35 @@
         <router-link to="/login"><button>X微信登陆</button></router-link>
         <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
-    </div>
+    </div> -->
     <router-view/>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
 import MQTT from './MQTT.service.js'
+import AppFooter from './components/AppFooter'
 export default {
   name: 'App',
+  components: {
+    'app-footer': AppFooter
+  },
+  data () {
+    return {
+      isPlaying: true
+    }
+  },
   methods: {
+    closeZoom () {
+      document.addEventListener('touchmove', function (event) {
+        if (event.scale) {
+          if (event.scale !== 1) {
+            event.preventDefault()
+          }
+        }
+      }, { passive: false })
+    },
     leaveRoom () {
       MQTT.destoryMQTT()
     },
@@ -39,6 +58,7 @@ export default {
   created () {
     // 执行checklogin
     this.checkLogin()
+    this.closeZoom()
   }
 }
 </script>
@@ -94,6 +114,5 @@ export default {
       background-color: #FFF;
     }
   }
-
 }
 </style>

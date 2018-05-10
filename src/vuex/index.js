@@ -111,6 +111,7 @@ const store = new Vuex.Store({
     },
     leaveRoom (state) {
       state.roomState = 'leave'
+      state.isPlaying = false
     },
     startPlaying (state) {
       state.isPlaying = true
@@ -120,6 +121,7 @@ const store = new Vuex.Store({
     },
     initRoomTopic (state, id) {
       state.roomTopic = id
+      state.isPlaying = true
     },
     showStartQueue (state) {
       state.roomState = 'MqttConnected'

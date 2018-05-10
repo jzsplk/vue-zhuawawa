@@ -6,19 +6,22 @@ window.onload=function () {
   //   }
   // }, { passive: false })
   document.addEventListener('touchmove', function (event) {
-    console.log('touchmove scale', event)
-    if (event.scale) {
-      if (event.scale !== 1) { event.preventDefault(); }
+    // console.log('touchmove scale', event)
+    if (event.touches.length>1) {
+      if (event.scale) {
+        if (event.scale !== 1) { event.preventDefault(); }
+      }
     }
+
   }, { passive: false });
-  var lastTouchEnd=0;  
-  document.addEventListener('touchend',function (event) {
-      var now=(new Date()).getTime()
-      if(now-lastTouchEnd<=300){
-        event.preventDefault()  
-      }  
-      lastTouchEnd=now
-  }, { passive: false });
+  // var lastTouchEnd=0;  
+  // document.addEventListener('touchend',function (event) {
+  //     var now=(new Date()).getTime()
+  //     if(now-lastTouchEnd<=300){
+  //       event.preventDefault()  
+  //     }  
+  //     lastTouchEnd=now
+  // }, { passive: false });
 }  
 
 // var phoneWidth =  parseInt(window.screen.width);  
