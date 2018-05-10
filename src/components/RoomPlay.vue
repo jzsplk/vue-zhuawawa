@@ -6,6 +6,7 @@
         <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
       </router-link>
       <p class="room-title">{{roomData.Name}}</p>
+      <roomplay_countdown :cTime="6"></roomplay_countdown>
     </div>
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
@@ -52,58 +53,67 @@
     </div>
 
     <!-- 控制面板 -->
-    <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
-      <div class="balance_info">
-        <p>本次:<span>{{roomData.Coin}}CP</span></p>
-        <p>余额:<span>{{balance}}CP</span></p>
-      </div>
-      <div class="queue">
-        <button @click="queue" class="queue-button">预约抓娃娃</button>
-      </div>
-      <div class="charge">
-        <img src="../../static/pic/coin.png" alt="">
-        <button>充值</button>
-      </div>
-    </div>
-    <div v-if="roomState == 'Queueing'">
-      <button class="queueing-button">正在排队</button>
-    </div>
-<!--     <transition name="el-fade-in"> -->
-    <div v-if="roomState == 'Prepared'" class="confirm">
-      <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
-      <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
-    </div>
-<!--     </transition> -->
-    <div v-if="roomState == 'InsufficientBalance'">
-      <button class="queueing-button">余额不足</button>
-    </div>
-    <div  v-if="roomState == 'Catching'" id="operation-panel" class="operation-panel">
-        <div class="direction-wrapper">
-          <div class="operation-arrow">
+    <div class="control">
+        <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
+          <div class="balance_info">
+            <p>本次:<span>{{roomData.Coin}}CP</span></p>
+            <p>余额:<span>{{balance}}CP</span></p>
           </div>
-          <div class="overlay-arrow-up">
-            <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
-            </button>
+          <div class="queue">
+            <button @click="queue" class="queue-button">预约抓娃娃</button>
           </div>
-          <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
-          <div class="overlay-arrow-down">
-            <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
-          </div>
-          <div class="overlay-arrow-left">
-            <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
-          </div>
-          <div class="overlay-arrow-right">
-            <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+          <div class="charge">
+            <img src="../../static/pic/coin.png" alt="">
+            <button>充值</button>
           </div>
         </div>
-        <div class="operation-space">
-          <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
+        <div v-if="roomState == 'Queueing'">
+          <button class="queueing-button"><i class="el-icon-loading"></i>正在排队</button>
+        </div>
+    <!--     <transition name="el-fade-in"> -->
+        <div v-if="roomState == 'Prepared'" class="confirm">
+          <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
+          <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+        </div>
+    <!--     </transition> -->
+        <div v-show="roomState == 'InsufficientBalance'">
+          <button class="queueing-button">余额不足</button>
+        </div>
+        <div  v-show="roomState == 'Catching'" id="operation-panel" class="operation-panel">
+            <div class="direction-wrapper">
+              <div class="operation-arrow">
+              </div>
+              <div class="overlay-arrow-up">
+                <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
+                </button>
+              </div>
+              <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
+              <div class="overlay-arrow-down">
+                <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+              </div>
+              <div class="overlay-arrow-left">
+                <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+              </div>
+              <div class="overlay-arrow-right">
+                <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+              </div>
+            </div>
+            <div class="operation-space">
+              <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
+            </div>
         </div>
     </div>
     <!-- 测试Tab -->
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" >
       <el-tab-pane label="娃娃详情" name="first">
-        <img src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        <img v-show="false" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        <div v-show="roomData.Doll" class="pic">
+          <ul class="pic_ul">
+            <li v-for="pic in roomData.Doll.Item.Pictures" v-bind:key="pic.Path" class="pic_li">
+              <img :src="'http://zhua.liehuo55.com' + pic.Path" alt="">
+            </li>
+          </ul>
+        </div>
       </el-tab-pane>
       <el-tab-pane label="排行榜" name="second">
         <div class="rank_wrapper">
@@ -198,13 +208,18 @@ import apiService from '../API.service.js'
 import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
+import CountDown from './CountDown'
 export default {
+  components: {
+    'roomplay_countdown': CountDown
+  },
   data () {
     return {
       videocanvas: 'video-canvas',
       roomData: [],
       roomRank: [],
-      balance: 0 // 存储房间排名信息的data
+      balance: 0, // 存储房间排名信息的data
+      activeName: 'first'
     }
   },
   props: ['room'],
@@ -339,6 +354,8 @@ export default {
       })
     },
     leaveRoom (id) {
+      // 先改变房间状态为leave，再断开MQTT
+      this.$store.dispatch('leaveRoom')
       MQTT.destoryMQTT()
       apiService.leaveRoom(id).then(data => {
         console.log('leave room', data)
@@ -417,6 +434,21 @@ export default {
     .el-tabs__header {
       .el-tabs__nav {
         margin: 0 auto;
+      }
+    }
+    .el-tab-pane {
+      overflow-y: scroll;
+      .pic {
+        .pic_ul {
+          display: block;
+          padding: 0;
+          .pic_li {
+            list-style: none;
+            img {
+              text-align: center;
+            }
+          }
+        }
       }
     }
   }
@@ -535,204 +567,211 @@ export default {
       }
     }
   }
-
-  /* 排队wrapper */
-  .connected_wrapper {
-    display: flex;
-    width: 360px;
-    max-width: 100%;
-    height: 50px;
-    margin: 0 auto;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    .balance_info {
-      font-size: 13px;
-      margin: 0;
-      text-align: left;
-      p {
-        padding: 0;
-        margin: 0;
-      }
-      span {
-        color: #FFFFFF;
-      }
-    }
-    .queue {
-      .queue-button {
-        box-sizing: border-box;
-        display: inline-block;
-        padding: 0 1.32em;
-        line-height: 2.3;
-        font-size: 1rem;
-        border-radius: 1.5rem;
-        background-color: #4d2d05;
-        color: #fff;
-      }
-    }
-    .charge {
-      display: flex;
-      align-items: center;
-      background-color: #303133;
-      max-width: 100%;
-      border-radius: 30px 0 0 30px;
-      padding: 0.2em 0.32em;
-      padding-right: 0.2em;
-      opacity: 0.8;
-      img {
-        width: 20px;
-        height: 20px;
-      }
-      button {
-        box-sizing: border-box;
-        background: none;
-        color: #FFFFFF;
-      }
-    }
-  }
-
-  /* 正在排队 */
-  .queueing-button {
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 0 1.32em;
-    line-height: 2.3;
-    font-size: 1rem;
-    margin-top: 20px;
-    border-radius: 1.5rem;
-    background-color: #fff;
-    color: #4d2d05;
-  }
-  /* 确认开始游戏按钮*/
-  .confirm-button {
-    box-sizing: border-box;
-    display: inline-block;
-    padding: 0 1.32em;
-    line-height: 2.3;
-    font-size: 1rem;
-    margin-top: 20px;
-    border-radius: 1.5rem;
-    background-color: #fff;
-    color: #4d2d05;
-  }
-  .confirm-button:hover {
-    background-color: #fff;
-    color: #4d2d05;
-  }
-  /* 移动设备触摸板*/
-  .operation-panel {
-    /*display: none;*/
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 360px;
+  /* 控制部分 */
+  .control {
+    width: 350px;
     max-width: 100%;
     height: 100px;
-    bottom: 10px;
-    /*      left: 55%;*/
     margin: 0 auto;
-    user-select: none;
-    background-color: none;
-    .direction-wrapper{
-      /* 控制上下左右*/
-      position: relative;
-      .operation-arrow {
-        position: relative;
-        background-color: #fff;
-        width: 100px;
-        // max-width: 50%;
-        height: 100px;
-        border-radius: 100px;
-        margin-left: 0px
-      }
-      .overlay-arrow-up {
-        position: absolute;
-        top: 0;
-        left: 35px;
-        background-color: #e2be46;
-        width: 32px;
-        height: 32px;
-        z-index: 999;
-        // background-color: transparent;
-        background: url(../../static/pic/up.png) no-repeat;
-        background-size: cover;
-        .arrow-up {
-          border-style: none;
-          background: none;
-          width: 32px;
-          height: 32px;
+    /* 排队wrapper */
+    .connected_wrapper {
+      display: flex;
+      box-sizing: border-box;
+      width: 360px;
+      max-width: 100%;
+      height: 50px;
+      margin: 0 auto;
+      justify-content: space-between;
+      align-items: center;
+      padding-top:20px;
+      .balance_info {
+        font-size: 13px;
+        margin: 0;
+        text-align: left;
+        p {
+          padding: 0;
+          margin: 0;
+        }
+        span {
+          color: #FFFFFF;
         }
       }
-      .overlay-arrow-down {
-        position: absolute;
-        top: 70%;
-        left: 35px;
-        background-color: #e2be46;
-        width: 32px;
-        height: 32px;
-        z-index: 999;
-        // background-color: transparent;
-        background: url(../../static/pic/down.png) no-repeat;
-        background-size: cover;
-        .arrow-down {
-          border-style: none;
-          background: none;
-          width: 32px;
-          height: 32px;
+      .queue {
+        .queue-button {
+          box-sizing: border-box;
+          display: inline-block;
+          padding: 0 1.32em;
+          line-height: 2.3;
+          font-size: 1rem;
+          border-radius: 1.5rem;
+          background-color: #4d2d05;
+          color: #fff;
         }
       }
-      .overlay-arrow-left {
-        position: absolute;
-        top: 35%;
-        left: 0px;
-        background-color: #e2be46;
-        width: 32px;
-        height: 32px;
-        z-index: 999;
-        // background-color: transparent;
-        background: url(../../static/pic/left.png) no-repeat;
-        background-size: cover;
-        .arrow-left {
-          border-style: none;
-          background: none;
-          width: 32px;
-          height: 32px;
+      .charge {
+        display: flex;
+        align-items: center;
+        background-color: #303133;
+        max-width: 100%;
+        border-radius: 30px 0 0 30px;
+        padding: 0.2em 0.32em;
+        padding-right: 0.2em;
+        opacity: 0.8;
+        img {
+          width: 20px;
+          height: 20px;
         }
-      }
-      .overlay-arrow-right {
-        position: absolute;
-        top: 35%;
-        left: 70px;
-        background-color: #e2be46;
-        width: 32px;
-        height: 32px;
-        z-index: 999;
-        // background-color: transparent;
-        background: url(../../static/pic/right.png) no-repeat;
-        background-size: cover;
-        .arrow-right {
-          border-style: none;
+        button {
+          box-sizing: border-box;
           background: none;
-          width: 32px;
-          height: 32px;
+          color: #FFFFFF;
         }
       }
     }
-  }
-  .operation-space {
-    background-color: #FFFFFF;
-    width: 90px;
-    height: 90px;
-    z-index: 999;
-    // background-color: transparent;
-    background: url(../../static/pic/catch_icon.png) no-repeat;
-    background-size: contain;
-    margin-right: 30px;
-    .space {
-      border-style: none;
-      background: none;
+
+    /* 正在排队 */
+    .queueing-button {
+      box-sizing: border-box;
+      display: inline-block;
+      padding: 0 1.32em;
+      line-height: 2.3;
+      font-size: 1rem;
+      margin-top: 20px;
+      border-radius: 1.5rem;
+      background-color: #fff;
+      color: #4d2d05;
+    }
+    /* 确认开始游戏按钮*/
+    .confirm-button {
+      box-sizing: border-box;
+      display: inline-block;
+      padding: 0 1.32em;
+      line-height: 2.3;
+      font-size: 1rem;
+      margin-top: 20px;
+      border-radius: 1.5rem;
+      background-color: #fff;
+      color: #4d2d05;
+    }
+    .confirm-button:hover {
+      background-color: #fff;
+      color: #4d2d05;
+    }
+    /* 移动设备触摸板*/
+    .operation-panel {
+      /*display: none;*/
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 360px;
+      max-width: 100%;
+      height: 100px;
+      bottom: 10px;
+      /*      left: 55%;*/
+      margin: 0 auto;
+      user-select: none;
+      background-color: none;
+      .direction-wrapper{
+        /* 控制上下左右*/
+        position: relative;
+        .operation-arrow {
+          position: relative;
+          background-color: #fff;
+          width: 100px;
+          // max-width: 50%;
+          height: 100px;
+          border-radius: 100px;
+          margin-left: 0px
+        }
+        .overlay-arrow-up {
+          position: absolute;
+          top: 0;
+          left: 35px;
+          background-color: #e2be46;
+          width: 32px;
+          height: 32px;
+          z-index: 999;
+          // background-color: transparent;
+          background: url(../../static/pic/up.png) no-repeat;
+          background-size: cover;
+          .arrow-up {
+            border-style: none;
+            background: none;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        .overlay-arrow-down {
+          position: absolute;
+          top: 70%;
+          left: 35px;
+          background-color: #e2be46;
+          width: 32px;
+          height: 32px;
+          z-index: 999;
+          // background-color: transparent;
+          background: url(../../static/pic/down.png) no-repeat;
+          background-size: cover;
+          .arrow-down {
+            border-style: none;
+            background: none;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        .overlay-arrow-left {
+          position: absolute;
+          top: 35%;
+          left: 0px;
+          background-color: #e2be46;
+          width: 32px;
+          height: 32px;
+          z-index: 999;
+          // background-color: transparent;
+          background: url(../../static/pic/left.png) no-repeat;
+          background-size: cover;
+          .arrow-left {
+            border-style: none;
+            background: none;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        .overlay-arrow-right {
+          position: absolute;
+          top: 35%;
+          left: 70px;
+          background-color: #e2be46;
+          width: 32px;
+          height: 32px;
+          z-index: 999;
+          // background-color: transparent;
+          background: url(../../static/pic/right.png) no-repeat;
+          background-size: cover;
+          .arrow-right {
+            border-style: none;
+            background: none;
+            width: 32px;
+            height: 32px;
+          }
+        }
+      }
+    }
+    .operation-space {
+      background-color: #FFFFFF;
       width: 90px;
       height: 90px;
+      z-index: 999;
+      // background-color: transparent;
+      background: url(../../static/pic/catch_icon.png) no-repeat;
+      background-size: contain;
+      margin-right: 30px;
+      .space {
+        border-style: none;
+        background: none;
+        width: 90px;
+        height: 90px;
+      }
     }
   }
   /*  测试tabs */

@@ -2,7 +2,8 @@ import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
 // 新API地址
-axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
+// axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
+axios.defaults.baseURL = 'http://139.199.227.21/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
 const apiService = {

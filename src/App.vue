@@ -83,6 +83,7 @@ export default {
   }
   nav a, button {
     min-width: 48px;
+    outline: none; // 去掉点击时边框
   }
 }
 .header {

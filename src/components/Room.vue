@@ -4,10 +4,10 @@
     <div class="img-wraper">
       <div class="img-container">
         <img :src="baseURL + room.Doll.Item.AvatarUrl" :alt="room.Name">
-        <p class="status">{{room.Status == 0 ? '空闲中' : '游戏中'}}</p>
+        <p v-show="room.Status == 0" class="statusAvailable">空闲中</p>
+        <p v-show="room.Status == 1" class="statusPlaying">游戏中</p>
       </div>
     </div>
-
     <div class="info">
       <p>{{room.Name}}</p>
       <p><!-- 💎 --> <img src="../../static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
@@ -57,16 +57,29 @@ a {
       border-radius: 10px 0 0 10px;
       overflow: hidden;
     }
-    .status {
+    .statusAvailable {
       position: absolute;
-      background-color: black;
-      opacity: 0.7;
+      background-color: #00FC00;
+      opacity: 0.9;
       color: white;
       right: 2px;
       top: -10px;
       padding: 2px;
       border-radius: 5px;
       font-size: 13px;
+      font-weight: bold;
+    }
+    .statusPlaying {
+      position: absolute;
+      background-color: #FF3036;
+      opacity: 0.9;
+      color: white;
+      right: 2px;
+      top: -10px;
+      padding: 2px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: bold;
     }
   }
   .info {

@@ -74,6 +74,11 @@ Vue.use(WechatAuth, {
   }
 })
 
+// 让页面跳转后回到页面顶部
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0)
+})
+
 /* eslint-disable no-new */
 var $vm = new Vue({
   el: '#app',
