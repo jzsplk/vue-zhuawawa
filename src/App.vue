@@ -42,7 +42,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" type="text/css">
 #app {
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
@@ -50,7 +49,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  // margin-top: 60px;
+  background-color: black;
+  // 解决左右轻微拖动问题
+  overflow-x:hidden;
   button {
     border-width: 0;
   }

@@ -52,32 +52,28 @@
     </div>
 
     <!-- 控制面板 -->
-    <transition name="el-fade-in">
-      <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
-        <div class="balance_info">
-          <p>本次:<span>{{roomData.Coin}}CP</span></p>
-          <p>余额:<span>{{balance}}CP</span></p>
-        </div>
-        <div class="queue">
-          <button @click="queue" class="queue-button">预约抓娃娃</button>
-        </div>
-        <div class="charge">
-          <img src="../../static/pic/coin.png" alt="">
-          <button>充值</button>
-        </div>
+    <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
+      <div class="balance_info">
+        <p>本次:<span>{{roomData.Coin}}CP</span></p>
+        <p>余额:<span>{{balance}}CP</span></p>
       </div>
-    </transition>
-    <transition name="el-fade-in">
-      <div v-if="roomState == 'Queueing'">
-        <button class="queueing-button">正在排队</button>
+      <div class="queue">
+        <button @click="queue" class="queue-button">预约抓娃娃</button>
       </div>
-    </transition>
-    <transition name="el-fade-in">
-      <div v-if="roomState == 'Prepared'" class="confirm">
-        <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
-        <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+      <div class="charge">
+        <img src="../../static/pic/coin.png" alt="">
+        <button>充值</button>
       </div>
-    </transition>
+    </div>
+    <div v-if="roomState == 'Queueing'">
+      <button class="queueing-button">正在排队</button>
+    </div>
+<!--     <transition name="el-fade-in"> -->
+    <div v-if="roomState == 'Prepared'" class="confirm">
+      <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
+      <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+    </div>
+<!--     </transition> -->
     <div v-if="roomState == 'InsufficientBalance'">
       <button class="queueing-button">余额不足</button>
     </div>
@@ -189,6 +185,13 @@ export default {
       cancelToPlay: 'cancelToPlay',
       startPlaying: 'startPlaying'
     }),
+    closeZoom () {
+      document.addEventListener('touchmove', function (event) {
+        if (event.scale !== 1) {
+          event.preventDefault()
+        }
+      }, { passive: false })
+    },
     updateTopic () {
       this.$store.dispatch('initRoomTopic', 'notify/' + this.roomData.DeviceId)
     },
@@ -337,7 +340,10 @@ export default {
       // return date
     }
   },
-  created () {},
+  created () {
+    // 阻止移动端缩放屏幕
+    // this.closeZoom()
+  },
   mounted () {
     playVideo.play()
     this.initMqttClient()
@@ -364,6 +370,8 @@ export default {
 .player-view {
   display: block;
   background-color: #edc83a;
+  max-width: 100%;
+  overflow-x:hidden;
   /* 房间header */
   .roomplay_header {
     margin: 0 auto;
@@ -414,7 +422,8 @@ export default {
         /* 围观信息*/
         .crowd-info {
           display: flex;
-          background-color: #112b44;
+          background-color: #303133;
+          opacity: 0.8;
           max-width: 100%;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
@@ -512,7 +521,7 @@ export default {
     .charge {
       display: flex;
       align-items: center;
-      background-color: #112b44;
+      background-color: #303133;
       max-width: 100%;
       border-radius: 30px 0 0 30px;
       padding: 0.2em 0.32em;
