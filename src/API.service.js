@@ -9,7 +9,7 @@ axios.defaults.baseURL = 'http://139.199.227.21/'
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
-      axios.get('api/app/doll/room')
+      axios.get('api/app/doll/room?Full=true')
         .then(response => {
           resolve(response.data)
           console.log('get Rooms response', response)
@@ -122,7 +122,7 @@ const apiService = {
       MAC: String(name)
     }
     return new Promise((resolve) => {
-      axios.post('http://zhua.liehuo55.com/api/auth/AuthWith?RefSource=visitor', UserInfo)
+      axios.post(axios.defaults.baseURL + 'api/auth/AuthWith?RefSource=visitor', UserInfo)
         .then(response => {
           resolve(response.data)
           console.log('login response', response)

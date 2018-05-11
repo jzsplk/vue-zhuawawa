@@ -8,13 +8,14 @@ const state = {
   isReady: false,
   isPlaying: false,
   roomTopic: 'notify/', // 房间notify topic
-  roomState: 'loading', // 房间状态
+  roomState: 'leave', // 房间状态
   playerId: '123',
   token: '456',
   playerInfo: {}, // 玩家详细信息
   roomUpdating: false, // 控制房间更新的状态
   isLogin: false, // 是否已登陆，切换登陆页面的按钮
-  detailState: 'Rank' //  房间detail的状态
+  detailState: 'Rank', //  房间detail的状态
+  isVideoReady: 'false'
 }
 
 const store = new Vuex.Store({
@@ -43,6 +44,9 @@ const store = new Vuex.Store({
     },
     changeDetailState: (state) => {
       return state.detailState
+    },
+    isVideoReady: (state) => {
+      return state.isVideoReady
     }
   },
   actions: {
@@ -89,6 +93,14 @@ const store = new Vuex.Store({
     // 更换detail状态的action
     changeDetailState (context, detail) {
       context.commit('changeDetailState', detail)
+    },
+    // 视频ready
+    startVideo (context) {
+      context.commit('startVideo')
+    },
+    // 关闭视频
+    stopVideo (context) {
+      context.commit('stopVideo')
     }
   },
   mutations: {
@@ -154,6 +166,12 @@ const store = new Vuex.Store({
     // 更改detailState的mutation
     changeDetailState (state, detail) {
       state.detailState = detail
+    },
+    startVideo (state) {
+      state.isVideoReady = true
+    },
+    stopVideo (state) {
+      state.isVideoReady = false
     }
   }
 })

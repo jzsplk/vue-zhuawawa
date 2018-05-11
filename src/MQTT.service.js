@@ -190,6 +190,8 @@ const MQTT = {
         console.log('show confirm play')
         // change roomState to Prepared
         store.dispatch('showConfirm')
+        // 10秒后自动选择取消
+        // setTimeout(MQTT.sendReadyorPassCmd(false, store.state.roomTopic), 20000)
       } else if (param === 1) {
         // start catching
         console.log('start catching')

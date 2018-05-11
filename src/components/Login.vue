@@ -2,9 +2,13 @@
   <div class="login">
     <!-- <router-link to="/login"><button>微信登陆</button></router-link> -->
     <div class="login-wrapper">
-      <img src="../../static/pic/icon.png" alt="">
+      <div class="login_logo">
+        <img src="../../static/pic/icon.png" alt="">
+      </div>
       <!-- <input type="text" v-model="TouristInput" placeholder="请输入您的名字"> -->
-      <button @click="login(UserUUID)">游客登陆</button>
+      <!-- <button @click="login(UserUUID)">游客登陆</button> -->
+      <el-button type="primary" round @click="login(UserUUID)">游客登陆</el-button>
+      <el-button type="primary" round @click="$router.push('./login')">微信登陆</el-button>
     </div>
   </div>
 </template>
@@ -68,16 +72,23 @@ export default {
       padding-top: 10%;
       width: 100%;
       margin: 0 auto;
+      .login_logo {
+        width: 300px;
+        max-width: 80%;
+        margin: 0 auto;
+        margin-top: 3rem;
+      }
       button {
-        font-size: 1.5rem;
-        border-radius: 3px;
-        background-color: #4B2A0C;
         display: block;
+        // font-size: 1.5rem;
+        // border-radius: 3px;
+        // background-color: #4B2A0C;
+        // display: block;
         margin: 20px auto;
-        width: 50%;
-        color: #FFF;
-        padding: 20px;
-        box-sizing: border-box;
+        // width: 50%;
+        // color: #FFF;
+        // padding: 20px;
+        // box-sizing: border-box;
       }
       input {
         font-size: 1.5rem;

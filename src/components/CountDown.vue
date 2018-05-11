@@ -1,27 +1,32 @@
 <template>
-  <span>倒计时： {{rTime}}</span>
+  <div>
+    <span>倒计时： {{cTime}}</span>
+  </div>
 </template>
 <script>
 export default {
   data () {
     return {
-      rTime: 6
+      cTime: this.rTime
     }
   },
-  props: ['cTime'],
+  props: ['rTime'],
   methods: {
     startCount () {
       let that = this
-      let rTime = that.rTime
+      let cTime = that.cTime
       // 倒计时
       let interval = window.setInterval(() => {
-        if (--that.rTime <= 0) {
+        if (--that.cTime <= 0) {
           // 倒计时接触后触发事件
-          that.rTime = rTime
+          that.cTime = cTime
           window.clearInterval(interval)
         }
       }, 1000)
     }
+  },
+  mounted () {
+    this.startCount()
   }
 }
 </script>

@@ -50,7 +50,7 @@ Vue.use(ElementUI)
 // 微信登陆
 Vue.use(WechatAuth, {
   router,
-  appid: 'wxb4fd13a5f6f5a7c2',
+  appid: 'wx229fb7a27a20b375',
   responseType: 'code',
   scope: 'snsapi_login',
   getCodeCallback (code, next) {

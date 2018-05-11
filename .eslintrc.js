@@ -19,7 +19,8 @@ module.exports = {
   globals: {
     'JSMpeg': true,
     'Paho': true,
-    'Fingerprint2': true
+    'Fingerprint2': true,
+    'WSAvcPlayer': true
   },
   // required to lint *.vue files
   plugins: [

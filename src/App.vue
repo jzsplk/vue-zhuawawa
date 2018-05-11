@@ -69,7 +69,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: black;
+  // background-color: black;
   // 解决左右轻微拖动问题
   overflow-x:hidden;
   button {

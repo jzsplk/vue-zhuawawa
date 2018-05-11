@@ -6,13 +6,12 @@
         <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
       </router-link>
       <p class="room-title">{{roomData.Name}}</p>
-      <roomplay_countdown :cTime="6"></roomplay_countdown>
     </div>
     <!-- 娃娃机画面 -->
     <div class="video-canvas">
       <div class="container">
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
-        <canvas :id="videocanvas"></canvas>
+        <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
         <!-- 围观头像 -->
         <div class="overlay">
           <div class="crowd-info">
@@ -47,7 +46,7 @@
         </transition>
         <!-- 切换摄像头按钮 -->
         <div class="overlay-camera">
-          <button class="camera_toggle"></button>
+          <button class="camera_toggle" @click="toggleCamera"></button>
         </div>
       </div>
     </div>
@@ -71,9 +70,10 @@
           <button class="queueing-button"><i class="el-icon-loading"></i>正在排队</button>
         </div>
     <!--     <transition name="el-fade-in"> -->
-        <div v-if="roomState == 'Prepared'" class="confirm">
+        <div v-show="roomState == 'Prepared'" class="confirm">
           <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
           <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+          <roomplay-countdown :rTime="10"></roomplay-countdown>
         </div>
     <!--     </transition> -->
         <div v-show="roomState == 'InsufficientBalance'">
@@ -211,7 +211,7 @@ import { mapGetters, mapActions } from 'vuex'
 import CountDown from './CountDown'
 export default {
   components: {
-    'roomplay_countdown': CountDown
+    'roomplay-countdown': CountDown
   },
   data () {
     return {
@@ -219,7 +219,8 @@ export default {
       roomData: [],
       roomRank: [],
       balance: 0, // 存储房间排名信息的data
-      activeName: 'first'
+      activeName: 'first',
+      isMainCamera: true
     }
   },
   props: ['room'],
@@ -266,6 +267,9 @@ export default {
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // 获取房间排名数据
         this.getRoomRank(this.$route.query.id)
+        // 获取视频地址，播放视频
+        console.log('XroomData', this.roomData)
+        // playVideo.wsPlay(this.roomData.WStreams[0])
       })
     },
     disconnect () {
@@ -302,6 +306,8 @@ export default {
         this._sendControlEventHandler(type, 200, topic),
         100
       )
+      // 防止命令没有消除一直发送
+      setTimeout(clearInterval(window.tap), 5000)
     },
     // 给tap事件传参的控制函数
     tapControlWithParam (type, param, topic) {
@@ -346,6 +352,7 @@ export default {
         data => {
           console.log('balance', data.data)
           this.balance = data.data
+          // playVideo.wsPlay('video.liehuo55.com:29001')
         })
     },
     enterRoom (id) {
@@ -354,9 +361,13 @@ export default {
       })
     },
     leaveRoom (id) {
+      console.log('关闭视频')
+      window.wsavc.stopStream()
+      playVideo.wsDisconnect()
       // 先改变房间状态为leave，再断开MQTT
       this.$store.dispatch('leaveRoom')
       MQTT.destoryMQTT()
+      clearInterval(window.tap)
       apiService.leaveRoom(id).then(data => {
         console.log('leave room', data)
       })
@@ -393,6 +404,18 @@ export default {
       }
       return date.toLocaleDateString('zh-cn', options)
       // return date
+    },
+    // 切换摄像头
+    toggleCamera () {
+      if (this.isMainCamera) {
+        console.log('change main to true', this.mainWsStream)
+        this.isMainCamera = false
+        playVideo.wsRePlay(this.mainWsStream)
+      } else {
+        console.log('change main to false', this.mainWsStream)
+        this.isMainCamera = true
+        playVideo.wsRePlay(this.mainWsStream)
+      }
     }
   },
   created () {
@@ -400,14 +423,35 @@ export default {
     // this.closeZoom()
   },
   mounted () {
-    playVideo.play()
     this.initMqttClient()
     this.enterRoom(this.$route.query.id)
     this.getRoomInfo(this.$route.query.id)
     console.log('DeviceId', this.roomData)
+    // playVideo.wsPlay('video.liehuo55.com:29001')
   },
   computed: {
-    ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState'])
+    ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState']),
+    canvasReady: {
+      get: function () {
+        return document.getElementById('video-canvas') !== null
+      },
+      set: function (newValue) {
+        console.log('视频状态改变')
+      }
+    },
+    mainWsStream: {
+      // getter
+      get: function () {
+        if (this.isMainCamera) {
+          return this.roomData.WStreams[0]
+        } else {
+          return this.roomData.WStreams[1]
+        }
+      },
+      // setter
+      set: function (newValue) {
+      }
+    }
   },
   watch: {
     '$store.state.roomUpdating': {
@@ -416,6 +460,26 @@ export default {
         this.getRoomRank(this.$route.query.id) // 执行更新rank的数据
       },
       deep: true // 开启深度监听
+    },
+    // 监听canvas是否建立，开始播放视频
+    'canvasReady': {
+      handler: function (newer, older) {
+        console.log('视频 ready')
+        // playVideo.wsPlay('video.liehuo55.com:29001')
+      }
+    }
+  },
+  directives: {
+    insertVideo: {
+      // 只在bind执行一次播放视频
+      bind: function (canvasElement, binding) {
+        let ctx = canvasElement
+        playVideo.wsPlay(ctx, binding.value)
+      },
+      unbind: function () {
+        // unbind时断开视频连接
+        playVideo.wsDisconnect()
+      }
     }
   }
 }
@@ -427,8 +491,8 @@ export default {
   .el-tabs {
     background-color: #FFFFFF;
     width: 350px;
-    max-width: 100%;
-    height: 500px;
+    max-width: 90%;
+    height: 650px;
     border-radius: 10px;
     margin: 10px auto;
     .el-tabs__header {
@@ -460,7 +524,7 @@ export default {
   .roomplay_header {
     margin: 0 auto;
     width: 350px;
-    max-width: 100%;
+    max-width: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -483,7 +547,7 @@ export default {
   /* 视频画面*/
   .video-canvas {
     width: 360px;
-    max-width: 100%;
+    max-width: 90%;
     margin: 0 auto;
     canvas {
       display: block;
@@ -495,7 +559,7 @@ export default {
       img {
         display: block;
         width: 360px;
-        max-width: 100%;
+        max-width: 90%;
         position: relative;
       }
       /* 叠加在视频上的叠加层*/
@@ -508,7 +572,7 @@ export default {
           display: flex;
           background-color: #303133;
           opacity: 0.8;
-          max-width: 100%;
+          max-width: 90%;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
           padding-right: 0.2em;
@@ -570,7 +634,7 @@ export default {
   /* 控制部分 */
   .control {
     width: 350px;
-    max-width: 100%;
+    max-width: 90%;
     height: 100px;
     margin: 0 auto;
     /* 排队wrapper */
