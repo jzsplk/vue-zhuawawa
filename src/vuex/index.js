@@ -15,7 +15,8 @@ const state = {
   roomUpdating: false, // 控制房间更新的状态
   isLogin: false, // 是否已登陆，切换登陆页面的按钮
   detailState: 'Rank', //  房间detail的状态
-  isVideoReady: 'false'
+  isVideoReady: 'false',
+  isCountDown: false
 }
 
 const store = new Vuex.Store({
@@ -101,6 +102,9 @@ const store = new Vuex.Store({
     // 关闭视频
     stopVideo (context) {
       context.commit('stopVideo')
+    },
+    resetCountDown (context) {
+      context.commit('resetCountDown')
     }
   },
   mutations: {
@@ -118,8 +122,10 @@ const store = new Vuex.Store({
         console.log('queue error', e)
       })
     },
-    cancelToPlay (state) {
+    cancelToPlay (state) { // 项目中目前暂时没有使用
       state.roomState = 'loading'
+      // 复原倒计时状态
+      state.isCountDown = false
     },
     leaveRoom (state) {
       state.roomState = 'leave'
@@ -127,9 +133,8 @@ const store = new Vuex.Store({
     },
     startPlaying (state) {
       state.isPlaying = true
-      setTimeout(function () {
-        state.roomState = 'MqttConnected'
-      }, 30000)
+      // 复原倒计时
+      state.isCountDown = false
     },
     initRoomTopic (state, id) {
       state.roomTopic = id
@@ -140,12 +145,16 @@ const store = new Vuex.Store({
     },
     showConfirm (state) {
       state.roomState = 'Prepared'
+      // 倒计时加在这里
+      // 开始倒计时，倒计时事件到，触发取消，还原倒计时
+      state.isCountDown = true
     },
     showPanel (state) {
       state.roomState = 'Catching'
     },
-    stopCatching (state) {
+    stopCatching (state) { // 当玩家取消命令发出后，收到done命令且id是自己，触发
       state.roomState = 'MqttConnected'
+      state.isCountDown = false
     },
     InsufficientBalance (state) {
       state.roomState = 'InsufficientBalance'
@@ -172,6 +181,10 @@ const store = new Vuex.Store({
     },
     stopVideo (state) {
       state.isVideoReady = false
+    },
+    resetCountDown (state) {
+      state.roomState = 'MqttConnected'
+      state.isCountDown = false
     }
   }
 })

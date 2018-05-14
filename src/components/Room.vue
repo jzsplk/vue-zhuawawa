@@ -59,7 +59,7 @@ a {
     }
     .statusAvailable {
       position: absolute;
-      background-color: #00FC00;
+      background-color: #67C23A;
       opacity: 0.9;
       color: white;
       right: 2px;
@@ -71,8 +71,8 @@ a {
     }
     .statusPlaying {
       position: absolute;
-      background-color: #FF3036;
-      opacity: 0.9;
+      background-color: #00F71A;
+      opacity: 0.6;
       color: white;
       right: 2px;
       top: -10px;

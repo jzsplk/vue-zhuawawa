@@ -48,18 +48,34 @@ Vue.use(touch)
 // 使用ElementUI
 Vue.use(ElementUI)
 // 微信登陆
+// let router2 = new Router({
+//   routers: [
+//     {
+//       path: '/',
+//       name: 'l',
+//       meta: {
+//         auth: true
+//       }
+//     }
+//   ]
+// })
+// console.log('router1', router)
+// console.log('router2', router2)
+axios.defaults.baseURL = 'http://139.199.227.21/'
+
+// console.log('新参数', JSON.stringify(window.params))
 Vue.use(WechatAuth, {
   router,
   appid: 'wx229fb7a27a20b375',
   responseType: 'code',
-  scope: 'snsapi_login',
+  scope: 'snsapi_userinfo',
   getCodeCallback (code, next) {
-    axios.get('https://open.weixin.qq.com/connect/oauth2/authorize', {
-      params: {
-        code,
-        state: ''
-      }
-    }).then(response => {
+    window.params = {
+      'AppId': 'wx229fb7a27a20b375',
+      'Code': code
+    }
+    console.log('新参数', JSON.parse(JSON.stringify(window.params)))
+    axios.post('api/auth/AuthWith?RefSource=wechat', JSON.parse(JSON.stringify(window.params))).then(response => {
       let data = response.data
       console.log(data)
       let accessToken = data.data['access_token']

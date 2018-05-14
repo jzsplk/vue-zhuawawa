@@ -4582,11 +4582,11 @@ var WSAvcPlayer = new Class({
     };
 
 
-    var running = true;
+    _this.running = true;
     var shiftFrameCnt=0;
 
     var shiftFrame = function() {
-      if(!running)
+      if(!_this.running)
         return;
 
 
@@ -4624,7 +4624,6 @@ var WSAvcPlayer = new Class({
                     _this.running = false;
       console.log("WSAvcPlayer: Connection closed with " + + url);
     };
-
   },
 
   initCanvas : function(width, height) {

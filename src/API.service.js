@@ -129,6 +129,34 @@ const apiService = {
         })
     })
   },
+  WechatLogin () {
+    window.params1 = {
+      'AppId': 'wx229fb7a27a20b375',
+      'Code': 123,
+      'state': '',
+      'os': 'H5'
+    }
+    JSON.stringify(window.params1)
+    console.log('新参数2', JSON.stringify(window.params1))
+    axios.post(axios.defaults.baseURL + 'api/auth/AuthWith?RefSource=wechat', {
+      'AppId': 'wx229fb7a27a20b375',
+      'Code': 'code',
+      'state': '',
+      'os': 'H5'
+    }
+    ).then(response => {
+      let data = response.data
+      console.log(data)
+      let accessToken = data.data['access_token']
+      if (accessToken) {
+        console.log('token success: ', accessToken)
+      } else {
+        console.log('token error: ')
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  },
   getUserBalance () {
     return new Promise((resolve) => {
       axios.get('api/balance', {

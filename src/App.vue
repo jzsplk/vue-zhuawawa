@@ -45,7 +45,7 @@ export default {
       if (!this.getCookie('zhuawawa')) {
         // 如果没有登陆状态则跳转到登陆页
         console.log('no cookie found')
-        this.$router.push('/Tulogin')
+        this.$router.push('./Tulogin')
       } else {
         // this.$router.push('/')
         // 如果有session把用户数据提取到state中

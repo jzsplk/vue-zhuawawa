@@ -8,7 +8,7 @@
       <!-- <input type="text" v-model="TouristInput" placeholder="请输入您的名字"> -->
       <!-- <button @click="login(UserUUID)">游客登陆</button> -->
       <el-button type="primary" round @click="login(UserUUID)">游客登陆</el-button>
-      <el-button type="primary" round @click="$router.push('./login')">微信登陆</el-button>
+      <!-- <el-button type="primary" round @click="$router.push('./login')">微信登陆</el-button> -->
     </div>
   </div>
 </template>

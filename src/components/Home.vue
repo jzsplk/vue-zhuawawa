@@ -37,7 +37,6 @@ export default {
     }
   },
   created () {
-    this.checkLogin()
   },
   watch: {
     // 监听路由变化，检查登陆状态

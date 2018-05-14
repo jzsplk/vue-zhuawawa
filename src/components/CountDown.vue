@@ -1,32 +1,47 @@
 <template>
   <div>
-    <span>倒计时： {{cTime}}</span>
+    <span>{{time}}</span>
   </div>
 </template>
 <script>
 export default {
   data () {
     return {
-      cTime: this.rTime
+      time: this.rTime
     }
   },
   props: ['rTime'],
+  watch: {
+    getCountDownStart (value, oldvalue) {
+      if (value === true) {
+        this.countDown()
+      }
+    }
+  },
+  computed: {
+    getCountDownStart () {
+      return this.$store.state.isCountDown
+    }
+  },
   methods: {
-    startCount () {
-      let that = this
-      let cTime = that.cTime
+    countDown () {
+      this.time = this.rTime
       // 倒计时
-      let interval = window.setInterval(() => {
-        if (--that.cTime <= 0) {
-          // 倒计时接触后触发事件
-          that.cTime = cTime
-          window.clearInterval(interval)
+      let time = setInterval(() => {
+        this.time--
+        // 倒计时事件到，或者用户点击开始玩或者取消
+        if (this.time === 0) {
+          this.$store.dispatch('cancelToPlay')
+          this.time = this.rTime
+          clearInterval(time)
+        }
+        if (this.$store.state.roomState !== 'Prepared') { // 当用户不在准备状态后，清除setInterval还原状态
+          clearInterval(time)
+          console.log('countdown this: ', this)
+          this.$store.dispatch('resetCountDown')
         }
       }, 1000)
     }
-  },
-  mounted () {
-    this.startCount()
   }
 }
 </script>

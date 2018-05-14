@@ -20,14 +20,14 @@
       text-color="#000000"
       active-text-color="#FFD04B">
         <el-menu-item index="./">
-          <span><img src="/static/pic/home_select.png" alt="">首页</span>
+          <span><img src="../../static/pic/home_select.png" alt="">首页</span>
         </el-menu-item>
         <el-menu-item index="./mydoll">
             <span>
-            <img src="/static/pic/prize_normal.png" alt="">我的娃娃</span>
+            <img src="../../static/pic/prize_normal.png" alt="">我的娃娃</span>
         </el-menu-item>
         <el-menu-item index="./myinfo">
-          <img src="/static/pic/mine_normal.png" alt="">
+          <img src="../../static/pic/mine_normal.png" alt="">
           <span>我的背包</span>
         </el-menu-item>
     </el-menu>

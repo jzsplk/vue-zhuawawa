@@ -2,7 +2,7 @@
   <div class="player-view">
     <!-- 房间header 返回按钮、房间标题 -->
     <div class="roomplay_header">
-      <router-link :to="{path: '/'}">
+      <router-link :to="{path: './'}">
         <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
       </router-link>
       <p class="room-title">{{roomData.Name}}</p>
@@ -53,7 +53,7 @@
 
     <!-- 控制面板 -->
     <div class="control">
-        <div v-if="roomState == 'MqttConnected'" class="connected_wrapper">
+        <div v-show="roomState == 'MqttConnected'" class="connected_wrapper">
           <div class="balance_info">
             <p>本次:<span>{{roomData.Coin}}CP</span></p>
             <p>余额:<span>{{balance}}CP</span></p>
@@ -66,14 +66,14 @@
             <button>充值</button>
           </div>
         </div>
-        <div v-if="roomState == 'Queueing'">
+        <div v-show="roomState == 'Queueing'">
           <button class="queueing-button"><i class="el-icon-loading"></i>正在排队</button>
         </div>
     <!--     <transition name="el-fade-in"> -->
         <div v-show="roomState == 'Prepared'" class="confirm">
           <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
           <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
-          <roomplay-countdown :rTime="10"></roomplay-countdown>
+          <roomplay-countdown class="prepare-countdown" :rTime="7"></roomplay-countdown>
         </div>
     <!--     </transition> -->
         <div v-show="roomState == 'InsufficientBalance'">
@@ -220,7 +220,8 @@ export default {
       roomRank: [],
       balance: 0, // 存储房间排名信息的data
       activeName: 'first',
-      isMainCamera: true
+      isMainCamera: true,
+      start: false
     }
   },
   props: ['room'],
@@ -473,8 +474,11 @@ export default {
     insertVideo: {
       // 只在bind执行一次播放视频
       bind: function (canvasElement, binding) {
-        let ctx = canvasElement
-        playVideo.wsPlay(ctx, binding.value)
+        let canvas = canvasElement
+        window.canvas = canvas
+        playVideo.wsPlay(canvas, binding.value)
+        // let ctx = canvas.getContext('2d')
+        // ctx.clearReact(20, 20, 100, 501)
       },
       unbind: function () {
         // unbind时断开视频连接
@@ -720,6 +724,14 @@ export default {
     .confirm-button:hover {
       background-color: #fff;
       color: #4d2d05;
+    }
+    /* 准备状态倒计时*/
+    .prepare-countdown {
+      font-size: 9rem;
+      position: absolute;
+      top: 50%;
+      left: 40%;
+      color: #409EFF;
     }
     /* 移动设备触摸板*/
     .operation-panel {
