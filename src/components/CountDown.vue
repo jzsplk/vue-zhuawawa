@@ -31,7 +31,7 @@ export default {
         this.time--
         // 倒计时事件到，或者用户点击开始玩或者取消
         if (this.time === 0) {
-          this.$store.dispatch('cancelToPlay')
+          this.$store.dispatch('stopCatching')
           this.time = this.rTime
           clearInterval(time)
         }

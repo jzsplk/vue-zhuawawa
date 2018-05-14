@@ -183,7 +183,6 @@ const store = new Vuex.Store({
       state.isVideoReady = false
     },
     resetCountDown (state) {
-      state.roomState = 'MqttConnected'
       state.isCountDown = false
     }
   }
