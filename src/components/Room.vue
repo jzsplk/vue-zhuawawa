@@ -5,7 +5,7 @@
       <div class="img-container">
         <img :src="baseURL + room.Doll.Item.AvatarUrl" :alt="room.Name">
         <p v-show="room.Status == 0" class="statusAvailable">空闲中</p>
-        <p v-show="room.Status == 1" class="statusPlaying">游戏中</p>
+        <p v-show="room.Status == 2" class="statusPlaying">维护中</p>
       </div>
     </div>
     <div class="info">
@@ -22,7 +22,7 @@
 export default {
   data () {
     return {
-      baseURL: 'https://www.iqi1.com/'
+      baseURL: 'https://www.liehuo55.com/'
     }
   },
   props: ['room']
@@ -67,7 +67,6 @@ a {
       padding: 2px;
       border-radius: 5px;
       font-size: 13px;
-      font-weight: bold;
     }
     .statusPlaying {
       position: absolute;

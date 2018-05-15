@@ -7,8 +7,12 @@
       <div class="name">{{$store.state.playerInfo.name}}
       </div>
       <div class="balance">
-        <img src="../../static/pic/coin.png" alt=""> {{userInfo.balance}} CP
+        <img src="../../static/pic/coin.png" alt=""> {{userInfo.balance * 10}} 币
       </div>
+    </div>
+    <div class="list">
+      <el-button type="warning" @click="logout">退出登陆</el-button>
+      <!-- <button @click="logout">退出登陆</button> -->
     </div>
     <div class="main">
     </div>
@@ -42,6 +46,12 @@ export default {
         console.log('user balance info', data.data)
         this.userInfo.balance = data.data
       })
+    },
+    logout () {
+      this.delCookie('zhuawawa')
+      this.delCookie('wxzhuawawa')
+      // 跳转到主页
+      setTimeout(this.$router.push('./'), 2000)
     }
   },
   created () {

@@ -2,8 +2,8 @@ import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
 // 新API地址
-// axios.defaults.baseURL = 'http://zhua.liehuo55.com/'
-axios.defaults.baseURL = 'http://139.199.227.21/'
+axios.defaults.baseURL = 'https://www.liehuo55.com/'
+// axios.defaults.baseURL = 'http://139.199.227.21/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
 const apiService = {
@@ -28,6 +28,8 @@ const apiService = {
         .then(response => {
           resolve(response.data)
           console.log(' getRoomInfo response.data', response.data)
+          // 执行action，把目前所有玩家的数据存到store中
+          store.dispatch('getCrowds', response.data)
         })
     })
   },

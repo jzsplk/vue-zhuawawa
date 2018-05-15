@@ -12,6 +12,14 @@
       <div class="container">
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
         <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
+<!--         <div class="overlay-header">
+          <div class="roomplay_header">
+            <router-link :to="{path: './'}">
+              <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
+            </router-link>
+            <p class="room-title">{{roomData.Name}}</p>
+          </div>
+        </div> -->
         <!-- 围观头像 -->
         <div class="overlay">
           <div class="crowd-info">
@@ -33,7 +41,7 @@
         </div>
         <!-- 屏幕左上，玩家状态 -->
         <transition name="el-fade-in-linear">
-          <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
+<!--           <div v-if="$store.state.roomState === 'Queueing'" class="overlay-playing">
             <div class="playing_wrapper">
               <span>玩家 排队中</span>
             </div>
@@ -42,6 +50,11 @@
             <div class="playing_wrapper">
               <span>玩家 热玩中</span>
             </div>
+          </div> -->
+          <div v-show="$store.state.playingUrl !== ''" class="overlay-playing">
+            <img :src="$store.state.playingUrl" alt="">
+            <p>{{$store.state.playingName}}</p>
+            <p class="overlay-playing-title">热玩中</p>
           </div>
         </transition>
         <!-- 切换摄像头按钮 -->
@@ -55,8 +68,8 @@
     <div class="control">
         <div v-show="roomState == 'MqttConnected'" class="connected_wrapper">
           <div class="balance_info">
-            <p>本次:<span>{{roomData.Coin}}CP</span></p>
-            <p>余额:<span>{{balance}}CP</span></p>
+            <p>本次:<span>{{roomData.Coin}}币</span></p>
+            <p>余额:<span>{{balance * 10}}币</span></p>
           </div>
           <div class="queue">
             <button @click="queue" class="queue-button">预约抓娃娃</button>
@@ -106,7 +119,7 @@
     <!-- 测试Tab -->
     <el-tabs v-model="activeName" >
       <el-tab-pane label="娃娃详情" name="first">
-        <img v-show="false" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+        <img v-show="false" src="https://www.liehuo55.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
         <div v-show="roomData.Doll" class="pic">
           <ul class="pic_ul">
             <li v-for="pic in roomData.Doll.Item.Pictures" v-bind:key="pic.Path" class="pic_li">
@@ -167,7 +180,7 @@
           <button @click="changeDetailState('Log')">抓中记录</button>
         </div>
         <transition name="el-zoom-in-top">
-          <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.iqi1.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
+          <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.liehuo55.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
         </transition>
         <transition name="el-zoom-in-top">
           <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
@@ -307,7 +320,7 @@ export default {
         this._sendControlEventHandler(type, 200, topic),
         100
       )
-      // 防止命令没有消除一直发送
+      // // 防止命令没有消除一直发送
       setTimeout(clearInterval(window.tap), 5000)
     },
     // 给tap事件传参的控制函数
@@ -476,7 +489,10 @@ export default {
       bind: function (canvasElement, binding) {
         let canvas = canvasElement
         window.canvas = canvas
-        playVideo.wsPlay(canvas, binding.value)
+        // if (window.wsavc !== null) {
+        //   playVideo.wsRePlay(binding.value)
+        // }
+        playVideo.wsPlay(window.canvas, binding.value)
         // let ctx = canvas.getContext('2d')
         // ctx.clearReact(20, 20, 100, 501)
       },
@@ -528,16 +544,17 @@ export default {
   .roomplay_header {
     margin: 0 auto;
     width: 350px;
-    max-width: 90%;
+    max-width: 95%;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 40px;
     .back_to_home {
       border-style: none;
-      width: 48px;
-      height: 48px;
+      width: 30px;
+      height: 30px;
       background: url(../../static/pic/goback.png) no-repeat;
-      background-size: cover;
+      background-size: 30px 30px;
       flex-grow: 0;
     }
     /* 房间标题*/
@@ -551,7 +568,7 @@ export default {
   /* 视频画面*/
   .video-canvas {
     width: 360px;
-    max-width: 90%;
+    max-width: 95%;
     margin: 0 auto;
     canvas {
       display: block;
@@ -563,8 +580,16 @@ export default {
       img {
         display: block;
         width: 360px;
-        max-width: 90%;
+        max-width: 95%;
         position: relative;
+        /*  其他玩家的头像显示 */
+        width: 48px;
+        /*border-radius: 40px;*/
+      }
+      /* 叠加到画面上的head*/
+      .overlay-header {
+        position: absolute;
+        top: 0;
       }
       /* 叠加在视频上的叠加层*/
       .overlay {
@@ -576,19 +601,21 @@ export default {
           display: flex;
           background-color: #303133;
           opacity: 0.8;
-          max-width: 90%;
+          max-width: 95%;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
-          padding-right: 0.2em;
+          padding-right: 0.3em;
           .crowd-count {
             color: #fff;
             height: 50%;
             font-size: 0.5rem;
+            margin-right: 0.3rem;
           }
           .queue-count {
             color: #e67200;
             height: 50%;
             font-size: 0.5rem;
+            margin-right: 0.3rem;
           }
           .crowd {
             overflow: hidden;
@@ -601,6 +628,7 @@ export default {
               -webkit-box-shadow: 0 0 3px #ccc;
               box-shadow: 0 0 3px #ccc;
               border: 2px solid white;
+              margin-top: 0.2rem;
             }
           }
         }
@@ -610,8 +638,29 @@ export default {
         top: 0;
         left: 0;
         color: #fff;
+        background-color: #303133;
+        opacity: 0.7;
+        width: 120px;
+        max-width: 30%;
         .playing_wrapper {
           background-color: #121f32;
+        }
+        img {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          border-radius: 40px;
+          overflow: hidden;
+          -webkit-box-shadow: 0 0 3px #ccc;
+          box-shadow: 0 0 3px #ccc;
+          border: 2px solid white;
+          margin-top: 0.2rem;
+        }
+        p {
+          font-size: 14px;
+        }
+        .overlay-playing-title {
+          color: #e67200;
         }
       }
       .overlay-camera {
@@ -638,9 +687,10 @@ export default {
   /* 控制部分 */
   .control {
     width: 350px;
-    max-width: 90%;
+    max-width: 95%;
     height: 100px;
     margin: 0 auto;
+    margin-top: -20px;
     /* 排队wrapper */
     .connected_wrapper {
       display: flex;
@@ -706,7 +756,7 @@ export default {
       font-size: 1rem;
       margin-top: 20px;
       border-radius: 1.5rem;
-      background-color: #fff;
+      background-color: #E2BE46;
       color: #4d2d05;
     }
     /* 确认开始游戏按钮*/
@@ -718,8 +768,8 @@ export default {
       font-size: 1rem;
       margin-top: 20px;
       border-radius: 1.5rem;
-      background-color: #fff;
-      color: #4d2d05;
+      background-color: #67C23A;
+      color: #FFFFFF;
     }
     .confirm-button:hover {
       background-color: #fff;
@@ -729,7 +779,7 @@ export default {
     .prepare-countdown {
       font-size: 9rem;
       position: absolute;
-      top: 50%;
+      top: 30%;
       left: 40%;
       color: #409EFF;
     }
@@ -742,9 +792,10 @@ export default {
       width: 360px;
       max-width: 100%;
       height: 100px;
-      bottom: 10px;
+      bottom: 40px;
       /*      left: 55%;*/
       margin: 0 auto;
+      margin-top: -40px;
       user-select: none;
       background-color: none;
       .direction-wrapper{
@@ -886,9 +937,9 @@ export default {
     box-sizing: border-box;
     border: 0 0 10px 10px;
     margin-bottom: 10px;
+    font-size: 12px;
     .rank {
       display: flex;
-      font-weight: bold;
       background-color: white;
       border-bottom: solid 1px #e6e4e5;
       div {
@@ -927,9 +978,9 @@ export default {
     position: relative;
     overflow: scroll;
     box-sizing: border-box;
+    font-size: 12px;
     .logs {
       display: flex;
-      font-weight: bold;
       background-color: white;
       border-bottom: solid 1px #e6e4e5;
       div {

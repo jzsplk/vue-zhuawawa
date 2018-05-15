@@ -16,7 +16,10 @@ const state = {
   isLogin: false, // 是否已登陆，切换登陆页面的按钮
   detailState: 'Rank', //  房间detail的状态
   isVideoReady: 'false',
-  isCountDown: false
+  isCountDown: false,
+  playingUrl: '',
+  roomPlayers: '',
+  playingName: ''
 }
 
 const store = new Vuex.Store({
@@ -105,6 +108,15 @@ const store = new Vuex.Store({
     },
     resetCountDown (context) {
       context.commit('resetCountDown')
+    },
+    getPlayingUrl (context, id) {
+      context.commit('getPlayingUrl', id)
+    },
+    getCrowds (context, data) {
+      context.commit('getCrowds', data)
+    },
+    resetPlayingUrl (context) {
+      context.commit('resetPlayingUrl')
     }
   },
   mutations: {
@@ -184,6 +196,29 @@ const store = new Vuex.Store({
     },
     resetCountDown (state) {
       state.isCountDown = false
+    },
+    getPlayingUrl (state, id) {
+      console.log('更新目前玩家头像')
+      console.log('当前id', id)
+      console.log('当前Crowd', state.roomPlayers.Crowd)
+      // for (var i = 0; i < state.roomPlayers.Crowd.length; i++) {
+      //   if (state.roomPlayers.Crowd[i].Id === id) {
+      //     console.log('目前玩家头像', state.roomPlayers.Crowd[i].AvatarUrl)
+      //     state.playingUrl = state.roomPlayers.Crowd[i].AvatarUrl
+      //   }
+      // }
+      state.roomPlayers.Crowd.forEach(function (element) {
+        if (element.Id === id) {
+          state.playingUrl = element.AvatarUrl
+          state.playingName = element.NickName
+        }
+      })
+    },
+    getCrowds (state, data) {
+      state.roomPlayers = data
+    },
+    resetPlayingUrl (state) {
+      state.playingUrl = ''
     }
   }
 })

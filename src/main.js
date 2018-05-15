@@ -5,6 +5,7 @@ import App from './App'
 import store from './vuex/index.js'
 import router from './router'
 import WechatAuth from 'vue-wechat-auth'
+// import WechatAuth from './node_modules/vue-wechat-auth/src/wechat-auth.js'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
@@ -18,7 +19,7 @@ Vue.prototype.setCookie = (cName, value, expiredays) => {
   var exdate = new Date()
   exdate.setDate(exdate.getDate() + expiredays)
   document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
-  // console.log('set cookie: ', document.cookie)
+  console.log('set cookie: ', document.cookie)
 }
 // 获取cookie、
 function getCookie (name) {
@@ -61,7 +62,7 @@ Vue.use(ElementUI)
 // })
 // console.log('router1', router)
 // console.log('router2', router2)
-axios.defaults.baseURL = 'http://139.199.227.21/'
+axios.defaults.baseURL = 'https://www.liehuo55.com/'
 
 // console.log('新参数', JSON.stringify(window.params))
 Vue.use(WechatAuth, {
@@ -78,14 +79,32 @@ Vue.use(WechatAuth, {
     axios.post('api/auth/AuthWith?RefSource=wechat', JSON.parse(JSON.stringify(window.params))).then(response => {
       let data = response.data
       console.log(data)
-      let accessToken = data.data['access_token']
-      if (accessToken) {
-        console.log('token success: ', accessToken)
+      // 获取到微信登陆后的处理
+      // 存储得到的数据
+      let userData = {
+        playerId: data.Id,
+        token: data.Token,
+        AvatarUrl: data.AvatarUrl,
+        name: data.FirstName
+      }
+      // 触发action，把id， token更新到state
+      store.dispatch('updataPlayerInfo', userData)
+      let jsonUserData = JSON.stringify(userData)
+      let expireDays = 1000 * 60 * 60 * 24 * 15
+      console.log('$vm', $vm)
+      $vm.setCookie('wxzhuawawa', jsonUserData, expireDays)
+      console.log('$vm router', router)
+      // router.push('./')
+      // 微信登陆下一步动作
+      if (data.Token) {
+        next(data.Token, { path: './' })
       } else {
-        console.log('token error: ')
+        console.log('未获取到token')
+        next('', { path: './loginex' })
       }
     }).catch((error) => {
       console.log(error)
+      next('', { path: './login' })
     })
   }
 })
@@ -105,3 +124,5 @@ var $vm = new Vue({
 })
 
 window.$vm = $vm
+console.log('$vm', $vm.getCookie())
+console.log('$vm router', router.push)

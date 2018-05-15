@@ -2,6 +2,7 @@ import _global from './components/Global'
 // import store of vuex
 import store from './vuex/index.js'
 // import UserInfo from './Login.service.js'
+// import router from './router/index.js'
 
 const MQTT = {
   initMqttClient (To) {
@@ -174,8 +175,10 @@ const MQTT = {
     let action = object.action
     console.log('parseMQTTResults action= ' + action)
     if (action === _global.MQTT_ACTION_SUCCESS) {
+      // 增加成功抓到的弹窗
       console.log('恭喜 ' + object.Name + ' 抓到了!')
     } else if (action === _global.MQTT_ACTION_FAIL) {
+      // 增加没有抓中的弹窗
       console.log('可惜了 ' + object.Name + ' 没抓到')
     } else if (action === _global.MQTT_ACTION_PREPARE) {
       let param = object.param
@@ -183,8 +186,17 @@ const MQTT = {
       console.log('id = ', id)
       // 如果id不一样，返回
       if (object.id !== store._vm.playerId) {
-        return
+        // 如果id不一致且param为1,代表别人在抓，取别人的头像显示在屏幕左上
+        if (param === 2 || param === 1) {
+          // 发起api请求，获取围观所有人的头像，跟过id取得目前玩的人的头像
+          store.dispatch('getPlayingUrl', id)
+          return
+        } else {
+          // store.dispatch('resetPlayingUrl')
+          return
+        }
       }
+
       if (param === 2) {
         // confirm play
         console.log('show confirm play')
@@ -193,11 +205,13 @@ const MQTT = {
         store.dispatch('showConfirm')
         // 10秒后自动选择取消
         // setTimeout(MQTT.sendReadyorPassCmd(false, store.state.roomTopic), 20000)
+        store.dispatch('getPlayingUrl', id)
       } else if (param === 1) {
         // start catching
         console.log('start catching')
         // change roomState to Catching
         store.dispatch('showPanel')
+        store.dispatch('getPlayingUrl', id)
       } else if (param === 3) {
         // is waiting
         console.log('is waiting')
@@ -206,12 +220,14 @@ const MQTT = {
       // refresh room info
       console.log('refresh room info')
       // 增加刷新房间的函数，这里通过action先改变state中roomUpdating
+      store.dispatch('resetPlayingUrl')
       store.dispatch('roomUpdating')
     } else if (action === _global.MQTT_ACTION_DONE) {
       let id = object.id
       // 完成动作
       console.log('id', id)
       // 停止抓娃娃
+      store.dispatch('resetPlayingUrl')
       if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }
@@ -220,6 +236,7 @@ const MQTT = {
       let id = object.id
       console.log(id)
       // 停止抓娃娃,先判断id是否相同
+      store.dispatch('resetPlayingUrl')
       if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }

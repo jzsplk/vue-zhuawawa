@@ -27,6 +27,13 @@ export default {
       isPlaying: true
     }
   },
+  watch: {// 监控路由变化，如果返回主页，执行checklogin,可能这里导致wechat登陆post发送了两次
+    '$route' (to, from) {
+      if (to.path === '/') {
+        this.checkLogin()
+      }
+    }
+  },
   methods: {
     closeZoom () {
       document.addEventListener('touchmove', function (event) {
@@ -41,17 +48,72 @@ export default {
       MQTT.destoryMQTT()
     },
     checkLogin () {
-      // 检查是否存在session
-      if (!this.getCookie('zhuawawa')) {
-        // 如果没有登陆状态则跳转到登陆页
-        console.log('no cookie found')
-        this.$router.push('./Tulogin')
+      let browser = {
+        versions: function () {
+          let u = navigator.userAgent
+          // let app = navigator.appVersion
+          return {// 移动终端浏览器版本信息
+            trident: u.indexOf('Trident') > -1, // IE内核
+            presto: u.indexOf('Presto') > -1, // opera内核
+            webKit: u.indexOf('AppleWebKit') > -1, // 苹果、谷歌内核
+            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') === -1, //  火狐内核
+            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //  是否为移动终端
+            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, // android终端或uc浏览器
+            iPhone: u.indexOf('iPhone') > -1, //  是否为iPhone或者QQHD浏览器
+            iPad: u.indexOf('iPad') > -1, //  是否iPad
+            webApp: u.indexOf('Safari') === -1 //  是否web应该程序，没有头部与底部
+          }
+        },
+        language: (navigator.browserLanguage || navigator.language).toLowerCase()
+      }
+      // 检查是否是微信浏览器
+      if (browser.versions().mobile) {
+        let ua = navigator.userAgent.toLowerCase()
+        if (ua.match(/MicroMessenger/i)) {
+          if (ua.match(/MicroMessenger/i)[0] === 'micromessenger') {
+            console.log('微信浏览器')
+            // 如果不是微信浏览器，游客登陆，检查是否存在session
+            if (!this.getCookie('wxzhuawawa')) {
+              // 如果没有登陆状态则跳转到登陆页
+              console.log('no wx cookie found,will jump to login')
+              // 如果是微信浏览器，跳转微信登陆
+              this.$router.push('./login')
+            } else {
+              // this.$router.push('/')
+              // 如果有session把用户数据提取到state中
+              let data = unescape(this.getCookie('wxzhuawawa'))
+              console.log('getCookie parse: ', JSON.parse(data))
+              this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+            }
+          }
+        } else {
+          // 如果不是微信浏览器，游客登陆，检查是否存在session
+          if (!this.getCookie('zhuawawa')) {
+            // 如果没有登陆状态则跳转到登陆页
+            console.log('no cookie found')
+            this.$router.push('./Tulogin')
+          } else {
+            // this.$router.push('/')
+            // 如果有session把用户数据提取到state中
+            let data = unescape(this.getCookie('zhuawawa'))
+            console.log('getCookie parse: ', JSON.parse(data))
+            this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+          }
+        }
       } else {
-        // this.$router.push('/')
-        // 如果有session把用户数据提取到state中
-        let data = unescape(this.getCookie('zhuawawa'))
-        console.log('getCookie parse: ', JSON.parse(data))
-        this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+        // 检查是否存在session
+        if (!this.getCookie('zhuawawa')) {
+          // 如果没有登陆状态则跳转到登陆页
+          console.log('no cookie found')
+          this.$router.push('./Tulogin')
+        } else {
+          // this.$router.push('/')
+          // 如果有session把用户数据提取到state中
+          let data = unescape(this.getCookie('zhuawawa'))
+          console.log('getCookie parse: ', JSON.parse(data))
+          this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
+        }
       }
     }
   },
@@ -69,9 +131,17 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  // background-color: black;
-  // 解决左右轻微拖动问题
+  /* 解决左右轻微拖动问题 */
   overflow-x:hidden;
+  body {
+    /* 禁止微信内置浏览器调整字体大小 */
+    -webkit-text-size-adjust: 100% !important;
+    -moz-user-select: none; /*火狐*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none; /* 禁止用户选中文字 */
+  }
   button {
     border-width: 0;
   }
@@ -83,7 +153,11 @@ export default {
   }
   nav a, button {
     min-width: 48px;
-    outline: none; // 去掉点击时边框
+    outline: none; /* 去掉点击时边框 */
+  }
+  img {
+    /* 在iphone关闭长按图片保存图片弹窗 */
+    -webkit-touch-callout: none;
   }
 }
 .header {

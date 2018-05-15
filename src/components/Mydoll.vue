@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>Hello Vue</p>
+    <p></p>
     <app-footer></app-footer>
   </div>
 
