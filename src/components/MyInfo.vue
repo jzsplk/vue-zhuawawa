@@ -49,8 +49,13 @@ export default {
     },
     logout () {
       this.delCookie('zhuawawa')
+      // 暂时不退出微信，等修复微信二次登陆问题
       this.delCookie('wxzhuawawa')
       // 跳转到主页
+      // 清理有关微信登陆auth_code
+      window.sessionStorage.removeItem('auth_code')
+      // 清理微信登陆的token
+      window.localStorage.removeItem('access_token')
       setTimeout(this.$router.push('./'), 2000)
     }
   },
@@ -65,8 +70,10 @@ export default {
 <style scoped lang="scss" type="text/css">
   .UserInfo_wrapper {
     .user_header {
-      width: 100%;
+      width: 750px;
+      max-width: 100%;
       height: 500px;
+      margin: 0 auto;
       background: url(../../static/pic/mine_header_bg.png) no-repeat;
       background-size: 100% 30%;
       .avatar {

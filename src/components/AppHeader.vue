@@ -25,8 +25,11 @@ div {
 }
 .nav{
   font-size: 1.5rem;
-  background-color: #F3FF3D;
-  color: #000;
+  background: linear-gradient(to right, #F8E354, #DCBD3B);
+  color: linear-gradient(to right, #FEFEFE, #000000);
+  width: 750px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 .head-img {
   max-width: 100%;

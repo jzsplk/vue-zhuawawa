@@ -24,12 +24,12 @@ const playVideo = {
       console.log(window.wsavc)
       window.wsavc.connect(url)
     } else {
-      window.wsavc.stopStream()
-      window.wsavc.disconnect()
-      window.wsavc = null
+      // window.wsavc.stopStream()
+      // window.wsavc.disconnect()
+      // window.wsavc = null
       setTimeout(function () {
-        window.wsavc = new WSAvcPlayer(window.canvas, 'webgl', 1, 35)
-        window.wsavc.connect(url)
+        // window.wsavc = new WSAvcPlayer(window.canvas, 'webgl', 1, 35)
+        window.wsavc.connect(url, ctx)
       }, 500)
     }
   },

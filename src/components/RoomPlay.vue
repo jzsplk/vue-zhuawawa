@@ -11,6 +11,8 @@
     <div class="video-canvas">
       <div class="container">
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
+        <el-table  v-loading.fullscreen.lock="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
+        </el-table>
         <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
 <!--         <div class="overlay-header">
           <div class="roomplay_header">
@@ -84,8 +86,17 @@
         </div>
     <!--     <transition name="el-fade-in"> -->
         <div v-show="roomState == 'Prepared'" class="confirm">
-          <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
-          <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button>
+          <!-- 尝试使用el-button class="confirm-button" -->
+          <el-button-group v-show="this.$store.state.isFailed === false">
+            <el-button type="primary" @click="sendReady(true, roomTopic)">赶紧开始</el-button>
+            <el-button type="warning" @click="sendReady(false, roomTopic)">我放弃</el-button>
+          </el-button-group>
+          <el-button-group v-show="this.$store.state.isFailed === true">
+            <el-button type="primary" @click="sendReady(true, roomTopic)">再来一局</el-button>
+            <el-button type="warning" @click="sendReady(false, roomTopic)">无力再战</el-button>
+          </el-button-group>
+<!--           <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
+          <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button> -->
           <roomplay-countdown class="prepare-countdown" :rTime="7"></roomplay-countdown>
         </div>
     <!--     </transition> -->
@@ -97,15 +108,18 @@
               <div class="operation-arrow">
               </div>
               <div class="overlay-arrow-up">
-                <button id="arrow-up" class="arrow-up arrow-key" @mousedown="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
+                <button id="arrow-up" class="arrow-up arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
                 </button>
               </div>
               <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
               <div class="overlay-arrow-down">
-                <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+                <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
               </div>
-              <div class="overlay-arrow-left">
+<!--               <div class="overlay-arrow-left">
                 <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+              </div> -->
+              <div class="overlay-arrow-left">
+                <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
               </div>
               <div class="overlay-arrow-right">
                 <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
@@ -302,26 +316,16 @@ export default {
     sendControlEventHandler (type, param, topic) {
       MQTT.sendControlEvent(type, param, topic)
     },
-    // 为setInterval定义window中的sendControlEventHandler函数
-    _sendControlEventHandler (type, param, topic) {
-      window.sendControlEventHandler = function (type, param, topic) {
-        MQTT.sendControlEvent(type, param, topic)
-      }
-      return function () {
-        // 返回windows中的sendControlEventHandler函数
-        this.sendControlEventHandler(type, param, topic)
-      }
-    },
     // 持续点击或tap方向控制函数
     longTapControlEventHandler (type, param, topic) {
+      // 先清除掉interval
+      clearInterval(window.tap)
       MQTT.sendControlEvent(type, param, topic)
       // 持续定时输出控制命令
-      window.tap = setInterval(
-        this._sendControlEventHandler(type, 200, topic),
-        100
-      )
-      // // 防止命令没有消除一直发送
-      setTimeout(clearInterval(window.tap), 5000)
+      window.tap = setInterval(function () {
+        MQTT.sendControlEvent(type, 200, topic)
+        console.log('长按')
+      }, 100)
     },
     // 给tap事件传参的控制函数
     tapControlWithParam (type, param, topic) {
@@ -346,6 +350,7 @@ export default {
     },
     sendCmdGo (topic) {
       MQTT.sendControlCmd('go', 200, 2, topic)
+      this.stopMovingHandler()
     },
     PrepareTopic () {
       MQTT.publishMessage({ action: 'room_update' }, 0, 'notify/' + '22371')
@@ -409,7 +414,7 @@ export default {
     utcTimeConvert (time) {
       let date = new Date(time)
       let options = {
-        weekday: 'long',
+        // weekday: 'long',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -425,10 +430,12 @@ export default {
         console.log('change main to true', this.mainWsStream)
         this.isMainCamera = false
         playVideo.wsRePlay(this.mainWsStream)
+        this.$store.dispatch('showLoading')
       } else {
         console.log('change main to false', this.mainWsStream)
         this.isMainCamera = true
         playVideo.wsRePlay(this.mainWsStream)
+        this.$store.dispatch('showLoading')
       }
     }
   },
@@ -506,6 +513,10 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+.el-table {
+  opacity: 0;
+  height: 0;
+}
 .player-view {
   /*  测试tabs */
   .el-tabs {

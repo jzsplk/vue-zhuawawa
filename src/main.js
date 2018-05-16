@@ -63,7 +63,7 @@ Vue.use(ElementUI)
 // console.log('router1', router)
 // console.log('router2', router2)
 axios.defaults.baseURL = 'https://www.liehuo55.com/'
-
+// axios.defaults.baseURL = 'http://139.199.227.21/'
 // console.log('新参数', JSON.stringify(window.params))
 Vue.use(WechatAuth, {
   router,
@@ -90,21 +90,20 @@ Vue.use(WechatAuth, {
       // 触发action，把id， token更新到state
       store.dispatch('updataPlayerInfo', userData)
       let jsonUserData = JSON.stringify(userData)
-      let expireDays = 1000 * 60 * 60 * 24 * 15
-      console.log('$vm', $vm)
+      let expireDays = 1000 * 60 * 60 * 24 * 7
       $vm.setCookie('wxzhuawawa', jsonUserData, expireDays)
       console.log('$vm router', router)
       // router.push('./')
       // 微信登陆下一步动作
       if (data.Token) {
-        next(data.Token, { path: './' })
+        next(data.Token)
       } else {
         console.log('未获取到token')
         next('', { path: './loginex' })
       }
     }).catch((error) => {
       console.log(error)
-      next('', { path: './login' })
+      next('', { path: './' })
     })
   }
 })
@@ -124,5 +123,3 @@ var $vm = new Vue({
 })
 
 window.$vm = $vm
-console.log('$vm', $vm.getCookie())
-console.log('$vm router', router.push)

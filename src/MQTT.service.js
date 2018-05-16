@@ -88,9 +88,22 @@ const MQTT = {
       console.log('Connection Lost: ' + responseObject.errorMessage)
     }
     store.dispatch('cancelToPlay')
-    if (store._vm.roomState !== 'MqttConnected' && store._vm.roomState !== 'leave') {
+    store.dispatch('showLoading')
+    // 当从正在游戏状态中掉线，重新连接并把state 设置为catching
+    if (store._vm.roomState === 'Catching') {
       MQTT.reConnect()
+      store.dispatch('showPanel')
+    } else if (store._vm.roomState === 'Prepared') {
+      MQTT.reConnect()
+      store.dispatch('showConfirm')
+    } else if (store._vm.roomState === 'MqttConnected') {
+      MQTT.reConnect()
+    } else {
+      MQTT.destoryMQTT()
     }
+    // if (store._vm.roomState !== 'MqttConnected' && store._vm.roomState !== 'leave') {
+    //   MQTT.reConnect()
+    // }
   },
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
@@ -176,10 +189,17 @@ const MQTT = {
     console.log('parseMQTTResults action= ' + action)
     if (action === _global.MQTT_ACTION_SUCCESS) {
       // 增加成功抓到的弹窗
+      window.$vm.$message({
+        message: '恭喜 ' + object.Name + '抓到了！',
+        type: 'success'
+      })
       console.log('恭喜 ' + object.Name + ' 抓到了!')
     } else if (action === _global.MQTT_ACTION_FAIL) {
+      // 触发状态概念，修改按钮内容
+      store.dispatch('showFailedConfirm')
       // 增加没有抓中的弹窗
       console.log('可惜了 ' + object.Name + ' 没抓到')
+      window.$vm.$message('可惜了 ' + object.Name + '没抓到')
     } else if (action === _global.MQTT_ACTION_PREPARE) {
       let param = object.param
       let id = object.id

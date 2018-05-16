@@ -19,7 +19,9 @@ const state = {
   isCountDown: false,
   playingUrl: '',
   roomPlayers: '',
-  playingName: ''
+  playingName: '',
+  isLoading: false,
+  isFailed: false
 }
 
 const store = new Vuex.Store({
@@ -117,6 +119,15 @@ const store = new Vuex.Store({
     },
     resetPlayingUrl (context) {
       context.commit('resetPlayingUrl')
+    },
+    showLoading (context) {
+      context.commit('showLoading')
+    },
+    showFailedConfirm (context) {
+      context.commit('showFailedConfirm')
+    },
+    closeFailedConfirm (context) {
+      context.commit('closeFailedConfirm')
     }
   },
   mutations: {
@@ -142,6 +153,8 @@ const store = new Vuex.Store({
     leaveRoom (state) {
       state.roomState = 'leave'
       state.isPlaying = false
+      // 玩家退出后，isFailed状态恢复，显示正常按钮
+      state.isFailed = false
     },
     startPlaying (state) {
       state.isPlaying = true
@@ -167,6 +180,8 @@ const store = new Vuex.Store({
     stopCatching (state) { // 当玩家取消命令发出后，收到done命令且id是自己，触发
       state.roomState = 'MqttConnected'
       state.isCountDown = false
+      // 玩家取消后，isFailed状态恢复，显示正常按钮
+      state.isFailed = false
     },
     InsufficientBalance (state) {
       state.roomState = 'InsufficientBalance'
@@ -219,6 +234,18 @@ const store = new Vuex.Store({
     },
     resetPlayingUrl (state) {
       state.playingUrl = ''
+    },
+    showLoading (state) {
+      state.isLoading = true
+      setTimeout(function () {
+        state.isLoading = false
+      }, 500)
+    },
+    showFailedConfirm (state) {
+      state.isFailed = true
+    },
+    closeFailedConfirm (state) {
+      state.isFailed = false
     }
   }
 })

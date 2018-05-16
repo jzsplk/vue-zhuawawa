@@ -9,7 +9,12 @@
         <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
     </div> -->
-    <router-view/>
+    <keep-alive :include="/Keep$/">
+        <router-view/>
+    </keep-alive>
+<!--     <keep-alive exclude="WechatAuth">
+      <router-view/>
+    </keep-alive> -->
     <app-footer></app-footer>
   </div>
 </template>
@@ -125,6 +130,8 @@ export default {
 }
 </script>
 <style lang="scss" type="text/css">
+/* 去掉默认body的margin*/
+body { margin: 0; }
 #app {
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -134,6 +141,7 @@ export default {
   /* 解决左右轻微拖动问题 */
   overflow-x:hidden;
   body {
+    /* 去掉margin*/
     /* 禁止微信内置浏览器调整字体大小 */
     -webkit-text-size-adjust: 100% !important;
     -moz-user-select: none; /*火狐*/

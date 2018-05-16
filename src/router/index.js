@@ -34,7 +34,8 @@ export default new Router({
       path: '/login',
       name: 'Hello',
       meta: {
-        auth: true
+        auth: true,
+        keepAlive: false
       }
     },
     {

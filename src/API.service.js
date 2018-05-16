@@ -9,7 +9,7 @@ axios.defaults.baseURL = 'https://www.liehuo55.com/'
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
-      axios.get('api/app/doll/room?Full=true')
+      axios.get('api/app/doll/room')
         .then(response => {
           resolve(response.data)
           console.log('get Rooms response', response)
