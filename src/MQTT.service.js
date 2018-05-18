@@ -8,7 +8,9 @@ const MQTT = {
   initMqttClient (To) {
     // console.log('MQTT service', Paho)
     // console.log('MQTT store', store)
-    let hostname = '47.97.34.46'
+    // let hostname = '47.97.34.46'
+    // 测试MQTT地址
+    let hostname = '139.199.227.21'
     let port = 18000
     let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
     let path = '/'
@@ -274,6 +276,7 @@ const MQTT = {
       console.log('id', id)
       // 停止抓娃娃
       store.dispatch('resetPlayingUrl')
+      // 退出到准备状态一种情况，收到done，id为自己
       if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }
@@ -283,6 +286,7 @@ const MQTT = {
       console.log(id)
       // 停止抓娃娃,先判断id是否相同
       store.dispatch('resetPlayingUrl')
+      // 退出到准备状态一种情况，收到timeout，id为自己
       if (object.id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }

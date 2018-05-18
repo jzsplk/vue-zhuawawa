@@ -53,9 +53,15 @@
               <span>玩家 热玩中</span>
             </div>
           </div> -->
-          <div v-show="$store.state.playingUrl !== ''" class="overlay-playing">
+<!--           <div v-show="$store.state.playingUrl !== ''" class="overlay-playing">
             <img :src="$store.state.playingUrl" alt="">
             <p>{{$store.state.playingName}}</p>
+            <p class="overlay-playing-title">热玩中</p>
+          </div> -->
+          <!-- 新的正在玩头像 注意这里要用vif不能用v-show-->
+          <div v-if="$store.state.isPlaying" class="overlay-playing">
+            <img :src="roomData.Actor.AvatarUrl" alt="">
+            <p>{{roomData.Actor.NickName}}</p>
             <p class="overlay-playing-title">热玩中</p>
           </div>
         </transition>
@@ -84,7 +90,7 @@
           </div>
         </div>
         <div v-show="roomState == 'Queueing'">
-          <button class="queueing-button"><i class="el-icon-loading"></i>{{roomData.Queued}}人正在排队</button>
+          <button class="queueing-button"><i class="el-icon-loading"></i>正在排队 {{roomData.Queued}}人在前面</button>
         </div>
     <!--     <transition name="el-fade-in"> -->
         <div v-show="roomState == 'Prepared'" class="confirm">
@@ -245,7 +251,7 @@ export default {
   data () {
     return {
       videocanvas: 'video-canvas',
-      roomData: [],
+      roomData: {},
       roomRank: [],
       balance: 0, // 存储房间排名信息的data
       activeName: 'first',
@@ -495,12 +501,15 @@ export default {
       },
       deep: true // 开启深度监听
     },
-    // 监听canvas是否建立，开始播放视频
-    'canvasReady': {
+    'roomData': {
       handler: function (newer, older) {
-        console.log('视频 ready')
-        // playVideo.wsPlay('video.liehuo55.com:29001')
-      }
+        if (newer.Actor !== undefined) {
+          this.$store.dispatch('showPlaying')
+        } else {
+          this.$store.dispatch('togglePlaying')
+        }
+      },
+      deep: true
     }
   },
   directives: {

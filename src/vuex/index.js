@@ -128,6 +128,13 @@ const store = new Vuex.Store({
     },
     closeFailedConfirm (context) {
       context.commit('closeFailedConfirm')
+    },
+    // 新的显示正在玩action
+    showPlaying (context, obj) {
+      context.commit('showPlaying', obj)
+    },
+    togglePlaying (context) {
+      context.commit('togglePlaying')
     }
   },
   mutations: {
@@ -248,6 +255,13 @@ const store = new Vuex.Store({
     },
     closeFailedConfirm (state) {
       state.isFailed = false
+    },
+    showPlaying (state, obj) {
+      state.isPlaying = true
+      // 可能需要在这里传正在玩的信息进来
+    },
+    togglePlaying (state) {
+      state.isPlaying = false
     }
   }
 })
