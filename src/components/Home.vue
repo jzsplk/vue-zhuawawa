@@ -11,6 +11,7 @@ import AppHeader from './AppHeader'
 import AppFooter from './AppFooter'
 import Room from './Room'
 import Category from './Category'
+import MQTT from '../MQTT.service.js'
 
 export default {
   components: {
@@ -61,9 +62,15 @@ export default {
         // console.log('getCookie parse: ', JSON.parse(data))
         this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
       }
+    },
+    // 游戏开始函数，连接MQTT，初始化Music
+    onStart () {
+      // 初始化，连接MQTT
+      MQTT.initMqttClient()
     }
   },
   created () {
+    this.onStart()
   },
   watch: {
     // 监听路由变化，检查登陆状态

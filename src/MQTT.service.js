@@ -23,7 +23,10 @@ const MQTT = {
     // let lastWillRetain = false
     // let lastWillMessage = ''
     console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
-    window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
+    // 判断如果是掉线，并且没有window.client,则重连
+    if (window.client === undefined || window.client === null) {
+      window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
+    }
     let options = {
       invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
       timeout: timeout,
@@ -34,7 +37,8 @@ const MQTT = {
         console.log('Client Connected')
         // let statusSpan = document.getElementById('connectionStatus')
         // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
-        MQTT.subscribeToTopic(window.client, To)
+        // 暂时不直接注册，进入房间再注册Topic
+        // MQTT.subscribeToTopic(window.client, To)
       },
       onFailure: this.onFail
     }
@@ -101,7 +105,7 @@ const MQTT = {
     } else if (store._vm.roomState === 'loading') {
       MQTT.reConnect()
     } else {
-      MQTT.destoryMQTT()
+      MQTT.reConnect()
     }
     // if (store._vm.roomState !== 'MqttConnected' && store._vm.roomState !== 'leave') {
     //   MQTT.reConnect()
@@ -121,11 +125,16 @@ const MQTT = {
     let onSubscribeSuccess = () => {
       // show 排队按钮
       console.log('subscribe success!')
+      // topic注册成功，则显示可以排队按钮
       store.dispatch('showStartQueue')
     }
     let onFailure = (errorMessage) => { console.log('subscribe fail', errorMessage) }
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
     c.subscribe(subscriptionTopic, {qos: Number(qos), invocationContext: {}, onSuccess: onSubscribeSuccess, onFailure: onFailure})
+  },
+  unsubscribe () {
+    window.client.unsubscribe(store._vm.roomTopic)
+    console.log('unsubscribe from: ' + store._vm.roomTopic)
   },
   publishMessage (object, qos, topic) {
     let publishMessage = JSON.stringify(object)
@@ -190,27 +199,30 @@ const MQTT = {
     let action = object.action
     console.log('parseMQTTResults action= ' + action)
     if (action === _global.MQTT_ACTION_SUCCESS) {
+      let id = object.Id
       // 增加成功抓到的弹窗
       window.$vm.$message({
         message: '恭喜 ' + object.Name + '抓到了！',
         type: 'success'
       })
       console.log('恭喜 ' + object.Name + ' 抓到了!')
-      // 如果id是自己，停止抓娃娃
-      if (object.id === store._vm.playerId) {
+      // 如果是抓娃娃成功，下一步是否是停止抓娃娃？安卓写法如此
+      if (id === store._vm.playerId) {
         store.dispatch('stopCatching')
       }
     } else if (action === _global.MQTT_ACTION_FAIL) {
       // 触发状态概念，修改按钮内容
-      if (object.id === store._vm.playerId) {
+      let id = object.Id
+      if (id === store._vm.playerId) {
         store.dispatch('showFailedConfirm')
       }
       // 增加没有抓中的弹窗
       console.log('可惜了 ' + object.Name + ' 没抓到')
       window.$vm.$message('可惜了 ' + object.Name + '没抓到')
-      if (object.id === store._vm.playerId) {
-        store.dispatch('stopCatching')
-      }
+      // 注意这里showFailedConfirm跟stopCatching的命令有冲突，不能一起用
+      // if (object.Id === store._vm.playerId) {
+      //   store.dispatch('stopCatching')
+      // }
     } else if (action === _global.MQTT_ACTION_PREPARE) {
       let param = object.param
       let id = object.id
@@ -220,7 +232,7 @@ const MQTT = {
         // 如果id不一致且param为1,代表别人在抓，取别人的头像显示在屏幕左上
         if (param === 2 || param === 1) {
           // 发起api请求，获取围观所有人的头像，跟过id取得目前玩的人的头像
-          console.log('code 2, id not mine, my id :', store._vm.playerId)
+          console.log('code 2, id not mine, my id :', object.id)
           store.dispatch('getPlayingUrl', id)
           // 如果收到2，id不是自己，退出排队
           // store.dispatch('stopCatching')

@@ -90,12 +90,12 @@
         <div v-show="roomState == 'Prepared'" class="confirm">
           <!-- 尝试使用el-button class="confirm-button" -->
           <el-button-group v-show="this.$store.state.isFailed === false">
-            <el-button type="primary" @click="sendReady(true, roomTopic)">赶紧开始</el-button>
-            <el-button type="warning" @click="sendReady(false, roomTopic)">我放弃</el-button>
+            <el-button type="primary" @click="sendReady(true, roomTopic)" round>赶紧开始</el-button>
+            <el-button type="warning" @click="sendReady(false, roomTopic)" round>我放弃</el-button>
           </el-button-group>
           <el-button-group v-show="this.$store.state.isFailed === true">
-            <el-button type="primary" @click="sendReady(true, roomTopic)">再来一局</el-button>
-            <el-button type="warning" @click="sendReady(false, roomTopic)">无力再战</el-button>
+            <el-button type="primary" @click="sendReady(true, roomTopic)" round>再来一局</el-button>
+            <el-button type="warning" @click="sendReady(false, roomTopic)" round>无力再战</el-button>
           </el-button-group>
 <!--           <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
           <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button> -->
@@ -295,7 +295,9 @@ export default {
         // 把State中roomTopic 更新为‘notify/’ + roomData.DeviceId
         this.updateTopic()
         // 对roomTopic建立MQTT联建并subscribe对应Topic
-        MQTT.initMqttClient(this.roomTopic)
+        // MQTT.initMqttClient(this.roomTopic)
+        // 这里改为只subscribe,不新建MQTT
+        MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // 获取房间排名数据
         this.getRoomRank(this.$route.query.id)
@@ -394,7 +396,9 @@ export default {
       playVideo.wsDisconnect()
       // 先改变房间状态为leave，再断开MQTT
       this.$store.dispatch('leaveRoom', id)
-      MQTT.destoryMQTT()
+      // 改为不destoryMQTT,而是unsubcribe
+      MQTT.unsubscribe()
+      // MQTT.destoryMQTT()
       clearInterval(window.tap)
       apiService.leaveRoom(id).then(data => {
         console.log('leave room', data)

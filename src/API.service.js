@@ -9,7 +9,7 @@ import store from './vuex/index.js'
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
-      axios.get('api/app/doll/room')
+      axios.get('api/app/doll/room?Full=true')
         .then(response => {
           resolve(response.data)
           console.log('get Rooms response', response)
