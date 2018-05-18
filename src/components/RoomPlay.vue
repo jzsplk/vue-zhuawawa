@@ -78,11 +78,13 @@
           </div>
           <div class="charge">
             <img src="../../static/pic/coin.png" alt="">
-            <button>充值</button>
+            <el-tooltip content="关注 一起抓抓抓 微信公众号 充值" placement="top">
+              <button>充值</button>
+            </el-tooltip>
           </div>
         </div>
         <div v-show="roomState == 'Queueing'">
-          <button class="queueing-button"><i class="el-icon-loading"></i>正在排队</button>
+          <button class="queueing-button"><i class="el-icon-loading"></i>{{roomData.Queued}}人正在排队</button>
         </div>
     <!--     <transition name="el-fade-in"> -->
         <div v-show="roomState == 'Prepared'" class="confirm">
@@ -130,7 +132,7 @@
             </div>
         </div>
     </div>
-    <!-- 测试Tab -->
+    <!-- detailTab -->
     <el-tabs v-model="activeName" >
       <el-tab-pane label="娃娃详情" name="first">
         <img v-show="false" src="https://www.liehuo55.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
@@ -282,6 +284,8 @@ export default {
       this.$store.dispatch('queueToPlay', this.$route.query.id)
     },
     initMqttClient () {
+      // 进入房间，先loading
+      this.$store.dispatch('showLoading')
       // 先通过getRoomInfo取得房间deviceId，然后根据deviceId生成对应MQTT client Topci在State中，并注册对应Topic
       apiService.getRoomInfo(this.$route.query.id).then(data => {
         console.log('room info', data)
@@ -311,6 +315,11 @@ export default {
     },
     sendReady (is, topic) {
       MQTT.sendReadyorPassCmd(is, topic)
+      // 设定一个事件，这个时间之后，自动下爪子: 设定timeout似乎没用，一开始就自动下爪子了
+      // console.log('现在的this', this)
+      // if (is === true) {
+      //   setTimeout(this.sendCmdGo('ctrl/' + this.roomData.DeviceId), 600000)
+      // }
     },
     // 鼠标单击房间控制事件
     sendControlEventHandler (type, param, topic) {
@@ -384,7 +393,7 @@ export default {
       window.wsavc.stopStream()
       playVideo.wsDisconnect()
       // 先改变房间状态为leave，再断开MQTT
-      this.$store.dispatch('leaveRoom')
+      this.$store.dispatch('leaveRoom', id)
       MQTT.destoryMQTT()
       clearInterval(window.tap)
       apiService.leaveRoom(id).then(data => {
@@ -517,20 +526,21 @@ export default {
   opacity: 0;
   height: 0;
 }
+.el-tabs__nav {
+  float: right;
+  .el-tabs__active-bar {
+    left: 16%;
+  }
+}
 .player-view {
   /*  测试tabs */
   .el-tabs {
     background-color: #FFFFFF;
     width: 350px;
-    max-width: 90%;
+    max-width: 95%;
     height: 650px;
     border-radius: 10px;
     margin: 10px auto;
-    .el-tabs__header {
-      .el-tabs__nav {
-        margin: 0 auto;
-      }
-    }
     .el-tab-pane {
       overflow-y: scroll;
       .pic {
@@ -943,18 +953,19 @@ export default {
     max-width: 100%;
     position: relative;
     height: 100%;
-    max-height: 80%;
-    overflow: scroll;
+    max-height: 90%;
+    overflow: hidden;
     box-sizing: border-box;
-    border: 0 0 10px 10px;
+    /*border: 0 0 10px 10px;*/
     margin-bottom: 10px;
+    margin-top: 0;
     font-size: 12px;
     .rank {
       display: flex;
       background-color: white;
       border-bottom: solid 1px #e6e4e5;
       div {
-        // display: inline-block;
+        display: inline-block;
         overflow: hidden;
         padding: 5px;
         height: 30px;

@@ -62,8 +62,8 @@ const store = new Vuex.Store({
     cancelToPlay (context) {
       context.commit('cancelToPlay')
     },
-    leaveRoom (context) {
-      context.commit('leaveRoom')
+    leaveRoom (context, id) {
+      context.commit('leaveRoom', id)
     },
     startPlaying (context) {
       context.commit('startPlaying')
@@ -150,11 +150,13 @@ const store = new Vuex.Store({
       // 复原倒计时状态
       state.isCountDown = false
     },
-    leaveRoom (state) {
+    leaveRoom (state, id) {
       state.roomState = 'leave'
       state.isPlaying = false
       // 玩家退出后，isFailed状态恢复，显示正常按钮
       state.isFailed = false
+      // 离开房间时，增加一个离开房间api请求，告知服务器已经退出排队
+      apiService.leaveQueue(id)
     },
     startPlaying (state) {
       state.isPlaying = true

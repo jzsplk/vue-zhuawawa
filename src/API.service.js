@@ -2,7 +2,7 @@ import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
 // 新API地址
-axios.defaults.baseURL = 'https://www.liehuo55.com/'
+// axios.defaults.baseURL = 'https://www.liehuo55.com/'
 // axios.defaults.baseURL = 'http://139.199.227.21/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
@@ -83,6 +83,9 @@ const apiService = {
           } else if (String(e).indexOf('401') !== -1) {
             // 显示请登陆
             console.log('请登陆')
+          } else {
+            // 如果其他情况，先退出排队
+            store.dispatch('stopCatching')
           }
         })
     })

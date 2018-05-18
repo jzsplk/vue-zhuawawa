@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "element-theme": "^2.0.1",
     "element-ui": "^2.3.7",
     "exports-loader": "^0.7.0",
     "node-sass": "^4.8.3",
@@ -39,6 +40,7 @@
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "element-theme-chalk": "https://github.com/ElementUI/theme-chalk",
     "eslint": "^4.15.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",

@@ -4,15 +4,17 @@
     <div class="img-wraper">
       <div class="img-container">
         <img :src="baseURL + room.Doll.Item.AvatarUrl" :alt="room.Name">
-        <p v-show="room.Status == 0" class="statusAvailable">空闲中</p>
-        <p v-show="room.Status == 2" class="statusPlaying">维护中</p>
+        <p v-show="room.Actor === undefined" class="statusAvailable">空闲中</p>
+        <p v-show="room.Actor !== undefined" class="statusPlaying">游戏中</p>
+        <p v-show="room.Status == 1" class="statusPlaying">维护中</p>
       </div>
     </div>
     <div class="info">
       <p>{{room.Name}}</p>
       <p><!-- 💎 --> <img src="../../static/pic/coin.png" alt=""> {{room.Coin}} /次</p>
       <span>{{room.Crowd}} 人在线 {{room.id}}</span>
-      <button>去捕获</button>
+      <button class="" v-show="room.Actor === undefined">去捕获</button>
+      <button class="" v-show="room.Actor !== undefined">去围观</button>
     </div>
   </div>
   </router-link>
@@ -71,7 +73,7 @@ a {
     }
     .statusPlaying {
       position: absolute;
-      background-color: #00F71A;
+      background-color: #E6A23C;
       opacity: 0.6;
       color: white;
       right: 2px;

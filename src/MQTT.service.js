@@ -87,7 +87,7 @@ const MQTT = {
     if (responseObject.errorCode !== 0) {
       console.log('Connection Lost: ' + responseObject.errorMessage)
     }
-    store.dispatch('cancelToPlay')
+    // store.dispatch('cancelToPlay')
     store.dispatch('showLoading')
     // 当从正在游戏状态中掉线，重新连接并把state 设置为catching
     if (store._vm.roomState === 'Catching') {
@@ -97,6 +97,8 @@ const MQTT = {
       MQTT.reConnect()
       store.dispatch('showConfirm')
     } else if (store._vm.roomState === 'MqttConnected') {
+      MQTT.reConnect()
+    } else if (store._vm.roomState === 'loading') {
       MQTT.reConnect()
     } else {
       MQTT.destoryMQTT()
@@ -194,22 +196,34 @@ const MQTT = {
         type: 'success'
       })
       console.log('恭喜 ' + object.Name + ' 抓到了!')
+      // 如果id是自己，停止抓娃娃
+      if (object.id === store._vm.playerId) {
+        store.dispatch('stopCatching')
+      }
     } else if (action === _global.MQTT_ACTION_FAIL) {
       // 触发状态概念，修改按钮内容
-      store.dispatch('showFailedConfirm')
+      if (object.id === store._vm.playerId) {
+        store.dispatch('showFailedConfirm')
+      }
       // 增加没有抓中的弹窗
       console.log('可惜了 ' + object.Name + ' 没抓到')
       window.$vm.$message('可惜了 ' + object.Name + '没抓到')
+      if (object.id === store._vm.playerId) {
+        store.dispatch('stopCatching')
+      }
     } else if (action === _global.MQTT_ACTION_PREPARE) {
       let param = object.param
       let id = object.id
-      console.log('id = ', id)
+      console.log('preared id = ', id)
       // 如果id不一样，返回
       if (object.id !== store._vm.playerId) {
         // 如果id不一致且param为1,代表别人在抓，取别人的头像显示在屏幕左上
         if (param === 2 || param === 1) {
           // 发起api请求，获取围观所有人的头像，跟过id取得目前玩的人的头像
+          console.log('code 2, id not mine, my id :', store._vm.playerId)
           store.dispatch('getPlayingUrl', id)
+          // 如果收到2，id不是自己，退出排队
+          // store.dispatch('stopCatching')
           return
         } else {
           // store.dispatch('resetPlayingUrl')

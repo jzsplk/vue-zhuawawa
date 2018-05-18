@@ -99,7 +99,7 @@ Vue.use(WechatAuth, {
         next(data.Token)
       } else {
         console.log('未获取到token')
-        next('', { path: './loginex' })
+        next('', { path: './login' })
       }
     }).catch((error) => {
       console.log(error)
