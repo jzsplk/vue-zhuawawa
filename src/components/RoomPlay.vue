@@ -11,12 +11,17 @@
     <div class="video-canvas">
       <div class="container">
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
-        <el-table  v-loading.fullscreen.lock="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
-        </el-table>
+<!--         <el-table  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
+        </el-table> -->
+        <el-row  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" target=".canvas-video">
+          <div class="canvas-wrapper">
+            <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
+          </div>
+        </el-row>
         <!-- 用一个跟canvas等大的div 占住canvas位置-->
-        <div class="canvas-wrapper">
+<!--         <div class="canvas-wrapper">
           <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
-        </div>
+        </div> -->
 <!--         <div class="overlay-header">
           <div class="roomplay_header">
             <router-link :to="{path: './'}">
@@ -539,8 +544,8 @@ export default {
 
 <style scoped lang="scss" type="text/css">
 .el-table {
-  opacity: 0;
-  height: 0;
+  opacity: 1;
+  height: 200px;
 }
 .el-tabs__nav {
   float: right;
@@ -612,7 +617,7 @@ export default {
       width: 360px;
       max-width: 100%;
       height: 480px;
-      max-height: 100%;
+      max-height: 30%;
       canvas {
         display: block;
         width: 360px;
