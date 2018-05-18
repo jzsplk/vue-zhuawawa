@@ -13,7 +13,10 @@
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
         <el-table  v-loading.fullscreen.lock="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
         </el-table>
-        <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
+        <!-- 用一个跟canvas等大的div 占住canvas位置-->
+        <div class="canvas-wrapper">
+          <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
+        </div>
 <!--         <div class="overlay-header">
           <div class="roomplay_header">
             <router-link :to="{path: './'}">
@@ -604,11 +607,19 @@ export default {
     width: 360px;
     max-width: 95%;
     margin: 0 auto;
-    canvas {
-      display: block;
+    .canvas-wrapper {
+      /* canvas的css设置 */
       width: 360px;
       max-width: 100%;
+      height: 480px;
+      max-height: 100%;
+      canvas {
+        display: block;
+        width: 360px;
+        max-width: 100%;
+      }
     }
+    /* canvas及叠加层的外层 */
     .container {
       position: relative;
       img {

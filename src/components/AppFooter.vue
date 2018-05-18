@@ -83,6 +83,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-around;
+    z-index: 9999;
     .el-menu-item {
       height: 50px;
       line-height: 50px;
