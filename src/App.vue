@@ -126,6 +126,10 @@ export default {
     // 执行checklogin
     this.checkLogin()
     this.closeZoom()
+    // 阻止微信长按菜单出现
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault()
+    })
   }
 }
 </script>
@@ -151,7 +155,7 @@ body { margin: 0; }
     user-select: none; /* 禁止用户选中文字 */
   }
   button {
-    border-width: 0;
+    /*border-width: 0;*/
   }
   img, embed, object, video, canvas {
     max-width: 100%;

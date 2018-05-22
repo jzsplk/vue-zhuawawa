@@ -73,8 +73,9 @@ a {
     }
     .statusPlaying {
       position: absolute;
-      background-color: #E6A23C;
-      opacity: 0.6;
+      /*background-color: #E6A23C;*/
+      background-color: #F56C6C;
+      opacity: 0.9;
       color: white;
       right: 2px;
       top: -10px;

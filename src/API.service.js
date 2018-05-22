@@ -6,6 +6,8 @@ import store from './vuex/index.js'
 // axios.defaults.baseURL = 'http://139.199.227.21/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
@@ -173,6 +175,43 @@ const apiService = {
         .then(response => {
           resolve(response)
           console.log('user balance', response)
+        })
+    })
+  },
+  getUserGifts () {
+    return new Promise((resolve) => {
+      axios.get('api/gift', {
+        headers: {
+          // 改为由state获取token
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('user gifts', response)
+        })
+    })
+  },
+  // 兑换券请求  JSON.parse(JSON.stringify(UserCode))
+  postCoupon (code) {
+    // 更改post写法
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL.substring(0, axios.defaults.baseURL.length - 1) + ':15359/exchange/',
+        data: {
+          ExchangeCode: code
+        },
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('post Coupon response', response)
+        })
+        .catch(error => {
+          console.log('coupen error', error)
         })
     })
   }

@@ -5,7 +5,9 @@
   <div class="nav">
     <!-- <i class="el-icon-loading"></i> -->首页
   </div>
-  <img class="head-img" src="../../static/pic/guide.png" alt="claw-game">
+  <div class="head">
+    <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="picLoading">
+  </div>
 </div>
 </template>
 <script>
@@ -14,6 +16,18 @@ export default {
   methods: {
     WechatLogin () {
       apiService.WechatLogin()
+    },
+    picLoading () {
+      const loading = this.$loading({
+        lock: true,
+        text: '建设中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+        target: document.querySelector('.head')
+      })
+      setTimeout(() => {
+        loading.close()
+      }, 1000)
     }
   }
 }

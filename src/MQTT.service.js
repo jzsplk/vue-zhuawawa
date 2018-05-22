@@ -12,11 +12,12 @@ const MQTT = {
     // 测试MQTT地址
     let hostname = '139.199.227.21'
     let port = 18000
+    // 改为UUID+ 时间戳
     let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
     let path = '/'
     let user = 'ultracreation'
     let pass = 'dasboot121212'
-    let keepAlive = Number(60)
+    let keepAlive = Number(5)
     let timeout = Number(5)
     let tls = false
     let cleanSession = true
@@ -24,10 +25,10 @@ const MQTT = {
     // let lastWillQos = 0
     // let lastWillRetain = false
     // let lastWillMessage = ''
-    console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
     // 判断如果是掉线，并且没有window.client,则重连
     if (window.client === undefined || window.client === null) {
       window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
+      console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
     }
     let options = {
       invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
@@ -35,8 +36,9 @@ const MQTT = {
       keepAliveInterval: keepAlive,
       cleanSession: cleanSession,
       useSSL: tls,
+      reconnect: true,
       onSuccess: function (context) {
-        console.log('Client Connected')
+        console.log('Client Connected000')
         // let statusSpan = document.getElementById('connectionStatus')
         // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
         // 暂时不直接注册，进入房间再注册Topic
@@ -51,22 +53,42 @@ const MQTT = {
     if (pass.length > 0) {
       options.password = pass
     }
-    window.client.connect(options)
     window.client.onConnectionLost = this.onConnectionLost
     window.client.onMessageArrived = this.onMessageArrived
     window.client.onMessageDelivered = this.onMessageDelivered
+    window.client.onConnected = this.onConnect
+    window.client.connect(options)
   },
   reConnect () {
-    this.initMqttClient(store._vm.roomTopic)
+    // this.initMqttClient(store._vm.roomTopic)
   },
   onConnect (context) {
-    let self = MQTT
-    console.log('self= ', self)
+    // let self = MQTT
+    // console.log('self= ', self)
     // Once a connection has been made, make a subscription and send a message.
-    console.log('Client Connected')
+    console.log('Client Connected1111')
     // let statusSpan = document.getElementById('connectionStatus')
     // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
-    self.subscribeToTopic(window.client, MQTT.notifyTopic)
+    // self.subscribeToTopic(window.client, MQTT.notifyTopic)
+    // 这里注册到所有topic中
+    // MQTT.subscribeToTopic(window.client, 'notify/#')
+    console.log('MQTT infos: ', store.state.roomsInfo)
+    store.state.roomsInfo.forEach(function (room) {
+      MQTT.subscribeToTopic(window.client, 'notify/' + room.DeviceId)
+    })
+  },
+  checkLastState () {
+    if (store.state.roomState === 'leave') {
+      // store.dispatch('showStartQueue')
+    } else if (store.state.roomState === 'MqttConnected') {
+      store.dispatch('showStartQueue')
+    } else if (store.state.roomState === 'Prepared') {
+      store.dispatch('showConfirm')
+    } else if (store.state.roomState === 'Catching') {
+      store.dispatch('showPanel')
+    } else {
+      store.dispatch('showStartQueue')
+    }
   },
   onFail (context) {
     console.log('Failed to connect')
@@ -75,7 +97,7 @@ const MQTT = {
   },
   disconnect () {
     console.info('Disconnecting from Server')
-    window.client.disconnect()
+    // window.client.disconnect()
     // var statusSpan = document.getElementById('connectionStatus')
     // statusSpan.innerHTML = 'Connection - Disconnected.'
   },
@@ -92,23 +114,25 @@ const MQTT = {
   onConnectionLost (responseObject) {
     if (responseObject.errorCode !== 0) {
       console.log('Connection Lost: ' + responseObject.errorMessage)
+      console.log('error code: ', responseObject.errorCode)
     }
+    console.log('connecting lost')
     // store.dispatch('cancelToPlay')
-    store.dispatch('showLoading')
+    // store.dispatch('showLoading')
     // 当从正在游戏状态中掉线，重新连接并把state 设置为catching
-    if (store._vm.roomState === 'Catching') {
-      MQTT.reConnect()
-      store.dispatch('showPanel')
-    } else if (store._vm.roomState === 'Prepared') {
-      MQTT.reConnect()
-      store.dispatch('showConfirm')
-    } else if (store._vm.roomState === 'MqttConnected') {
-      MQTT.reConnect()
-    } else if (store._vm.roomState === 'loading') {
-      MQTT.reConnect()
-    } else {
-      MQTT.reConnect()
-    }
+    // if (store._vm.roomState === 'Catching') {
+    //   MQTT.reConnect()
+    //   store.dispatch('showPanel')
+    // } else if (store._vm.roomState === 'Prepared') {
+    //   MQTT.reConnect()
+    //   store.dispatch('showConfirm')
+    // } else if (store._vm.roomState === 'MqttConnected') {
+    //   MQTT.reConnect()
+    // } else if (store._vm.roomState === 'loading') {
+    //   MQTT.reConnect()
+    // } else {
+    //   MQTT.reConnect()
+    // }
     // if (store._vm.roomState !== 'MqttConnected' && store._vm.roomState !== 'leave') {
     //   MQTT.reConnect()
     // }
@@ -116,23 +140,32 @@ const MQTT = {
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
     // console.log(message)
+    // 在这里判断destination是否是notify，本房间，如果不是 不做处理
+    if (message.destinationName !== store.state.roomTopic) {
+      // 只有收到成功消息，显示(即使不在房间内,也能收到玩家抓中的消息哦)
+      if (JSON.parse(message.payloadString).action !== undefined && JSON.parse(message.payloadString).action === _global.MQTT_ACTION_SUCCESS) {
+        MQTT.parseMQTTResults(message.payloadString)
+      }
+      console.log('payloadString', JSON.parse(message.payloadString))
+      return
+    }
     MQTT.parseMQTTResults(message.payloadString)
   },
   onMessageDelivered (token) {
     console.log('deliver complete', token.payloadString)
   },
-  subscribeToTopic (c, topic) {
+  subscribeToTopic (client, topic) {
     let subscriptionTopic = topic
     let qos = 2
     let onSubscribeSuccess = () => {
       // show 排队按钮
       console.log('subscribe success!')
-      // topic注册成功，则显示可以排队按钮
-      store.dispatch('showStartQueue')
+      // topic注册成功，则根据之前状态，自动切换回之前界面
+      MQTT.checkLastState()
     }
     let onFailure = (errorMessage) => { console.log('subscribe fail', errorMessage) }
     console.info('Subscribing to: Topic: ', subscriptionTopic, '. QoS: ', qos)
-    c.subscribe(subscriptionTopic, {qos: Number(qos), invocationContext: {}, onSuccess: onSubscribeSuccess, onFailure: onFailure})
+    client.subscribe(subscriptionTopic, {qos: Number(qos), invocationContext: {}, onSuccess: onSubscribeSuccess, onFailure: onFailure})
   },
   unsubscribe () {
     window.client.unsubscribe(store._vm.roomTopic)

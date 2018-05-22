@@ -11,7 +11,7 @@
     </div>
     <div v-if="false" class="copyright">一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div> -->
     <el-menu
-      v-bind:class="{ hide: this.$store.state.isPlaying}"
+      v-bind:class="{ hide: this.$store.state.isEntered}"
       :default-acitve="activeIndex"
       class="el-menu-demo"
       mode="horizontal"
@@ -20,15 +20,27 @@
       text-color="#000000"
       active-text-color="#FFD04B">
         <el-menu-item index="./">
-          <span><img src="../../static/pic/home_select.png" alt="">首页</span>
+          <template slot="title">
+            <i class="el-icon-mobile-phone"></i>
+            <span>首页</span>
+          </template>
+          <!-- <span><img src="../../static/pic/home_select.png" alt="">首页</span> -->
         </el-menu-item>
         <el-menu-item index="./mydoll">
-            <span>
-            <img src="../../static/pic/prize_normal.png" alt="">我的娃娃</span>
+          <template slot="title">
+            <i class="el-icon-view"></i>
+            <span>我的娃娃</span>
+          </template>
+            <!-- <span>
+            <img src="../../static/pic/prize_normal.png" alt="">我的娃娃</span> -->
         </el-menu-item>
         <el-menu-item index="./myinfo">
-          <img src="../../static/pic/mine_normal.png" alt="">
-          <span>我的背包</span>
+          <template slot="title">
+            <i class="el-icon-menu"></i>
+            <span>我的背包</span>
+          </template>
+<!--           <img src="../../static/pic/mine_normal.png" alt="">
+          <span>我的背包</span> -->
         </el-menu-item>
     </el-menu>
   </div>

@@ -22,6 +22,8 @@ export default {
       apiService.getRooms().then(data => {
         this.rooms = data
         console.log('get Rooms data', data)
+        // 这里把房间数据传到state中，用于mqtt一次注册所有房间
+        this.$store.dispatch('getRoomsInfo', data)
       })
     }
   },

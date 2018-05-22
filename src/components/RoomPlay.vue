@@ -13,8 +13,8 @@
         <!-- <img class="video" src="../static/pic/switch_bg.png"> -->
 <!--         <el-table  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
         </el-table> -->
-        <el-row  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" target=".canvas-video">
-          <div class="canvas-wrapper">
+        <el-row  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" target=".canvas-video" :style="{height: loaderHeight + 'px'}">
+          <div class="canvas-wrapper" ref="abc">
             <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
           </div>
         </el-row>
@@ -75,6 +75,9 @@
         </transition>
         <!-- 切换摄像头按钮 -->
         <div class="overlay-camera">
+<!--           <el-tooltip content="切换镜头" placement="top" :disabled="disabled">
+            <button class="camera_toggle" @click="toggleCamera"></button>
+          </el-tooltip> -->
           <button class="camera_toggle" @click="toggleCamera"></button>
         </div>
       </div>
@@ -84,17 +87,35 @@
     <div class="control">
         <div v-show="roomState == 'MqttConnected'" class="connected_wrapper">
           <div class="balance_info">
-            <p>本次:<span>{{roomData.Coin}}币</span></p>
-            <p>余额:<span>{{balance * 10}}币</span></p>
+<!--             <p>本次:<span>{{roomData.Coin}}币</span></p>
+            <p>余额:<span>{{balance * 10}}币</span></p> -->
+            <!-- <el-button type="warning" icon="el-icon-star-off" round>如何领回家？</el-button> -->
+            如何领回家？
           </div>
           <div class="queue">
-            <button @click="queue" class="queue-button">预约抓娃娃</button>
+            <el-button type="primary" round @click="queue">预约抓娃娃
+              <div>
+                <img src="../../static/pic/coin.png" alt=""> <span> X {{roomData.Coin}}币</span>
+              </div>
+            </el-button>
+<!--             <button @click="queue" class="queue-button">
+              预约抓娃娃
+              <div>
+                <img src="../../static/pic/coin.png" alt=""> <span> X {{roomData.Coin}}币</span>
+              </div>
+            </button> -->
           </div>
           <div class="charge">
-            <img src="../../static/pic/coin.png" alt="">
-            <el-tooltip content="关注 一起抓抓抓 微信公众号 充值" placement="top">
-              <button>充值</button>
-            </el-tooltip>
+            <div class="balance">
+              <img src="../../static/pic/coin.png" alt="">
+                <button>  {{balance * 10}}币</button>
+            </div>
+            <div class="charge-button">
+              <i class="el-icon-circle-plus"></i>
+              <el-tooltip content="关注 一起抓抓抓 微信公众号 充值" placement="top">
+                <button> 充值</button>
+              </el-tooltip>
+            </div>
           </div>
         </div>
         <div v-show="roomState == 'Queueing'">
@@ -264,7 +285,8 @@ export default {
       balance: 0, // 存储房间排名信息的data
       activeName: 'first',
       isMainCamera: true,
-      start: false
+      start: false,
+      disabled: false
     }
   },
   props: ['room'],
@@ -311,14 +333,31 @@ export default {
         // 对roomTopic建立MQTT联建并subscribe对应Topic
         // MQTT.initMqttClient(this.roomTopic)
         // 这里改为只subscribe,不新建MQTT
-        MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
+        // 改为在home中直接subscribe，这里不用单独subscribe了
+        // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // 获取房间排名数据
         this.getRoomRank(this.$route.query.id)
         // 获取视频地址，播放视频
         console.log('XroomData', this.roomData)
+        // topic注册成功，则显示可以排队按钮
+        // this.$store.dispatch('showStartQueue')
+        this.checkLastState()
+        // 通过上一个状态来判断，如果是断线，则恢复之前的状态
         // playVideo.wsPlay(this.roomData.WStreams[0])
       })
+    },
+    checkLastState () {
+      if (this.$store.state.roomState === 'leave') {
+        this.$store.dispatch('showStartQueue')
+      } else if (this.$store.state.roomState === 'MqttConnected') {
+      } else if (this.$store.state.roomState === 'Prepared') {
+        this.$store.dispatch('showConfirm')
+      } else if (this.$store.state.roomState === 'Catching') {
+        this.$store.dispatch('showPanel')
+      } else {
+        this.$store.dispatch('showStartQueue')
+      }
     },
     disconnect () {
       MQTT.disconnect()
@@ -376,6 +415,13 @@ export default {
     sendCmdGo (topic) {
       MQTT.sendControlCmd('go', 200, 2, topic)
       this.stopMovingHandler()
+      // 增加一个提示玩家正在等待结果提示
+      this.$notify({
+        title: '已下爪',
+        message: '请等待结果揭晓',
+        type: 'success',
+        duration: 3000
+      })
     },
     PrepareTopic () {
       MQTT.publishMessage({ action: 'room_update' }, 0, 'notify/' + '22371')
@@ -402,6 +448,8 @@ export default {
     enterRoom (id) {
       apiService.enterRoom(id).then(data => {
         console.log('enter room', data)
+        // 切换isEntered 状态，用于控制底部tab是否显示
+        this.$store.dispatch('enterRoom')
       })
     },
     leaveRoom (id) {
@@ -411,7 +459,8 @@ export default {
       // 先改变房间状态为leave，再断开MQTT
       this.$store.dispatch('leaveRoom', id)
       // 改为不destoryMQTT,而是unsubcribe
-      MQTT.unsubscribe()
+      // 这里离开房间不unsubscribe 改为home中统一直接subscribe
+      // MQTT.unsubscribe()
       // MQTT.destoryMQTT()
       clearInterval(window.tap)
       apiService.leaveRoom(id).then(data => {
@@ -453,6 +502,7 @@ export default {
     },
     // 切换摄像头
     toggleCamera () {
+      this.disabled = false
       if (this.isMainCamera) {
         console.log('change main to true', this.mainWsStream)
         this.isMainCamera = false
@@ -469,6 +519,7 @@ export default {
   created () {
     // 阻止移动端缩放屏幕
     // this.closeZoom()
+    this.$store.dispatch('startPlaying')
   },
   mounted () {
     this.initMqttClient()
@@ -476,6 +527,8 @@ export default {
     this.getRoomInfo(this.$route.query.id)
     console.log('DeviceId', this.roomData)
     // playVideo.wsPlay('video.liehuo55.com:29001')
+    // 打印动态获取的div css
+    console.log('css of canvas', this.$refs)
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState']),
@@ -498,6 +551,16 @@ export default {
       },
       // setter
       set: function (newValue) {
+      }
+    },
+    // 动态设置loading画面的
+    loaderHeight: {
+      get: function () {
+        if (window.innerWidth > 360) {
+          return 480
+        } else {
+          return window.innerWidth * 0.95 * 480 / 360
+        }
       }
     }
   },
@@ -765,34 +828,72 @@ export default {
         }
       }
       .queue {
+        z-index: 999;
+        margin: 0;
+        padding: 0;
+        .el-button {
+          img {
+            width: 13px;
+            height: 13px;
+          }
+        }
         .queue-button {
           box-sizing: border-box;
           display: inline-block;
           padding: 0 1.32em;
-          line-height: 2.3;
-          font-size: 1rem;
-          border-radius: 1.5rem;
+          line-height: 2.0;
+          font-size: 13px;
+          border: 4px solid #E8E8E8;
+          border-radius: 2.5rem;
           background-color: #4d2d05;
           color: #fff;
+          img {
+            width: 13px;
+            height: 13px;
+          }
         }
       }
       .charge {
         display: flex;
-        align-items: center;
-        background-color: #303133;
-        max-width: 100%;
-        border-radius: 30px 0 0 30px;
-        padding: 0.2em 0.32em;
-        padding-right: 0.2em;
-        opacity: 0.8;
-        img {
-          width: 20px;
-          height: 20px;
+        flex-direction: column;
+        /*align-items: center;*/
+        .balance {
+          background-color: #303133;
+          max-width: 100%;
+          border-radius: 30px 0 0 30px;
+          padding: 0.1em 0.32em;
+          padding-right: 0.2em;
+          opacity: 0.8;
+          img {
+            width: 13px;
+            height: 13px;
+          }
+          button {
+            box-sizing: border-box;
+            background: none;
+            color: #FFFFFF;
+            border-width: 0;
+          }
         }
-        button {
-          box-sizing: border-box;
-          background: none;
-          color: #FFFFFF;
+        .charge-button {
+          background-color: #FFFFFF;
+          max-width: 100%;
+          border-radius: 30px 0 0 30px;
+          padding: 0.1em 0.32em;
+          padding-right: 0.2em;
+          opacity: 0.8;
+          color: #000000;
+          margin-top: 0.5rem;
+          img {
+            width: 13px;
+            height: 13px;
+          }
+          button {
+            box-sizing: border-box;
+            background: none;
+            color: #000000;
+            border-width: 0;
+          }
         }
       }
     }
@@ -808,6 +909,7 @@ export default {
       border-radius: 1.5rem;
       background-color: #E2BE46;
       color: #4d2d05;
+      border-width: 0;
     }
     /* 确认开始游戏按钮*/
     .confirm-button {

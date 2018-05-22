@@ -10,6 +10,48 @@
         <img src="../../static/pic/coin.png" alt=""> {{userInfo.balance * 10}} 币
       </div>
     </div>
+    <el-collapse v-model="activeName" accordion>
+      <el-collapse-item>
+        <template slot="title" @click="goToMydoll">
+          <i class="header-icon el-icon-view"></i>我的娃娃
+        </template>
+        <el-button @click="goToMydoll">查看</el-button>
+<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
+      </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          <i class="header-icon el-icon-tickets"></i>消费记录
+        </template>
+<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
+      </el-collapse-item>
+      <el-collapse-item disable="true">
+        <template slot="title">
+          <i class="header-icon el-icon-star-off"></i>邀请有礼
+        </template>
+<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
+      </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          <i class="header-icon el-icon-edit"></i>优惠码
+        </template>
+        <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" type="number">
+          <el-select v-model="select" slot="prepend" placeholder="请选择">
+            <el-option label="兑换卷" value=""></el-option>
+          </el-select>
+          <el-button slot="append" icon="el-icon-search" @click="postCoupon(input5)">兑换</el-button>
+        </el-input>
+      </el-collapse-item>
+      <el-collapse-item>
+        <template slot="title">
+          <i class="header-icon el-icon-edit-outline"></i>问题反馈
+        </template>
+<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
+      </el-collapse-item>
+    </el-collapse>
     <div class="list">
       <el-button type="warning" @click="logout">退出登陆</el-button>
       <!-- <button @click="logout">退出登陆</button> -->
@@ -37,7 +79,10 @@ export default {
   },
   data () {
     return {
-      userInfo: {balance: ''}
+      userInfo: {balance: ''},
+      activeName: 1,
+      input5: '',
+      select: ''
     }
   },
   methods: {
@@ -48,15 +93,34 @@ export default {
       })
     },
     logout () {
-      this.delCookie('zhuawawa')
-      // 暂时不退出微信，等修复微信二次登陆问题
-      this.delCookie('wxzhuawawa')
-      // 跳转到主页
       // 清理有关微信登陆auth_code
       window.sessionStorage.removeItem('auth_code')
       // 清理微信登陆的token
       window.localStorage.removeItem('access_token')
+      this.delCookie('zhuawawa')
+      // 暂时不退出微信，等修复微信二次登陆问题
+      this.delCookie('wxzhuawawa')
+      // 跳转到主页
       setTimeout(this.$router.push('./'), 2000)
+    },
+    postCoupon (coupon) {
+      apiService.postCoupon(coupon).then(data => {
+        console.log('user coupon posted', data.data)
+        // 增加成功抓到的弹窗
+        if (data.data.status === '该优惠券可兑换') {
+          window.$vm.$message({
+            message: data.data.result,
+            type: 'success'
+          })
+        } else {
+          window.$vm.$message({
+            message: '可惜 ' + data.data.status
+          })
+        }
+      })
+    },
+    goToMydoll () {
+      this.$router.push('./mydoll')
     }
   },
   created () {
@@ -68,14 +132,20 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+  .list {
+    margin-top: 40px;
+  }
   .UserInfo_wrapper {
+    .template {
+      float: left;
+    }
     .user_header {
       width: 750px;
       max-width: 100%;
-      height: 500px;
+      height: 150px;
       margin: 0 auto;
       background: url(../../static/pic/mine_header_bg.png) no-repeat;
-      background-size: 100% 30%;
+      background-size: 100% 100%;
       .avatar {
         width: 60px;
         height: 60px;

@@ -11,6 +11,7 @@ const state = {
   roomState: 'leave', // 房间状态
   playerId: '123',
   token: '456',
+  roomsInfo: [], // 从category取来的所有房间数据
   playerInfo: {}, // 玩家详细信息
   roomUpdating: false, // 控制房间更新的状态
   isLogin: false, // 是否已登陆，切换登陆页面的按钮
@@ -21,7 +22,8 @@ const state = {
   roomPlayers: '',
   playingName: '',
   isLoading: false,
-  isFailed: false
+  isFailed: false,
+  isEntered: false
 }
 
 const store = new Vuex.Store({
@@ -135,6 +137,12 @@ const store = new Vuex.Store({
     },
     togglePlaying (context) {
       context.commit('togglePlaying')
+    },
+    getRoomsInfo (context, rooms) {
+      context.commit('getRoomsInfo', rooms)
+    },
+    enterRoom (context) {
+      context.commit('enterRoom')
     }
   },
   mutations: {
@@ -162,6 +170,7 @@ const store = new Vuex.Store({
       state.isPlaying = false
       // 玩家退出后，isFailed状态恢复，显示正常按钮
       state.isFailed = false
+      state.isEntered = false
       // 离开房间时，增加一个离开房间api请求，告知服务器已经退出排队
       apiService.leaveQueue(id)
     },
@@ -262,6 +271,12 @@ const store = new Vuex.Store({
     },
     togglePlaying (state) {
       state.isPlaying = false
+    },
+    getRoomsInfo (state, rooms) {
+      state.roomsInfo = rooms
+    },
+    enterRoom (state) {
+      state.isEntered = true
     }
   }
 })
