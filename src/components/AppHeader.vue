@@ -3,7 +3,9 @@
 <!--   <el-button type="primary" round @click="$router.push('./login')">微信登陆</el-button>
   <el-button type="primary" round @click="WechatLogin">测试登陆</el-button> -->
   <div class="nav">
-    <!-- <i class="el-icon-loading"></i> -->首页
+    <!-- <i class="el-icon-loading"></i> <-->
+      首页
+    <!-- <el-button v-effect="yellow">test</el-button> -->
   </div>
   <div class="head">
     <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="picLoading">
@@ -44,6 +46,7 @@ div {
   width: 750px;
   max-width: 100%;
   margin: 0 auto;
+  line-height: 1.4;
 }
 .head-img {
   max-width: 100%;

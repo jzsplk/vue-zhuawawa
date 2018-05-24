@@ -35,16 +35,21 @@ export default {
 <style scoped lang="scss" type="text/css">
 a {
   text-decoration: none;
-  color: #000;
+  color: #000 !important;
+}
+a:hover, a:visited, a:link, a:active {
+  text-decoration: none;
+  color: #000 !important;
 }
 .router-link-active {
   text-decoration: none;
 }
 .room {
+  box-sizing: border-box;
   margin: 4px 2px 2px 4px;
   padding: 0;
   max-width: 100%;
-  height: 100px;
+  height: auto;
   background-color: #E5E67E;
   display: flex;
   border-radius: 10px;

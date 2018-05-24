@@ -3,7 +3,7 @@
     <app-header></app-header>
     <!-- <room></room> -->
     <category></category>
-    <app-footer></app-footer>
+    <!-- <app-footer></app-footer> -->
   </div>
 </template>
 <script>

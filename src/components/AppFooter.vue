@@ -10,7 +10,7 @@
       </router-link>
     </div>
     <div v-if="false" class="copyright">一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div> -->
-    <el-menu
+    <!-- <el-menu
       v-bind:class="{ hide: this.$store.state.isEntered}"
       :default-acitve="activeIndex"
       class="el-menu-demo"
@@ -24,25 +24,29 @@
             <i class="el-icon-mobile-phone"></i>
             <span>首页</span>
           </template>
-          <!-- <span><img src="../../static/pic/home_select.png" alt="">首页</span> -->
         </el-menu-item>
         <el-menu-item index="./mydoll">
           <template slot="title">
             <i class="el-icon-view"></i>
             <span>我的娃娃</span>
           </template>
-            <!-- <span>
-            <img src="../../static/pic/prize_normal.png" alt="">我的娃娃</span> -->
         </el-menu-item>
         <el-menu-item index="./myinfo">
           <template slot="title">
             <i class="el-icon-menu"></i>
             <span>我的背包</span>
           </template>
-<!--           <img src="../../static/pic/mine_normal.png" alt="">
-          <span>我的背包</span> -->
         </el-menu-item>
-    </el-menu>
+    </el-menu> -->
+    <div class="footer-wrapper" v-bind:class="{ hide: this.$store.state.isEntered}">
+      <div class="phone-viewport">
+        <md-bottom-bar class="md-accent" md-type="shift">
+          <md-bottom-bar-item  id="bottom-bar-item-home" md-label="首页" md-icon="home" @click="$router.push('./')"></md-bottom-bar-item>
+          <md-bottom-bar-item  id="bottom-bar-item-pages" md-label="我的娃娃" md-icon="favorite" @click="$router.push('./mydoll')"></md-bottom-bar-item>
+          <md-bottom-bar-item  id="bottom-bar-item-favorites" md-label="我的背包" md-icon="pages" @click="$router.push('./myinfo')"></md-bottom-bar-item>
+        </md-bottom-bar>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -50,7 +54,8 @@ export default {
   data () {
     return {
       activeIndex: './',
-      isPlaying: this.$store.state.isPlaying
+      isPlaying: this.$store.state.isPlaying,
+      name: 'Shift'
     }
   },
   methods: {
@@ -68,34 +73,31 @@ export default {
 }
 </script>
 <style scoped lang="scss" type="text/css">
-  .bottom-nav {
-    position: fixed;
-    bottom: -15px;
-    width: 100%;
-    background-color: #FFF;
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1.0rem;
-
-    button {
-      background-color: #FFFFFF;
-      border-style:none;
-      p {
-        margin-top: 0;
-        padding: 0;
-      }
-    }
-  }
+.footer {
+  width: 100%;
+}
   .hide {
     display: none !important;
   }
-  .el-menu {
+  .footer-wrapper {
+    width: 100%;
+    .phone-viewport {
+      width: 100%;
+      height: auto;
+      display: inline-flex;
+      align-items: flex-end;
+      overflow: hidden;
+      border: 1px solid rgba(#000, .26);
+      background: rgba(#000, .06);
+    }
+  }
+/*  .el-menu {
     position: fixed;
     bottom: 0px;
     width: 100%;
     display: flex;
     justify-content: space-around;
-    z-index: 9999;
+    z-index: 999;
     .el-menu-item {
       height: 50px;
       line-height: 50px;
@@ -115,5 +117,5 @@ export default {
         padding: 0;
       }
     }
-  }
+  }*/
 </style>

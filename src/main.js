@@ -6,8 +6,14 @@ import store from './vuex/index.js'
 import router from './router'
 import WechatAuth from 'vue-wechat-auth'
 // import WechatAuth from './node_modules/vue-wechat-auth/src/wechat-auth.js'
+// ElementUI
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// vue-material
+// import { MdButton, MdContent, MdTabs, MdBottomBar } from 'vue-material/dist/components'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+// import 'vue-material/dist/theme/default-dark.css'
 import axios from 'axios'
 import touch from 'vue-directive-touch' // 引入vue2-touch-evnets
 // import VueMqtt from 'vue-mqtt'
@@ -108,6 +114,11 @@ Vue.use(WechatAuth, {
   }
 })
 
+// Vue.use(MdButton)
+// Vue.use(MdContent)
+// Vue.use(MdTabs)
+// Vue.use(MdBottomBar)
+Vue.use(VueMaterial)
 // 让页面跳转后回到页面顶部
 router.afterEach((to, from, next) => {
   window.scrollTo(0, 0)

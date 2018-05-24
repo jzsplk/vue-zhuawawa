@@ -55,6 +55,7 @@
     <div class="list">
       <el-button type="warning" @click="logout">退出登陆</el-button>
       <!-- <button @click="logout">退出登陆</button> -->
+      <p>版本号： 0.5.8</p>
     </div>
     <div class="main">
     </div>
@@ -66,7 +67,6 @@
       <el-footer>
       </el-footer>
     </el-container>
-    <app-footer></app-footer>
   </div>
 </template>
 
@@ -134,6 +134,9 @@ export default {
 <style scoped lang="scss" type="text/css">
   .list {
     margin-top: 40px;
+    p {
+      font-size: 13px;
+    }
   }
   .UserInfo_wrapper {
     .template {

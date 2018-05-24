@@ -2,9 +2,11 @@
   <div class="player-view">
     <!-- 房间header 返回按钮、房间标题 -->
     <div class="roomplay_header">
-      <router-link :to="{path: './'}">
+      <!-- 这里改为一个判断按钮，根据房间目前状态判断下一步 -->
+<!--       <router-link :to="{path: './'}">
         <button class="back_to_home" @click="leaveRoom($route.query.id)"></button>
-      </router-link>
+      </router-link> -->
+      <button class="back_to_home" @click="checkToleave($route.query.id)"></button>
       <p class="room-title">{{roomData.Name}}</p>
     </div>
     <!-- 娃娃机画面 -->
@@ -80,6 +82,10 @@
           </el-tooltip> -->
           <button class="camera_toggle" @click="toggleCamera"></button>
         </div>
+        <!-- 倒计时roomState == 'Catching' -->
+        <div class="overlay-counting" v-show="roomState == 'Catching' && $store.state.isPlayingCountDown">
+          <roomplay-playing-countdown :rTime="30"></roomplay-playing-countdown>
+        </div>
       </div>
     </div>
 
@@ -112,7 +118,7 @@
             </div>
             <div class="charge-button">
               <i class="el-icon-circle-plus"></i>
-              <el-tooltip content="关注 一起抓抓抓 微信公众号 充值" placement="top">
+              <el-tooltip content="关注 最爱玩 微信公众号 充值" placement="top">
                 <button> 充值</button>
               </el-tooltip>
             </div>
@@ -145,26 +151,32 @@
               <div class="operation-arrow">
               </div>
               <div class="overlay-arrow-up">
-                <button id="arrow-up" class="arrow-up arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler">
+                <button id="arrow-up" class="arrow-up arrow-key md-icon-button md-primary" @mousedown.stop.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend.prevent="stopMovingHandler">
                 </button>
+                <!-- <md-button class="md-icon-button md-primary">测试</md-button> -->
               </div>
+   <!--            <div class="overlay-arrow-up">
+                <md-button id="arrow-up" class="md-icon-button md-accent" @mousedown.stop.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.prevent="longTapControlEventHandler(0, 100, 'ctrl/' + roomData.DeviceId)" @touchend.prevent="stopMovingHandler">
+                </md-button>
+              </div> -->
               <!-- <button id="arrow-up" class="arrow-up arrow-key" v-touch:tap="tapControlWithParam(0, 100, 'ctrl/' + roomData.DeviceId)"></button> -->
               <div class="overlay-arrow-down">
-                <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+                <button id="arrow-down" class="arrow-down arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(2, 100, 'ctrl/' + roomData.DeviceId)" @touchend.prevent="stopMovingHandler"></button>
               </div>
 <!--               <div class="overlay-arrow-left">
                 <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
               </div> -->
               <div class="overlay-arrow-left">
-                <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+                <button id="arrow-left" class="arrow-left arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.stop.prevent="longTapControlEventHandler(1, 100, 'ctrl/' + roomData.DeviceId)" @touchend.prevent="stopMovingHandler"></button>
               </div>
               <div class="overlay-arrow-right">
-                <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend="stopMovingHandler"></button>
+                <button id="arrow-right" class="arrow-right arrow-key" @mousedown.stop.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @mouseup="stopMovingHandler" @touchstart.prevent="longTapControlEventHandler(3, 100, 'ctrl/' + roomData.DeviceId)" @touchend.prevent="stopMovingHandler"></button>
               </div>
             </div>
             <div class="operation-space">
-              <button id="space" class="space arrow-key" @click="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
+              <button id="space" class="space arrow-key" @click.prevent="sendCmdGo('ctrl/' + roomData.DeviceId)"></button>
             </div>
+            <!-- <roomplay-playing-countdown :rTime="20"></roomplay-playing-countdown> -->
         </div>
     </div>
     <!-- detailTab -->
@@ -273,9 +285,11 @@ import playVideo from '../Video.service.js'
 import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
 import CountDown from './CountDown'
+import PlayingCountDown from './PlayingCountDown'
 export default {
   components: {
-    'roomplay-countdown': CountDown
+    'roomplay-countdown': CountDown,
+    'roomplay-playing-countdown': PlayingCountDown
   },
   data () {
     return {
@@ -453,6 +467,7 @@ export default {
       })
     },
     leaveRoom (id) {
+      // 先判断目前状态，如果目前为Catching，则先询问，如果用户确认，发下爪命令，然后退出房间
       console.log('关闭视频')
       window.wsavc.stopStream()
       playVideo.wsDisconnect()
@@ -466,6 +481,26 @@ export default {
       apiService.leaveRoom(id).then(data => {
         console.log('leave room', data)
       })
+      this.$router.push('./')
+    },
+    checkToleave (id) { // 检查房间目前状态，根据状态采取不同动作
+      if (this.$store.state.roomState === 'Catching') {
+        this.$confirm('正在抓取中，确定要退出？', '提示', {
+          confirmButtonText: '狠心退出',
+          cancelButtonText: '继续游戏',
+          type: 'warning'
+        }).then(() => {
+          this.sendCmdGo('ctrl/' + this.$store.state.roomPlayers.DeviceId)
+          this.leaveRoom(id)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '游戏继续'
+          })
+        })
+      } else {
+        this.leaveRoom(id)
+      }
     },
     queueToplay (id) {
       apiService.queueToPlay(id).then(data => {
@@ -711,7 +746,9 @@ export default {
         right: 0;
         /* 围观信息*/
         .crowd-info {
-          display: flex;
+          /* 这里disply开始是flex,后安装matiral 后改为webkit-box */
+          display: -webkit-box;
+          /*display: flex;*/
           background-color: #303133;
           opacity: 0.8;
           max-width: 95%;
@@ -794,6 +831,13 @@ export default {
           width: 48px;
           height: 48px;
         }
+      }
+      .overlay-counting {
+        position: absolute;
+        bottom: 10%;
+        right: 10%;
+        height: 50px;
+        width: 50px;
       }
     }
   }
@@ -1106,7 +1150,7 @@ export default {
         height: 30px;
         flex-grow: 0;
         img {
-          height: 30px;
+          /*height: 30px;*/
           width: auto;
           border-radius: 30px;
           border: solid 1px #fff;
@@ -1147,7 +1191,7 @@ export default {
         height: 30px;
         flex-grow: 0;
         img {
-          height: 30px;
+          /*height: 30px;*/
           width: auto;
           border-radius: 30px;
           border: solid 1px #fff;

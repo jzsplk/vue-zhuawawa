@@ -3,7 +3,7 @@
     <p>可在APP内申请发货</p>
     <div class="card-wrapper">
       <el-row>
-        <el-col :span="10" v-for="(o, index) in userGifts" :key="o" :offset="index % 2 !== 0 ? 2 : 0">
+        <el-col :span="10" v-for="(o, index) in userGifts" :key="index" :offset="index % 2 !== 0 ? 2 : 0">
           <el-card :body-style="{ padding: '0px' }">
             <img :src="baseURL + o.AvatarUrl" class="image">
             <div style="padding: 14px;">
@@ -17,7 +17,6 @@
         </el-col>
       </el-row>
     </div>
-    <app-footer></app-footer>
   </div>
 </template>
 <script>

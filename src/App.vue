@@ -15,7 +15,7 @@
 <!--     <keep-alive exclude="WechatAuth">
       <router-view/>
     </keep-alive> -->
-    <app-footer></app-footer>
+    <app-footer class="footer"></app-footer>
   </div>
 </template>
 
@@ -136,6 +136,16 @@ export default {
 <style lang="scss" type="text/css">
 /* 去掉默认body的margin*/
 body { margin: 0; }
+/* 修改el-message-box 默认样式*/
+.el-message-box {
+  max-width: 100%;
+  font-size: 13px;
+}
+.el-message {
+  min-width: 320px;
+  max-width: 100%;
+  font-size: 13px;
+}
 #app {
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -165,7 +175,8 @@ body { margin: 0; }
   }
   nav a, button {
     min-width: 48px;
-    outline: none; /* 去掉点击时边框 */
+    /* 去掉点击时边框 */
+    outline: none;
   }
   img {
     /* 在iphone关闭长按图片保存图片弹窗 */
@@ -202,4 +213,16 @@ body { margin: 0; }
     }
   }
 }
+.footer {
+  position: fixed;
+  bottom: 0;
+}
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+  primary: md-get-palette-color(blue, A200), // The primary color of your application
+  accent: md-get-palette-color(red, A200) // The accent or secondary color
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme
 </style>

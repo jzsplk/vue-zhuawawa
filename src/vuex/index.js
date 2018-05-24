@@ -18,6 +18,7 @@ const state = {
   detailState: 'Rank', //  房间detail的状态
   isVideoReady: 'false',
   isCountDown: false,
+  isPlayingCountDown: false,
   playingUrl: '',
   roomPlayers: '',
   playingName: '',
@@ -113,6 +114,9 @@ const store = new Vuex.Store({
     resetCountDown (context) {
       context.commit('resetCountDown')
     },
+    resetPlayingCountDown (context) {
+      context.commit('resetPlayingCountDown')
+    },
     getPlayingUrl (context, id) {
       context.commit('getPlayingUrl', id)
     },
@@ -194,6 +198,8 @@ const store = new Vuex.Store({
     },
     showPanel (state) {
       state.roomState = 'Catching'
+      // 开始playing倒计时，倒计时事件到，触发下抓，还原倒计时
+      state.isPlayingCountDown = true
     },
     stopCatching (state) { // 当玩家取消命令发出后，收到done命令且id是自己，触发
       state.roomState = 'MqttConnected'
@@ -229,6 +235,9 @@ const store = new Vuex.Store({
     },
     resetCountDown (state) {
       state.isCountDown = false
+    },
+    resetPlayingCountDown (state) {
+      state.isPlayingCountDown = false
     },
     getPlayingUrl (state, id) {
       console.log('更新目前玩家头像')

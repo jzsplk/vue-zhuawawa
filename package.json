@@ -19,6 +19,7 @@
     "sass-loader": "^7.0.1",
     "vue": "^2.5.2",
     "vue-directive-touch": "^1.0.10",
+    "vue-material": "^1.0.0-beta-10.2",
     "vue-mqtt": "^2.0.2",
     "vue-router": "^3.0.1",
     "vue-wechat-auth": "^1.0.2",
