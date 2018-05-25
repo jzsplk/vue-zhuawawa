@@ -295,7 +295,7 @@ export default {
       videocanvas: 'video-canvas',
       roomData: {},
       roomRank: [],
-      balance: 0, // 存储房间排名信息的data
+      balance: 0, // 存储房间排名信息的data.
       activeName: 'first',
       isMainCamera: true,
       start: false,
