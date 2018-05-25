@@ -42,7 +42,11 @@
       <div class="phone-viewport">
         <md-bottom-bar class="md-accent" md-type="shift">
           <md-bottom-bar-item  id="bottom-bar-item-home" md-label="首页" md-icon="home" @click="$router.push('./')"></md-bottom-bar-item>
-          <md-bottom-bar-item  id="bottom-bar-item-pages" md-label="我的娃娃" md-icon="favorite" @click="$router.push('./mydoll')"></md-bottom-bar-item>
+          <md-bottom-bar-item  id="bottom-bar-item-pages" md-label="我的娃娃" md-icon="favorite" @click="$router.push('./mydoll')">
+            <md-icon>favorite</md-icon>
+            <span class="md-bottom-bar-label">我的娃娃</span>
+            <i class="badge" v-if="dolls">{{ dolls }}</i>
+          </md-bottom-bar-item>
           <md-bottom-bar-item  id="bottom-bar-item-favorites" md-label="我的背包" md-icon="pages" @click="$router.push('./myinfo')"></md-bottom-bar-item>
         </md-bottom-bar>
       </div>
@@ -55,9 +59,11 @@ export default {
     return {
       activeIndex: './',
       isPlaying: this.$store.state.isPlaying,
-      name: 'Shift'
+      name: 'Shift',
+      newPosts: 4
     }
   },
+  props: ['dolls'],
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
@@ -89,6 +95,24 @@ export default {
       overflow: hidden;
       border: 1px solid rgba(#000, .26);
       background: rgba(#000, .06);
+      .badge {
+          width: 19px;
+          height: 19px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          background: #fff;
+          border-radius: 100%;
+          color: #000;
+          font-size: 10px;
+          font-style: normal;
+          font-weight: 600;
+          letter-spacing: -.05em;
+          font-family: 'Roboto Mono', monospace;
+        }
     }
   }
 /*  .el-menu {

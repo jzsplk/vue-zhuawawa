@@ -15,13 +15,14 @@
 <!--     <keep-alive exclude="WechatAuth">
       <router-view/>
     </keep-alive> -->
-    <app-footer class="footer"></app-footer>
+    <app-footer class="footer" :dolls="userGifts.length"></app-footer>
   </div>
 </template>
 
 <script>
 import MQTT from './MQTT.service.js'
 import AppFooter from './components/AppFooter'
+import apiService from './API.service.js'
 export default {
   name: 'App',
   components: {
@@ -29,8 +30,11 @@ export default {
   },
   data () {
     return {
-      isPlaying: true
+      isPlaying: true,
+      userGifts: []
     }
+  },
+  computed: {
   },
   watch: {// 监控路由变化，如果返回主页，执行checklogin,可能这里导致wechat登陆post发送了两次
     '$route' (to, from) {
@@ -120,12 +124,20 @@ export default {
           this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
         }
       }
+    },
+    getUserGifts () {
+      apiService.getUserGifts().then(data => {
+        console.log('user gifts 1111', data.data.Gifts)
+        // 把娃娃数据保存
+        this.userGifts = data.data.Gifts
+      })
     }
   },
   created () {
     // 执行checklogin
     this.checkLogin()
     this.closeZoom()
+    this.getUserGifts()
     // 阻止微信长按菜单出现
     document.addEventListener('contextmenu', function (e) {
       e.preventDefault()

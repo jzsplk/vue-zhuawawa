@@ -15,13 +15,13 @@
         <template slot="title" @click="goToMydoll">
           <i class="header-icon el-icon-view"></i>我的娃娃
         </template>
-        <el-button @click="goToMydoll">查看</el-button>
+        <el-button @click="goToMydoll" size="small">查看</el-button>
 <!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
         <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
       <el-collapse-item>
         <template slot="title">
-          <i class="header-icon el-icon-tickets"></i>消费记录
+          <i class="header-icon el-icon-tickets"></i>娃娃币账单
         </template>
 <!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
         <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
@@ -35,7 +35,7 @@
       </el-collapse-item>
       <el-collapse-item>
         <template slot="title">
-          <i class="header-icon el-icon-edit"></i>优惠码
+          <span><i class="header-icon el-icon-edit"></i>优惠码</span>
         </template>
         <el-input placeholder="请输入内容" v-model="input5" class="input-with-select" type="number">
           <el-select v-model="select" slot="prepend" placeholder="请选择">
@@ -51,6 +51,12 @@
 <!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
         <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
+            <el-collapse-item>
+              <template slot="title">
+                <i class="header-icon el-icon-setting"></i>设置
+              </template>
+              <el-button type="primary" icon="el-icon-edit" size="small" @click="$router.push('./address')">收货地址</el-button>
+            </el-collapse-item>
     </el-collapse>
     <div class="list">
       <el-button type="warning" @click="logout">退出登陆</el-button>
@@ -73,6 +79,7 @@
 <script>
 import apiService from '../API.service.js'
 import AppFooter from './AppFooter'
+import WePay from '../WePay.service.js'
 export default {
   components: {
     'app-footer': AppFooter
@@ -86,6 +93,9 @@ export default {
     }
   },
   methods: {
+    wepay () {
+      WePay.play()
+    },
     getUserInfo () {
       apiService.getUserBalance().then(data => {
         console.log('user balance info', data.data)

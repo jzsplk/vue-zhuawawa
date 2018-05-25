@@ -25,39 +25,39 @@ const MQTT = {
     // let lastWillQos = 0
     // let lastWillRetain = false
     // let lastWillMessage = ''
-    // 判断如果是掉线，并且没有window.client,则重连
+    // 判断如果是掉线，并且没有window.client,则新建连接
     if (window.client === undefined || window.client === null) {
       window.client = new Paho.MQTT.Client(hostname, Number(port), path, clientId)
       console.info('Connecting to Server: Hostname: ', hostname, '. Port: ', port, '. Path: ', path, '. Client ID: ', clientId)
-    }
-    let options = {
-      invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
-      timeout: timeout,
-      keepAliveInterval: keepAlive,
-      cleanSession: cleanSession,
-      useSSL: tls,
-      reconnect: true,
-      onSuccess: function (context) {
-        console.log('Client Connected000')
-        // let statusSpan = document.getElementById('connectionStatus')
-        // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
-        // 暂时不直接注册，进入房间再注册Topic
-        // MQTT.subscribeToTopic(window.client, To)
-      },
-      onFailure: this.onFail
-    }
-    if (user.length > 0) {
-      options.userName = user
-    }
+      let options = {
+        invocationContext: {host: hostname, port: port, path: window.client.path, clientId: clientId},
+        timeout: timeout,
+        keepAliveInterval: keepAlive,
+        cleanSession: cleanSession,
+        useSSL: tls,
+        reconnect: true,
+        onSuccess: function (context) {
+          console.log('Client Connected000')
+          // let statusSpan = document.getElementById('connectionStatus')
+          // statusSpan.innerHTML = 'Connected to: ' + context.invocationContext.host + ':' + context.invocationContext.port + context.invocationContext.path + ' as ' + context.invocationContext.clientId
+          // 暂时不直接注册，进入房间再注册Topic
+          // MQTT.subscribeToTopic(window.client, To)
+        },
+        onFailure: this.onFail
+      }
+      if (user.length > 0) {
+        options.userName = user
+      }
 
-    if (pass.length > 0) {
-      options.password = pass
+      if (pass.length > 0) {
+        options.password = pass
+      }
+      window.client.onConnectionLost = this.onConnectionLost
+      window.client.onMessageArrived = this.onMessageArrived
+      window.client.onMessageDelivered = this.onMessageDelivered
+      window.client.onConnected = this.onConnect
+      window.client.connect(options)
     }
-    window.client.onConnectionLost = this.onConnectionLost
-    window.client.onMessageArrived = this.onMessageArrived
-    window.client.onMessageDelivered = this.onMessageDelivered
-    window.client.onConnected = this.onConnect
-    window.client.connect(options)
   },
   reConnect () {
     // this.initMqttClient(store._vm.roomTopic)

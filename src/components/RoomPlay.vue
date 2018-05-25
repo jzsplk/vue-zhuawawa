@@ -33,7 +33,7 @@
           </div>
         </div> -->
         <!-- 围观头像 -->
-        <div class="overlay">
+        <div class="overlay" :style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">
           <div class="crowd-info">
             <div class="crowd-num">
               <div class="crowd-count">
@@ -69,7 +69,7 @@
             <p class="overlay-playing-title">热玩中</p>
           </div> -->
           <!-- 新的正在玩头像 注意这里要用vif不能用v-show-->
-          <div v-if="$store.state.isPlaying" class="overlay-playing">
+          <div v-if="$store.state.isPlaying && roomData.Actor !== undefined" class="overlay-playing">
             <img :src="roomData.Actor.AvatarUrl" alt="">
             <p>{{roomData.Actor.NickName}}</p>
             <p class="overlay-playing-title">热玩中</p>
@@ -182,7 +182,6 @@
     <!-- detailTab -->
     <el-tabs v-model="activeName" >
       <el-tab-pane label="娃娃详情" name="first">
-        <img v-show="false" src="https://www.liehuo55.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
         <div v-show="roomData.Doll" class="pic">
           <ul class="pic_ul">
             <li v-for="pic in roomData.Doll.Item.Pictures" v-bind:key="pic.Path" class="pic_li">
@@ -350,8 +349,6 @@ export default {
         // 改为在home中直接subscribe，这里不用单独subscribe了
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
         // MQTT.subscribeToTopic(window.client, 'notify/' + this.roomData.DeviceId)
-        // 获取房间排名数据
-        this.getRoomRank(this.$route.query.id)
         // 获取视频地址，播放视频
         console.log('XroomData', this.roomData)
         // topic注册成功，则显示可以排队按钮
@@ -530,7 +527,8 @@ export default {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        hour12: false
       }
       return date.toLocaleDateString('zh-cn', options)
       // return date
@@ -554,9 +552,9 @@ export default {
   created () {
     // 阻止移动端缩放屏幕
     // this.closeZoom()
+    // 获取房间排名数据
+    this.getRoomRank(this.$route.query.id)
     this.$store.dispatch('startPlaying')
-  },
-  mounted () {
     this.initMqttClient()
     this.enterRoom(this.$route.query.id)
     this.getRoomInfo(this.$route.query.id)
@@ -564,6 +562,16 @@ export default {
     // playVideo.wsPlay('video.liehuo55.com:29001')
     // 打印动态获取的div css
     console.log('css of canvas', this.$refs)
+  },
+  mounted () {
+    // 这里有下面函数都移到created中
+    // this.initMqttClient()
+    // this.enterRoom(this.$route.query.id)
+    // this.getRoomInfo(this.$route.query.id)
+    // console.log('DeviceId', this.roomData)
+    // // playVideo.wsPlay('video.liehuo55.com:29001')
+    // // 打印动态获取的div css
+    // console.log('css of canvas', this.$refs)
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState']),
@@ -579,9 +587,13 @@ export default {
       // getter
       get: function () {
         if (this.isMainCamera) {
-          return this.roomData.WStreams[0]
+          if (this.roomData.WStreams !== undefined) {
+            return this.roomData.WStreams[0]
+          }
         } else {
-          return this.roomData.WStreams[1]
+          if (this.roomData.WStreams !== undefined) {
+            return this.roomData.WStreams[1]
+          }
         }
       },
       // setter
@@ -771,9 +783,9 @@ export default {
             overflow: hidden;
             img {
               display: inline-block;
-              width: 25px;
-              height: 25px;
-              border-radius: 40px;
+              width: 35px;
+              height: 35px;
+              border-radius: 35px;
               overflow: hidden;
               -webkit-box-shadow: 0 0 3px #ccc;
               box-shadow: 0 0 3px #ccc;

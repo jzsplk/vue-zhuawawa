@@ -1,9 +1,10 @@
 import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
+import _global from './components/Global'
 // 新API地址
 // axios.defaults.baseURL = 'https://www.liehuo55.com/'
-// axios.defaults.baseURL = 'http://139.199.227.21/'
+axios.defaults.baseURL = 'http://139.199.227.21/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -126,7 +127,8 @@ const apiService = {
       AppId: 'wxb4fd13a5f6f5a7c2',
       // MAC: '124578963816'
       // 修改为用户输入
-      MAC: String(name)
+      MAC: String(name),
+      Terminal: 'H5'
     }
     return new Promise((resolve) => {
       axios.post(axios.defaults.baseURL + 'api/auth/AuthWith?RefSource=visitor', UserInfo)
@@ -212,6 +214,46 @@ const apiService = {
         })
         .catch(error => {
           console.log('coupen error', error)
+        })
+    })
+  },
+  // 商品列表获取
+  getPayList (json) {
+    return new Promise((resolve) => {
+      axios({
+        method: 'get',
+        url: _global.host2,
+        data: json,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get Pay list', response)
+        })
+        .catch(error => {
+          console.log('get Paylist error', error)
+        })
+    })
+  },
+  // 请求微信支付接口
+  requestWePay (json) {
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: _global.host3,
+        data: json,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get Pay request', response)
+        })
+        .catch(error => {
+          console.log('get Pay request error', error)
         })
     })
   }

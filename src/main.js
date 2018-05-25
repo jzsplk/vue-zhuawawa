@@ -69,7 +69,7 @@ Vue.use(ElementUI)
 // console.log('router1', router)
 // console.log('router2', router2)
 // axios.defaults.baseURL = 'https://www.liehuo55.com/'
-axios.defaults.baseURL = 'http://139.199.227.21/'
+// axios.defaults.baseURL = 'http://139.199.227.21/'
 // console.log('新参数', JSON.stringify(window.params))
 Vue.use(WechatAuth, {
   router,

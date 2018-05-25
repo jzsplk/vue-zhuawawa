@@ -20,6 +20,12 @@ const MQTT_ACTION_TIMEOUT = 'timeout'
 
 // const BASE_URL = 'https://www.iqi1.com/'
 // const URL_ROOM_QUEUE = 'api/app/doll/room/queue'
+// 支付完成请求数据
+const host1 = 'http://weixin.kk10888.com/payresult'
+// 请求商品列表
+const host2 = 'http://weixin.kk10888.com/getprice'
+// 请求调用微信支付数据接口
+const host3 = 'http://weixin.kk10888.com/buydiamond'
 
 export default {
   client,
@@ -35,6 +41,9 @@ export default {
   MQTT_ACTION_UPDATE,
   MQTT_ACTION_DONE,
   MQTT_ACTION_TIMEOUT,
-  token
+  token,
+  host1,
+  host2,
+  host3
 }
 </script>
