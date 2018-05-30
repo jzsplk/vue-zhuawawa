@@ -20,12 +20,14 @@ const MQTT_ACTION_TIMEOUT = 'timeout'
 
 // const BASE_URL = 'https://www.iqi1.com/'
 // const URL_ROOM_QUEUE = 'api/app/doll/room/queue'
+const appid = 'wx229fb7a27a20b375'
 // 支付完成请求数据
-const host1 = 'http://weixin.kk10888.com/payresult'
+const host1 = 'http://zhuaww.gongyou.co/weixin/payresult'
 // 请求商品列表
-const host2 = 'http://weixin.kk10888.com/getprice'
+const host2 = 'http://zhuaww.gongyou.co/weixin/getprice'
 // 请求调用微信支付数据接口
-const host3 = 'http://weixin.kk10888.com/buydiamond'
+const host3 = 'http://zhuaww.gongyou.co/weixin/buydiamond'
+const url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=http%3a%2f%2fzhuaww.gongyou.co%2fweixin%2fpayment&response_type=code&scope=snsapi_base&state=123#wechat_redirect'
 
 export default {
   client,
@@ -44,6 +46,7 @@ export default {
   token,
   host1,
   host2,
-  host3
+  host3,
+  url
 }
 </script>

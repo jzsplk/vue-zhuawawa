@@ -15,7 +15,7 @@
         <template slot="title" @click="goToMydoll">
           <i class="header-icon el-icon-view"></i>我的娃娃
         </template>
-        <el-button @click="goToMydoll" size="small">查看</el-button>
+        <el-button @click="goToMydoll" size="mini">查看</el-button>
 <!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
         <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
@@ -23,6 +23,7 @@
         <template slot="title">
           <i class="header-icon el-icon-tickets"></i>娃娃币账单
         </template>
+        <el-button @click="goToBill" size="mini">查看</el-button>
 <!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
         <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
@@ -131,6 +132,9 @@ export default {
     },
     goToMydoll () {
       this.$router.push('./mydoll')
+    },
+    goToBill () {
+      this.$router.push('./billing')
     }
   },
   created () {
@@ -164,6 +168,7 @@ export default {
         height: 60px;
         border-radius: 50px;
         margin: 0 auto;
+        margin-bottom: 20px;
         .avatar-img {
           width: 60px;
           height: 60px;
@@ -172,8 +177,8 @@ export default {
         }
       }
       .name {
-        margin-top: 15px;
-        font-size: 1.2rem;
+        margin-top: 13px;
+        font-size: 13px;
       }
       .balance {
         box-sizing: border-box;
@@ -194,7 +199,7 @@ export default {
         }
       }
     }
-    // el-container 有问题，先不用
+    /*// el-container 有问题，先不用*/
     .el-container {
       .el-header {
         text-align: center;

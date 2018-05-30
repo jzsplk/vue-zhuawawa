@@ -8,7 +8,7 @@
     <!-- <el-button v-effect="yellow">test</el-button> -->
   </div>
   <div class="head">
-    <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="picLoading">
+    <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="showGuide">
   </div>
 </div>
 </template>
@@ -30,6 +30,9 @@ export default {
       setTimeout(() => {
         loading.close()
       }, 1000)
+    },
+    showGuide () { // 增加一个帮助界面
+      this.$router.push('./guide')
     }
   }
 }

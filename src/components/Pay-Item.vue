@@ -1,6 +1,6 @@
 <template>
   <div class="Pay-item-wrapper">
-    <md-card class="md-primary">
+<!--     <md-card class="md-primary">
       <md-card-header>
         <md-card-header-text>
           <div class="md-title">微信充值</div>
@@ -15,7 +15,13 @@
       <md-card-actions>
         <md-button @click="sendPay(good, id)">充值</md-button>
       </md-card-actions>
-    </md-card>
+    </md-card> -->
+    <el-card>
+      <div class="md-title">微信充值</div>
+      <div class="md-subhead">{{good.price}}币</div>
+      <img src="../../static/pic/coin.png" alt="Avatar">
+      <el-button @click="sendPay(good, id)">充值</el-button>
+    </el-card>
   </div>
 </template>
 

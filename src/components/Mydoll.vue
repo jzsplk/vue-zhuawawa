@@ -1,21 +1,25 @@
 <template>
   <div class="my-doll">
-    <p>可在APP内申请发货</p>
+    <span>我的娃娃</span>
     <div class="card-wrapper">
       <el-row>
         <el-col :span="10" v-for="(o, index) in userGifts" :key="index" :offset="index % 2 !== 0 ? 2 : 0">
           <el-card :body-style="{ padding: '0px' }">
             <img :src="baseURL + o.AvatarUrl" class="image">
             <div style="padding: 14px;">
+              <!-- <el-checkbox v-model="o.check" label="邮寄" border></el-checkbox> -->
               <span>{{o.Name}}</span>
               <div class="bottom clearfix">
                 <time class="time">{{utcTimeConvert(o.ReceivedDT)}}</time>
-                <el-button type="text" class="button">可兑换</el-button>
+                <el-button style="float: right;" type="text" v-bind:class="{ active: o.Status === 1 }">{{o.Status === 0 ? '可兑换' : '已发货'}}</el-button>
               </div>
             </div>
           </el-card>
         </el-col>
       </el-row>
+      <br>
+      <br>
+      <el-button type="primary" round @click="$router.push('./delivery')" size="medium">申请发货</el-button>
     </div>
   </div>
 </template>
@@ -30,7 +34,8 @@ export default {
     return {
       userInfo: {balance: ''},
       userGifts: [],
-      baseURL: 'https://www.liehuo55.com/'
+      baseURL: 'https://www.liehuo55.com/',
+      checked3: false
     }
   },
   methods: {
@@ -56,7 +61,8 @@ export default {
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        hour12: false
       }
       return date.toLocaleDateString('zh-cn', options)
       // return date
@@ -88,6 +94,9 @@ export default {
       height: 600px;
       .el-card {
         margin-bottom: 10px;
+        .active {
+          color: #67C23A;
+        }
       }
     }
   }

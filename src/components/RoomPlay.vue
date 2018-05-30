@@ -83,8 +83,12 @@
           <button class="camera_toggle" @click="toggleCamera"></button>
         </div>
         <!-- 倒计时roomState == 'Catching' -->
-        <div class="overlay-counting" v-show="roomState == 'Catching' && $store.state.isPlayingCountDown">
-          <roomplay-playing-countdown :rTime="30"></roomplay-playing-countdown>
+        <div class="overlay-counting" v-show="roomState == 'Catching' && $store.state.isPlayingCountDown && !$store.state.isWaiting">
+          <roomplay-playing-countdown :rTime="30" v-on:sendGo="sendCmdGo('ctrl/' + $store.state.roomPlayers.DeviceId)"></roomplay-playing-countdown>
+        </div>
+        <div class="overlay-waiting" v-show="roomState == 'Catching' && $store.state.isWaiting">
+          <span><i class="el-icon-loading"></i>已下爪请等待结果</span>
+          <!-- <md-progress-spinner md-mode="indeterminate" :md-diameter="25" :md-stroke="3"></md-progress-spinner> -->
         </div>
       </div>
     </div>
@@ -96,7 +100,21 @@
 <!--             <p>本次:<span>{{roomData.Coin}}币</span></p>
             <p>余额:<span>{{balance * 10}}币</span></p> -->
             <!-- <el-button type="warning" icon="el-icon-star-off" round>如何领回家？</el-button> -->
-            如何领回家？
+            <el-button type="info" size="mini" round @click="showHelp">如何领回家</el-button>
+            <el-dialog title="如何领萌物？" :visible.sync="dialogVisible" width="90%">
+              <el-card class="box-card">
+                <div v-for="(o, index) in helps" :key="index" class="text item">
+                  <div class="query">
+                    {{(index + 1) + '. ' + o.query }}
+                  </div>
+                  <br>
+                  <div class="answer">
+                    {{o.answer }}
+                  </div>
+                </div>
+              </el-card>
+
+            </el-dialog>
           </div>
           <div class="queue">
             <el-button type="primary" round @click="queue">预约抓娃娃
@@ -119,7 +137,7 @@
             <div class="charge-button">
               <i class="el-icon-circle-plus"></i>
               <el-tooltip content="关注 最爱玩 微信公众号 充值" placement="top">
-                <button> 充值</button>
+                <a href="http://alicdn.gongyou.co/zhuaww/dist/"><button> 充值</button></a>
               </el-tooltip>
             </div>
           </div>
@@ -299,7 +317,38 @@ export default {
       activeName: 'first',
       isMainCamera: true,
       start: false,
-      disabled: false
+      disabled: false,
+      dialogVisible: false,
+      helps: [
+        {
+          query: '抓一次需要多少金币？',
+          answer: '每个机器价格不一定相同，游戏首页及游戏房间内都有当前机器所需金币数额，每次抓取都会扣去相应的金币。'
+        },
+        {
+          query: '如何知道我还有多少金币？',
+          answer: '进入娃娃房间后视频窗口左下方会有你当前的金币余额。'
+        },
+        {
+          query: '如何获得金币？',
+          answer: '可以通过点击充值获得金币。另外还可以输入兑换码获得金币。'
+        },
+        {
+          query: '如何切换摄像头？',
+          answer: '视频窗口右侧有一个切换按钮，点击即可切换。'
+        },
+        {
+          query: '哪里可以查看我抓到的娃娃？',
+          answer: '首页点击我的娃娃，即可查看所有抓中记录。'
+        },
+        {
+          query: '一次抓中两只娃娃怎么办？',
+          answer: '如果有次状况，请及时联系客服。目前系统判定为成功抓取一只，因此发货也只发一只。另一个娃娃将在我们审核游戏记录后兑换等同的金币放入您的账户中。'
+        },
+        {
+          query: '抓到娃娃后怎么拿到娃娃或者兑换金币？',
+          answer: '抓到娃娃后 返回页，点击我的娃娃 选择你抓中的娃娃，申请发货处理或选择兑换金币。（如选择邮寄，2只以上包邮，否则将收取110金币作为邮费）'
+        }
+      ]
     }
   },
   props: ['room'],
@@ -426,13 +475,9 @@ export default {
     sendCmdGo (topic) {
       MQTT.sendControlCmd('go', 200, 2, topic)
       this.stopMovingHandler()
+      // 改变状态为isWaiting == true
+      this.$store.dispatch('toggleWaiting')
       // 增加一个提示玩家正在等待结果提示
-      this.$notify({
-        title: '已下爪',
-        message: '请等待结果揭晓',
-        type: 'success',
-        duration: 3000
-      })
     },
     PrepareTopic () {
       MQTT.publishMessage({ action: 'room_update' }, 0, 'notify/' + '22371')
@@ -483,17 +528,17 @@ export default {
     checkToleave (id) { // 检查房间目前状态，根据状态采取不同动作
       if (this.$store.state.roomState === 'Catching') {
         this.$confirm('正在抓取中，确定要退出？', '提示', {
-          confirmButtonText: '狠心退出',
-          cancelButtonText: '继续游戏',
+          confirmButtonText: '继续游戏',
+          cancelButtonText: '狠心退出',
           type: 'warning'
         }).then(() => {
-          this.sendCmdGo('ctrl/' + this.$store.state.roomPlayers.DeviceId)
-          this.leaveRoom(id)
-        }).catch(() => {
           this.$message({
             type: 'info',
             message: '游戏继续'
           })
+        }).catch(() => {
+          this.sendCmdGo('ctrl/' + this.$store.state.roomPlayers.DeviceId)
+          this.leaveRoom(id)
         })
       } else {
         this.leaveRoom(id)
@@ -518,7 +563,7 @@ export default {
     changeDetailState (detail) {
       this.$store.dispatch('changeDetailState', detail)
     },
-    // 事件格式转换
+    // 时间格式转换
     utcTimeConvert (time) {
       let date = new Date(time)
       let options = {
@@ -547,6 +592,14 @@ export default {
         playVideo.wsRePlay(this.mainWsStream)
         this.$store.dispatch('showLoading')
       }
+    },
+    goToPay () {
+      // this.$router.push('alicdn.gongyou.co.zhuaww/dist/')
+      window.location.href = 'alicdn.gongyou.co.zhuaww/dist/'
+    },
+    showHelp () {
+      console.log('显示帮助')
+      this.dialogVisible = true
     }
   },
   created () {
@@ -846,10 +899,27 @@ export default {
       }
       .overlay-counting {
         position: absolute;
-        bottom: 10%;
+        bottom: 7%;
         right: 10%;
         height: 50px;
-        width: 50px;
+        background-color: #303133;
+        opacity: 0.8;
+        max-width: 95%;
+        border-radius: 30px;
+        padding: 0.2em 1.32em;
+      }
+      .overlay-waiting {
+        position: absolute;
+        bottom: 7%;
+        left: 50%;
+        background-color: #303133;
+        opacity: 0.8;
+        max-width: 95%;
+        border-radius: 30px 0 0 30px;
+        padding: 0.2em 1.32em;
+        span {
+          color: white;
+        }
       }
     }
   }
@@ -881,6 +951,15 @@ export default {
         }
         span {
           color: #FFFFFF;
+        }
+        .query {
+          font-weight: bold;
+          margin-bottom: -1.3rem;
+          padding-bottom: 0;
+        }
+        .answer {
+          margin-top: 0;
+          margin-bottom: 0.5rem;
         }
       }
       .queue {

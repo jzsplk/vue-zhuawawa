@@ -8,9 +8,10 @@ const MQTT = {
   initMqttClient (To) {
     // console.log('MQTT service', Paho)
     // console.log('MQTT store', store)
-    // let hostname = '47.97.34.46'
+    let hostname = '47.97.34.46'
     // 测试MQTT地址
-    let hostname = '139.199.227.21'
+    // let hostname = '139.199.227.21'
+    // let hostname = 'http://zhuaww.gongyou.co/weixin/'
     let port = 18000
     // 改为UUID+ 时间戳
     let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
@@ -233,8 +234,11 @@ const MQTT = {
   parseActionResult (object) {
     let action = object.action
     console.log('parseMQTTResults action= ' + action)
+    // 还原isWaiting的状态
+    store.dispatch('resetWaiting')
     if (action === _global.MQTT_ACTION_SUCCESS) {
       let id = object.Id
+      // 还原isWaiting的状态
       // 增加成功抓到的弹窗
       window.$vm.$message({
         message: '恭喜 ' + object.Name + '抓到了！',
@@ -246,6 +250,8 @@ const MQTT = {
         store.dispatch('stopCatching')
       }
     } else if (action === _global.MQTT_ACTION_FAIL) {
+      // 还原isWaiting的状态
+
       // 触发状态概念，修改按钮内容
       let id = object.Id
       if (id === store._vm.playerId) {

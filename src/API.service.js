@@ -3,8 +3,8 @@ import axios from 'axios'
 import store from './vuex/index.js'
 import _global from './components/Global'
 // 新API地址
-// axios.defaults.baseURL = 'https://www.liehuo55.com/'
-axios.defaults.baseURL = 'http://139.199.227.21/'
+axios.defaults.baseURL = 'https://www.liehuo55.com/'
+// axios.defaults.baseURL = 'http://zhuaww.gongyou.co/weixin/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -12,7 +12,7 @@ axios.defaults.baseURL = 'http://139.199.227.21/'
 const apiService = {
   getRooms () {
     return new Promise((resolve) => {
-      axios.get('api/app/doll/room?Full=true')
+      axios.get('api/app/doll/room')
         .then(response => {
           resolve(response.data)
           console.log('get Rooms response', response)
@@ -118,6 +118,24 @@ const apiService = {
       })
         .then(response => {
           resolve(response)
+        })
+    })
+  },
+  getBilling () {
+    return new Promise((resolve) => {
+      axios({
+        method: 'get',
+        url: axios.defaults.baseURL + 'api/balance/log',
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get billing history list', response)
+        })
+        .catch(error => {
+          console.log('get billing history error', error)
         })
     })
   },
@@ -237,6 +255,50 @@ const apiService = {
         })
     })
   },
+  getPostage (json) { // 获取发货邮费接口
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/receipt/postage',
+        data: {
+          Gifts: json
+        },
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get postage', response)
+        })
+        .catch(error => {
+          console.log('get postage error', error)
+        })
+    })
+  },
+  deliverGifts (json, address) { // 申请发货接口
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/receipt/ImportGift',
+        data: {
+          Gifts: json,
+          ToAddress: address
+        },
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('request delivery success', response)
+        })
+        .catch(error => {
+          console.log('request delivery error', error)
+          this.$message('余额不足请充值')
+        })
+    })
+  },
   // 请求微信支付接口
   requestWePay (json) {
     return new Promise((resolve) => {
@@ -254,6 +316,83 @@ const apiService = {
         })
         .catch(error => {
           console.log('get Pay request error', error)
+        })
+    })
+  },
+  // 获取用户存储的地址
+  getAddressList () {
+    return new Promise((resolve) => {
+      axios({
+        method: 'get',
+        url: axios.defaults.baseURL + 'api/addr',
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get address list', response)
+        })
+        .catch(error => {
+          console.log('get address list address error', error)
+        })
+    })
+  },
+  // 增加用户地址
+  appendAddress (json) {
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/addr/append',
+        data: json,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('append address', response)
+        })
+        .catch(error => {
+          console.log('gappend address error', error)
+        })
+    })
+  },
+  deleteAddress (id) { // 删除邮寄地址
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/addr/remove',
+        data: id,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('remove address', response)
+        })
+        .catch(error => {
+          console.log('remove address error', error)
+        })
+    })
+  },
+  setDefAddress (json) { // 设置默认地址
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/addr/def',
+        data: json,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('set def address', response)
+        })
+        .catch(error => {
+          console.log('set def error', error)
         })
     })
   }

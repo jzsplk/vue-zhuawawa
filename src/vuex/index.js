@@ -24,7 +24,8 @@ const state = {
   playingName: '',
   isLoading: false,
   isFailed: false,
-  isEntered: false
+  isEntered: false,
+  isWaiting: false
 }
 
 const store = new Vuex.Store({
@@ -147,6 +148,12 @@ const store = new Vuex.Store({
     },
     enterRoom (context) {
       context.commit('enterRoom')
+    },
+    toggleWaiting (context) {
+      context.commit('toggleWaiting')
+    },
+    resetWaiting (context) {
+      context.commit('resetWaiting')
     }
   },
   mutations: {
@@ -286,6 +293,12 @@ const store = new Vuex.Store({
     },
     enterRoom (state) {
       state.isEntered = true
+    },
+    toggleWaiting (state) {
+      state.isWaiting = true
+    },
+    resetWaiting (state) {
+      state.isWaiting = false
     }
   }
 })

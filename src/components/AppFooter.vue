@@ -10,7 +10,7 @@
       </router-link>
     </div>
     <div v-if="false" class="copyright">一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div> -->
-    <!-- <el-menu
+    <el-menu
       v-bind:class="{ hide: this.$store.state.isEntered}"
       :default-acitve="activeIndex"
       class="el-menu-demo"
@@ -37,8 +37,8 @@
             <span>我的背包</span>
           </template>
         </el-menu-item>
-    </el-menu> -->
-    <div class="footer-wrapper" v-bind:class="{ hide: this.$store.state.isEntered}">
+    </el-menu>
+<!--     <div class="footer-wrapper" v-bind:class="{ hide: this.$store.state.isEntered}">
       <div class="phone-viewport">
         <md-bottom-bar class="md-accent" md-type="shift">
           <md-bottom-bar-item  id="bottom-bar-item-home" md-label="首页" md-icon="home" @click="$router.push('./')"></md-bottom-bar-item>
@@ -50,7 +50,7 @@
           <md-bottom-bar-item  id="bottom-bar-item-favorites" md-label="我的背包" md-icon="pages" @click="$router.push('./myinfo')"></md-bottom-bar-item>
         </md-bottom-bar>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -59,7 +59,7 @@ export default {
     return {
       activeIndex: './',
       isPlaying: this.$store.state.isPlaying,
-      name: 'Shift',
+      // name: 'Shift',
       newPosts: 4
     }
   },
@@ -87,7 +87,7 @@ export default {
   }
   .footer-wrapper {
     width: 100%;
-    .phone-viewport {
+/*    .phone-viewport {
       width: 100%;
       height: auto;
       display: inline-flex;
@@ -113,9 +113,9 @@ export default {
           letter-spacing: -.05em;
           font-family: 'Roboto Mono', monospace;
         }
-    }
+    }*/
   }
-/*  .el-menu {
+  .el-menu {
     position: fixed;
     bottom: 0px;
     width: 100%;
@@ -141,5 +141,5 @@ export default {
         padding: 0;
       }
     }
-  }*/
+  }
 </style>

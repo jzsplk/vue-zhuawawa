@@ -29,6 +29,7 @@ export default {
     return {
       baseURL: 'https://www.liehuo55.com/'
       // baseURL: 'http://139.199.227.21/'
+      // baseURL: 'http://zhuaww.gongyou.co/weixin/'
     }
   },
   props: ['room']

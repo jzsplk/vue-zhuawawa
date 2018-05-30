@@ -8,6 +8,10 @@ import Mydoll from '@/components/Mydoll'
 import MyInfo from '@/components/MyInfo'
 import Pay from '@/components/Pay'
 import Address from '@/components/Address'
+import AddAddress from '@/components/Address-Add'
+import Delivery from '@/components/Mydoll-delivery'
+import Billing from '@/components/Bill'
+import Guide from '@/components/Guide'
 
 Vue.use(Router)
 
@@ -69,6 +73,26 @@ export default new Router({
       path: '/address',
       name: 'address',
       component: Address
+    },
+    {
+      path: '/add-address',
+      name: 'add-address',
+      component: AddAddress
+    },
+    {
+      path: '/delivery',
+      name: 'delivery',
+      component: Delivery
+    },
+    {
+      path: '/billing',
+      name: 'billing',
+      component: Billing
+    },
+    {
+      path: '/guide',
+      name: 'guide',
+      component: Guide
     }
   ]
 })

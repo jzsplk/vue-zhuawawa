@@ -11,7 +11,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // vue-material
 // import { MdButton, MdContent, MdTabs, MdBottomBar } from 'vue-material/dist/components'
-import VueMaterial from 'vue-material'
+// 由于微信浏览器不支持VueMaterial更改其他库
+// import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 // import 'vue-material/dist/theme/default-dark.css'
 import axios from 'axios'
@@ -68,7 +69,7 @@ Vue.use(ElementUI)
 // })
 // console.log('router1', router)
 // console.log('router2', router2)
-// axios.defaults.baseURL = 'https://www.liehuo55.com/'
+axios.defaults.baseURL = 'https://www.liehuo55.com/'
 // axios.defaults.baseURL = 'http://139.199.227.21/'
 // console.log('新参数', JSON.stringify(window.params))
 Vue.use(WechatAuth, {
@@ -84,7 +85,7 @@ Vue.use(WechatAuth, {
     console.log('新参数', JSON.parse(JSON.stringify(window.params)))
     axios.post('api/auth/AuthWith?RefSource=wechat', JSON.parse(JSON.stringify(window.params))).then(response => {
       let data = response.data
-      console.log(data)
+      console.log('微信登陆数据', data)
       // 获取到微信登陆后的处理
       // 存储得到的数据
       let userData = {
@@ -96,20 +97,19 @@ Vue.use(WechatAuth, {
       // 触发action，把id， token更新到state
       store.dispatch('updataPlayerInfo', userData)
       let jsonUserData = JSON.stringify(userData)
-      let expireDays = 1000 * 60 * 60 * 24 * 7
+      let expireDays = 1000 * 60 * 60 * 24 * 15
       $vm.setCookie('wxzhuawawa', jsonUserData, expireDays)
-      console.log('$vm router', router)
       // router.push('./')
       // 微信登陆下一步动作
       if (data.Token) {
         next(data.Token)
       } else {
         console.log('未获取到token')
-        next('', { path: './login' })
+        next('')
       }
     }).catch((error) => {
-      console.log(error)
-      next('', { path: './' })
+      console.log('微信登陆请求失败', error)
+      next('')
     })
   }
 })
@@ -118,7 +118,7 @@ Vue.use(WechatAuth, {
 // Vue.use(MdContent)
 // Vue.use(MdTabs)
 // Vue.use(MdBottomBar)
-Vue.use(VueMaterial)
+// Vue.use(VueMaterial)
 // 让页面跳转后回到页面顶部
 router.afterEach((to, from, next) => {
   window.scrollTo(0, 0)

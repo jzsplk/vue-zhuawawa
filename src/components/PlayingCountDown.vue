@@ -1,7 +1,7 @@
 <template>
   <div class="countdown-wrapper">
     <div class="circle">
-      <el-progress type="circle" :percentage="parseInt(time / this.rTime * 100)" color="#8e71c7" :width="60" :show-text="false"></el-progress>
+      <el-progress type="circle" :percentage="parseInt(time / this.rTime * 100)" color="#8e71c7" :width="40" :show-text="false"></el-progress>
     </div>
     <div class="number">
       <span>{{time}}</span>
@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-import MQTT from '../MQTT.service.js'
+// import MQTT from '../MQTT.service.js'
 export default {
   data () {
     return {
@@ -39,14 +39,15 @@ export default {
         if (this.time === 0) {
           // 发下抓命令
           console.log('下抓')
-          MQTT.sendControlCmd('go', 200, 2, 'ctrl/' + this.$store.state.roomPlayers.DeviceId)
-          // 增加一个提示玩家正在等待结果提示
-          this.$notify({
-            title: '已下爪',
-            message: '请等待结果揭晓',
-            type: 'success',
-            duration: 3000
-          })
+          this.$emit('sendGo')
+          // MQTT.sendControlCmd('go', 200, 2, 'ctrl/' + this.$store.state.roomPlayers.DeviceId)
+          // // 增加一个提示玩家正在等待结果提示
+          // this.$notify({
+          //   title: '已下爪',
+          //   message: '请等待结果揭晓',
+          //   type: 'success',
+          //   duration: 3000
+          // })
           this.$store.dispatch('resetPlayingCountDown')
           this.time = this.rTime
           clearInterval(time)
@@ -72,7 +73,7 @@ export default {
     top: 20%;
     left: 30%;
     color: #FFFFFF;
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
 }
 </style>

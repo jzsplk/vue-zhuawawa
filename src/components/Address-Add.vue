@@ -1,18 +1,17 @@
 <template>
   <div class="Address-wrapper">
-    <p>收货地址</p>
-    <div class="address-list" v-for="list in lists" v-bind:key="list.Id">
-      <address-list :address="list" v-on:update="updateAddress"></address-list>
-    </div>
-<!--     <el-form ref="form" :model="form" label-width="80px">
+    <p>新增收货地址</p>
+    <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="收货人">
         <el-input v-model="form.Recipient" size="medium"></el-input>
       </el-form-item>
       <el-form-item label="手机号码">
-        <el-input v-model="form.Tel" placeholder="手机号码">
+        <el-input v-model="form.Tel" placeholder="手机号码" type="number">
         </el-input>
       </el-form-item>
       <el-form-item label="所在地区">
+<!--         <el-input v-model="form.address" placeholder="北京市">
+        </el-input> -->
         <el-cascader :options="options" v-model="selectedOptions"></el-cascader>
       </el-form-item>
       <el-form-item label="详细地址">
@@ -25,21 +24,17 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="onBack">取消</el-button>
       </el-form-item>
-    </el-form> -->
-    <br>
-    <el-button type="primary" icon="el-icon-edit" round @click="$router.push('./add-address')">添加收货地址</el-button>
+    </el-form>
   </div>
 </template>
 
 <script>
 import apiService from '../API.service.js'
 import { regionData, CodeToText } from 'element-china-area-data'
-import AddressList from './Address-List'
 export default {
   components: {
-    'address-list': AddressList
   },
   data () {
     return {
@@ -61,7 +56,8 @@ export default {
         City: CodeToText[this.selectedOptions[0]] + ' ' + CodeToText[this.selectedOptions[1]] + ' ' + CodeToText[this.selectedOptions[2]],
         Street: this.form.Street,
         Recipient: this.form.Recipient,
-        Tel: this.form.Tel
+        Tel: this.form.Tel,
+        IsDefault: this.form.IsDefault
       }
     }
   },
@@ -71,23 +67,25 @@ export default {
       console.log('new methods: ', this.selectedOptions.forEach(li => {
         this.CityConvert(li)
       }))
+      // 判断IsDefault是否为真，如果是，则append之后，再设置其为默认地址
       apiService.appendAddress(this.addressMessage).then(data => {
         console.log('appended', data.data)
+        if (this.addressMessage.IsDefault === true) {
+          apiService.setDefAddress(data.data).then(data => {
+            console.log('set def ok!')
+          })
+        }
+        this.$router.push('./address')
       })
     },
     CityConvert (list) {
       return CodeToText[String(list)]
     },
-    updateAddress () {
-      apiService.getAddressList().then(data => {
-        console.log('address list update: ', data.data)
-        this.lists = data.data
-      })
+    onBack () {
+      this.$router.push('./address')
     }
   },
   created () {
-    // this.getPayList()
-    console.log('regionData', regionData)
     apiService.getAddressList().then(data => {
       console.log('address list get: ', data.data)
       this.lists = data.data
