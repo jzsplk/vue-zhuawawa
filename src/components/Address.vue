@@ -1,9 +1,9 @@
 <template>
   <div class="Address-wrapper">
-    <p>收货地址</p>
     <div class="address-list" v-for="list in lists" v-bind:key="list.Id">
       <address-list :address="list" v-on:update="updateAddress"></address-list>
     </div>
+    <p v-if="lists.length === 0">请增加收货地址</p>
 <!--     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="收货人">
         <el-input v-model="form.Recipient" size="medium"></el-input>
@@ -99,4 +99,7 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+.Address-wrapper {
+  text-align: center;
+}
 </style>

@@ -1,14 +1,15 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import 'es6-promise/auto'
 import Vue from 'vue'
 import App from './App'
 import store from './vuex/index.js'
 import router from './router'
-import WechatAuth from 'vue-wechat-auth'
+// import WechatAuth from 'vue-wechat-auth'
 // import WechatAuth from './node_modules/vue-wechat-auth/src/wechat-auth.js'
 // ElementUI
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
 // vue-material
 // import { MdButton, MdContent, MdTabs, MdBottomBar } from 'vue-material/dist/components'
 // 由于微信浏览器不支持VueMaterial更改其他库
@@ -19,6 +20,12 @@ import axios from 'axios'
 import touch from 'vue-directive-touch' // 引入vue2-touch-evnets
 // import VueMqtt from 'vue-mqtt'
 import _global from './components/Global'
+import 'babel-polyfill' // polyfill
+import WechatAuth from './wechat-auth.service.js' // 引入微信登陆模块
+
+// vux 设置
+const FastClick = require('fastclick')
+FastClick.attach(document.body)
 
 Vue.prototype.global = _global
 // 设置coookie方法
@@ -72,6 +79,8 @@ Vue.use(ElementUI)
 axios.defaults.baseURL = 'https://www.liehuo55.com/'
 // axios.defaults.baseURL = 'http://139.199.227.21/'
 // console.log('新参数', JSON.stringify(window.params))
+// 如果浏览器是微信 请求微信登陆
+// 检查是否是微信浏览器
 Vue.use(WechatAuth, {
   router,
   appid: 'wx229fb7a27a20b375',
@@ -102,14 +111,14 @@ Vue.use(WechatAuth, {
       // router.push('./')
       // 微信登陆下一步动作
       if (data.Token) {
-        next(data.Token)
+        next(data.Token, {path: './'})
       } else {
         console.log('未获取到token')
-        next('')
+        next('', {path: './myinfo'})
       }
     }).catch((error) => {
       console.log('微信登陆请求失败', error)
-      next('')
+      next('', {path: './feedback'})
     })
   }
 })
@@ -119,6 +128,14 @@ Vue.use(WechatAuth, {
 // Vue.use(MdTabs)
 // Vue.use(MdBottomBar)
 // Vue.use(VueMaterial)
+// 给每个页面添加单独的title
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+})
 // 让页面跳转后回到页面顶部
 router.afterEach((to, from, next) => {
   window.scrollTo(0, 0)

@@ -812,38 +812,45 @@ export default {
         /* 围观信息*/
         .crowd-info {
           /* 这里disply开始是flex,后安装matiral 后改为webkit-box */
-          display: -webkit-box;
+          display: flex;
           /*display: flex;*/
           background-color: #303133;
           opacity: 0.8;
           max-width: 95%;
+          height: 40px;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
           padding-right: 0.3em;
           .crowd-count {
             color: #fff;
             height: 50%;
-            font-size: 0.5rem;
-            margin-right: 0.3rem;
+            font-size: 13px;
+            margin-right: 0.5rem;
+            display: block;
+            line-height: 1;
+            white-space:nowrap;
           }
           .queue-count {
             color: #e67200;
             height: 50%;
-            font-size: 0.5rem;
-            margin-right: 0.3rem;
+            font-size: 13px;
+            margin-right: 0.5rem;
+            line-height: 1;
+            display: block;
+            white-space:nowrap;
           }
           .crowd {
             overflow: hidden;
             img {
               display: inline-block;
               width: 35px;
-              height: 35px;
-              border-radius: 35px;
+              height: auto;
+              border-radius: 50%;
               overflow: hidden;
               -webkit-box-shadow: 0 0 3px #ccc;
               box-shadow: 0 0 3px #ccc;
               border: 2px solid white;
-              margin-top: 0.2rem;
+              /*margin-top: 0.2rem;*/
             }
           }
         }
@@ -925,6 +932,7 @@ export default {
   }
   /* 控制部分 */
   .control {
+    text-align: center;
     width: 350px;
     max-width: 95%;
     height: 100px;
@@ -1066,7 +1074,7 @@ export default {
     .prepare-countdown {
       font-size: 9rem;
       position: absolute;
-      top: 30%;
+      top: 10%;
       left: 40%;
       color: #409EFF;
     }

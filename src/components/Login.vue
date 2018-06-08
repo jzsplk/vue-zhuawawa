@@ -77,6 +77,7 @@ export default {
         max-width: 80%;
         margin: 0 auto;
         margin-top: 3rem;
+        text-align: center;
       }
       button {
         display: block;

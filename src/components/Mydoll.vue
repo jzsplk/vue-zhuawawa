@@ -21,14 +21,19 @@
       <br>
       <el-button type="primary" round @click="$router.push('./delivery')" size="medium">申请发货</el-button>
     </div>
+    <div class="panel-wrapper">
+      <panel :header="'我的娃娃'" :list="list" :type="'1'"></panel>
+    </div>
   </div>
 </template>
 <script>
 import apiService from '../API.service.js'
 import AppFooter from './AppFooter'
+import { Panel } from 'vux'
 export default {
   components: {
-    'app-footer': AppFooter
+    'app-footer': AppFooter,
+    Panel
   },
   data () {
     return {
@@ -36,6 +41,19 @@ export default {
       userGifts: [],
       baseURL: 'https://www.liehuo55.com/',
       checked3: false
+    }
+  },
+  computed: {
+    list: function () {
+      if (this.userGifts.length > 0) {
+        return this.userGifts.forEach((item) => {
+          item.src = this.baseURL + item.AvatarUrl
+          item.fallbackSrc = 'http://placeholder.qiniudn.com/60x60/3cc51f/ffffff'
+          item.title = item.Name
+          item.desc = this.utcTimeConvert(item.ReceivedDT)
+        })
+      }
+      // return this.baseURL
     }
   },
   methods: {
@@ -70,9 +88,11 @@ export default {
   },
   created () {
     this.getUserGifts()
+    console.log('list1', this.list)
   },
   mounted () {
     this.getUserInfo()
+    console.log('list2', this.list)
   }
 }
 </script>
@@ -81,6 +101,7 @@ export default {
     font-size: 12px;
   }
   .my-doll {
+    text-align: center;
     display: block;
     background-color: #edc83a;
     width: 100%;

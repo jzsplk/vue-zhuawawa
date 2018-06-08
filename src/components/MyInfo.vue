@@ -10,29 +10,23 @@
         <img src="../../static/pic/coin.png" alt=""> {{userInfo.balance * 10}} 币
       </div>
     </div>
-    <el-collapse v-model="activeName" accordion>
+<!--     <el-collapse v-model="activeName" accordion>
       <el-collapse-item>
         <template slot="title" @click="goToMydoll">
           <i class="header-icon el-icon-view"></i>我的娃娃
         </template>
         <el-button @click="goToMydoll" size="mini">查看</el-button>
-<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
       <el-collapse-item>
         <template slot="title">
           <i class="header-icon el-icon-tickets"></i>娃娃币账单
         </template>
         <el-button @click="goToBill" size="mini">查看</el-button>
-<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
       <el-collapse-item disable="true">
         <template slot="title">
           <i class="header-icon el-icon-star-off"></i>邀请有礼
         </template>
-<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
       <el-collapse-item>
         <template slot="title">
@@ -49,8 +43,6 @@
         <template slot="title">
           <i class="header-icon el-icon-edit-outline"></i>问题反馈
         </template>
-<!--         <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div> -->
       </el-collapse-item>
             <el-collapse-item>
               <template slot="title">
@@ -58,9 +50,35 @@
               </template>
               <el-button type="primary" icon="el-icon-edit" size="small" @click="$router.push('./address')">收货地址</el-button>
             </el-collapse-item>
-    </el-collapse>
+    </el-collapse> -->
+    <div class="cells">
+      <group :title="xcell">
+       <cell is-link @click.native="goToBill">
+         <span slot="title" style="color:green;"><span style="vertical-align:middle;">{{ '娃娃币账单' }}</span> <badge text="1"></badge></span>
+         <x-icon slot="icon" type="_ionicons_svg_ios-document" size="20" class="cell-x-icon"></x-icon>
+       </cell>
+       <cell :title="'邀请有礼'" is-link>
+          <x-icon slot="icon" type="_ionicons_svg_ios-megaphone" size="20" class="cell-x-icon"></x-icon>
+       </cell>
+       <cell :title="'优惠码'" is-link>
+          <x-icon slot="icon" type="_ionicons_svg_ios-gift" size="20" class="cell-x-icon"></x-icon>
+          <!-- <i slot="icon" class="header-icon el-icon-star-off"></i> -->
+       </cell>
+       <cell :title="'问题反馈'" is-link @click.native="goToFeed">
+          <x-icon slot="icon" type="_ionicons_svg_ios-chatbubbles" size="20" class="cell-x-icon"></x-icon>
+       </cell>
+       <cell :title="'设置'" is-link @click.native="$router.push('./setting')">
+          <x-icon slot="icon" type="ios-settings" size="20" class="cell-x-icon"></x-icon>
+       </cell>
+<!--        <cell :title="'设置'" is-link>
+        <img slot="icon" width="20" style="display:block;margin-right:5px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAMAAABgZ9sFAAAAVFBMVEXx8fHMzMzr6+vn5+fv7+/t7e3d3d2+vr7W1tbHx8eysrKdnZ3p6enk5OTR0dG7u7u3t7ejo6PY2Njh4eHf39/T09PExMSvr6+goKCqqqqnp6e4uLgcLY/OAAAAnklEQVRIx+3RSRLDIAxE0QYhAbGZPNu5/z0zrXHiqiz5W72FqhqtVuuXAl3iOV7iPV/iSsAqZa9BS7YOmMXnNNX4TWGxRMn3R6SxRNgy0bzXOW8EBO8SAClsPdB3psqlvG+Lw7ONXg/pTld52BjgSSkA3PV2OOemjIDcZQWgVvONw60q7sIpR38EnHPSMDQ4MjDjLPozhAkGrVbr/z0ANjAF4AcbXmYAAAAASUVORK5CYII=">
+       </cell> -->
+     </group>
+    </div>
     <div class="list">
-      <el-button type="warning" @click="logout">退出登陆</el-button>
+<!--       <x-icon type="ios-ionic-outline" size="30"></x-icon> -->
+      <x-button mini plain type="primary" @click.native="logout">退出登陆</x-button>
+      <!-- <el-button type="warning" @click="logout">退出登陆</el-button> -->
       <!-- <button @click="logout">退出登陆</button> -->
       <p>版本号： 0.5.8</p>
     </div>
@@ -81,9 +99,17 @@
 import apiService from '../API.service.js'
 import AppFooter from './AppFooter'
 import WePay from '../WePay.service.js'
+import { XButton, Group, Cell, CellFormPreview, CellBox, Badge } from 'vux'
+
 export default {
   components: {
-    'app-footer': AppFooter
+    'app-footer': AppFooter,
+    XButton,
+    Group,
+    Cell,
+    CellFormPreview,
+    CellBox,
+    Badge
   },
   data () {
     return {
@@ -135,6 +161,9 @@ export default {
     },
     goToBill () {
       this.$router.push('./billing')
+    },
+    goToFeed () {
+      this.$router.push('./feedback')
     }
   },
   created () {
@@ -146,7 +175,23 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+.cells {
+  width: 750px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.vux-x-icon {
+  fill: #F70968;
+}
+.cell-x-icon {
+  display: block;
+  fill: green;
+}
+.weui-cells {
+  text-align: left;
+}
   .list {
+    text-align: center;
     margin-top: 40px;
     p {
       font-size: 13px;
@@ -163,6 +208,7 @@ export default {
       margin: 0 auto;
       background: url(../../static/pic/mine_header_bg.png) no-repeat;
       background-size: 100% 100%;
+      text-align: center;
       .avatar {
         width: 60px;
         height: 60px;

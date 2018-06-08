@@ -1,6 +1,5 @@
 <template>
   <div class="Address-wrapper">
-    <p>新增收货地址</p>
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="收货人">
         <el-input v-model="form.Recipient" size="medium"></el-input>
@@ -97,4 +96,8 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+.Address-wrapper {
+  text-align: left;
+  margin-top: 20px;
+}
 </style>

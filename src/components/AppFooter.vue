@@ -10,7 +10,7 @@
       </router-link>
     </div>
     <div v-if="false" class="copyright">一起抓 <span>&copy;</span>2018 ALL Rights Reserved.</div> -->
-    <el-menu
+<!--     <el-menu
       v-bind:class="{ hide: this.$store.state.isEntered}"
       :default-acitve="activeIndex"
       class="el-menu-demo"
@@ -37,7 +37,7 @@
             <span>我的背包</span>
           </template>
         </el-menu-item>
-    </el-menu>
+    </el-menu> -->
 <!--     <div class="footer-wrapper" v-bind:class="{ hide: this.$store.state.isEntered}">
       <div class="phone-viewport">
         <md-bottom-bar class="md-accent" md-type="shift">
@@ -51,9 +51,28 @@
         </md-bottom-bar>
       </div>
     </div> -->
+    <tabbar v-bind:class="{ hide: this.$store.state.isEntered}">
+      <tabbar-item link="./">
+        <img slot="icon" src="../../static/pic/home_normal.png">
+        <span slot="label">首页</span>
+      </tabbar-item>
+      <tabbar-item link="./mydoll" badge="0">
+        <img slot="icon" src="../../static/pic/prize_normal.png">
+        <span slot="label">我的娃娃</span>
+      </tabbar-item>
+      <tabbar-item selected link="./myinfo">
+        <img slot="icon" src="../../static/pic/mine_normal.png">
+        <span slot="label">我的背包</span>
+      </tabbar-item>
+<!--       <tabbar-item badge="2">
+        <img slot="icon" src="../../static/pic/coin.png">
+        <span slot="label">新闻</span>
+      </tabbar-item> -->
+    </tabbar>
   </div>
 </template>
 <script>
+import { Tabbar, TabbarItem, Group, Cell } from 'vux'
 export default {
   data () {
     return {
@@ -62,6 +81,12 @@ export default {
       // name: 'Shift',
       newPosts: 4
     }
+  },
+  components: {
+    Tabbar,
+    TabbarItem,
+    Group,
+    Cell
   },
   props: ['dolls'],
   methods: {
@@ -86,6 +111,7 @@ export default {
     display: none !important;
   }
   .footer-wrapper {
+    a { text-decoration: none !important};
     width: 100%;
 /*    .phone-viewport {
       width: 100%;

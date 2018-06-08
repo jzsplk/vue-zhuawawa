@@ -12,6 +12,8 @@ import AddAddress from '@/components/Address-Add'
 import Delivery from '@/components/Mydoll-delivery'
 import Billing from '@/components/Bill'
 import Guide from '@/components/Guide'
+import FeedBack from '@/components/MyInfo-feedback'
+import Setting from '@/components/MyInfo-setting'
 
 Vue.use(Router)
 
@@ -29,7 +31,10 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: Home,
+      meta: {
+        title: '最爱抓娃娃'
+      }
     },
     {
       path: '/vue',
@@ -57,27 +62,42 @@ export default new Router({
     {
       path: '/mydoll',
       name: 'Mydoll',
-      component: Mydoll
+      component: Mydoll,
+      meta: {
+        title: '我的娃娃'
+      }
     },
     {
       path: '/myinfo',
       name: 'MyInfo',
-      component: MyInfo
+      component: MyInfo,
+      meta: {
+        title: '我的背包'
+      }
     },
     {
       path: '/payment',
       name: 'Pay',
-      component: Pay
+      component: Pay,
+      meta: {
+        title: '支付'
+      }
     },
     {
       path: '/address',
       name: 'address',
-      component: Address
+      component: Address,
+      meta: {
+        title: '发货地址'
+      }
     },
     {
       path: '/add-address',
       name: 'add-address',
-      component: AddAddress
+      component: AddAddress,
+      meta: {
+        title: '添加发货地址'
+      }
     },
     {
       path: '/delivery',
@@ -87,12 +107,34 @@ export default new Router({
     {
       path: '/billing',
       name: 'billing',
-      component: Billing
+      component: Billing,
+      meta: {
+        title: '娃娃币账单'
+      }
     },
     {
       path: '/guide',
       name: 'guide',
-      component: Guide
+      component: Guide,
+      meta: {
+        title: '向导'
+      }
+    },
+    {
+      path: '/feedback',
+      name: 'feedback',
+      component: FeedBack,
+      meta: {
+        title: '问题反馈'
+      }
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      component: Setting,
+      meta: {
+        title: '设置'
+      }
     }
   ]
 })

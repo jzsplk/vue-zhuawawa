@@ -146,6 +146,7 @@ export default {
 }
 </script>
 <style lang="scss" type="text/css">
+/*@import '~vux/src/styles/reset.less';*/
 /* 去掉默认body的margin*/
 body { margin: 0; }
 /* 修改el-message-box 默认样式*/
@@ -162,7 +163,7 @@ body { margin: 0; }
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /*text-align: center;*/
   color: #2c3e50;
   /* 解决左右轻微拖动问题 */
   overflow-x:hidden;
@@ -193,6 +194,12 @@ body { margin: 0; }
   img {
     /* 在iphone关闭长按图片保存图片弹窗 */
     -webkit-touch-callout: none;
+  }
+  a:-webkit-any-link {
+    /* 去掉a tag的下划线*/
+      color: -webkit-link;
+      cursor: pointer;
+      text-decoration: none;
   }
 }
 .header {
@@ -237,4 +244,7 @@ body { margin: 0; }
 ));
 
 @import "~vue-material/dist/theme/all"; // Apply the theme
+</style>
+<style lang="less">
+@import '~vux/src/styles/reset.less';
 </style>

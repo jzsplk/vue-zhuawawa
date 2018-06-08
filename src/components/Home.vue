@@ -12,6 +12,7 @@ import AppFooter from './AppFooter'
 import Room from './Room'
 import Category from './Category'
 import MQTT from '../MQTT.service.js'
+// import { Group, Cell } from 'vux'
 
 export default {
   components: {

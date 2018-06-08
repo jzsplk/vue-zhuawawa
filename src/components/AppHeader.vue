@@ -2,11 +2,9 @@
 <div>
 <!--   <el-button type="primary" round @click="$router.push('./login')">微信登陆</el-button>
   <el-button type="primary" round @click="WechatLogin">测试登陆</el-button> -->
-  <div class="nav">
-    <!-- <i class="el-icon-loading"></i> <-->
+<!--   <div class="nav">
       首页
-    <!-- <el-button v-effect="yellow">test</el-button> -->
-  </div>
+  </div> -->
   <div class="head">
     <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="showGuide">
   </div>

@@ -2,13 +2,13 @@
   <div class="Address-List-wrapper">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <div>
-          <span>{{address.Recipient}}</span>
-          <span>{{address.Tel}}</span>
-        </div>
-        <div>
+        <div class="city">
           <span>{{address.City}}</span>
           <span>{{address.Street}}</span>
+        </div>
+        <div class="contact">
+          <span>{{address.Recipient}}</span>
+          <span>{{address.Tel}}</span>
         </div>
       </div>
       <div class="text item" style="display: flex; justify-content: space-around;align-items: center;">
@@ -58,4 +58,14 @@ export default {
 </script>
 
 <style scoped lang="scss" type="text/css">
+.Address-List-wrapper {
+  text-align: left;
+  .city {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .contact {
+    font-size: 14px;
+  }
+}
 </style>
