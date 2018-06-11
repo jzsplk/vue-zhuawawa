@@ -52,15 +52,15 @@
             </el-collapse-item>
     </el-collapse> -->
     <div class="cells">
-      <group :title="xcell">
+      <group :title="''">
        <cell is-link @click.native="goToBill">
-         <span slot="title" style="color:green;"><span style="vertical-align:middle;">{{ '娃娃币账单' }}</span> <badge text="1"></badge></span>
+         <span slot="title" style=""><span style="vertical-align:middle;">{{ '娃娃币账单' }}</span></span>
          <x-icon slot="icon" type="_ionicons_svg_ios-document" size="20" class="cell-x-icon"></x-icon>
        </cell>
-       <cell :title="'邀请有礼'" is-link>
+       <cell :title="'常见问题'" is-link @click.native="$router.push('./questions')">
           <x-icon slot="icon" type="_ionicons_svg_ios-megaphone" size="20" class="cell-x-icon"></x-icon>
        </cell>
-       <cell :title="'优惠码'" is-link>
+       <cell :title="'优惠码'" is-link @click.native="$router.push('./coupon')">
           <x-icon slot="icon" type="_ionicons_svg_ios-gift" size="20" class="cell-x-icon"></x-icon>
           <!-- <i slot="icon" class="header-icon el-icon-star-off"></i> -->
        </cell>
@@ -77,10 +77,10 @@
     </div>
     <div class="list">
 <!--       <x-icon type="ios-ionic-outline" size="30"></x-icon> -->
-      <x-button mini plain type="primary" @click.native="logout">退出登陆</x-button>
+      <x-button mini plain type="primary" @click.native="logout" style="color: #B29036;background-color: #F9DC3D; border-color: #B29036;">退出登陆</x-button>
       <!-- <el-button type="warning" @click="logout">退出登陆</el-button> -->
       <!-- <button @click="logout">退出登陆</button> -->
-      <p>版本号： 0.5.8</p>
+      <p>版本号： 0.5.9</p>
     </div>
     <div class="main">
     </div>
@@ -185,7 +185,7 @@ export default {
 }
 .cell-x-icon {
   display: block;
-  fill: green;
+  fill: #F9DC3D;
 }
 .weui-cells {
   text-align: left;

@@ -52,16 +52,19 @@
       </div>
     </div> -->
     <tabbar v-bind:class="{ hide: this.$store.state.isEntered}">
-      <tabbar-item link="./">
-        <img slot="icon" src="../../static/pic/home_normal.png">
+      <tabbar-item selected link="./">
+        <img slot="icon" src="../../static/icons/bottom-front.png">
+        <img slot="icon-active" src="../../static/icons/bottom-front-active.png">
         <span slot="label">首页</span>
       </tabbar-item>
-      <tabbar-item link="./mydoll" badge="0">
-        <img slot="icon" src="../../static/pic/prize_normal.png">
+      <tabbar-item link="./mydoll" :badge="String(dolls)">
+        <img slot="icon" src="../../static/icons/bottom-doll.png">
+        <img slot="icon-active" src="../../static/icons/bottom-doll-active.png">
         <span slot="label">我的娃娃</span>
       </tabbar-item>
-      <tabbar-item selected link="./myinfo">
-        <img slot="icon" src="../../static/pic/mine_normal.png">
+      <tabbar-item link="./myinfo">
+        <img slot="icon" src="../../static/icons/bottom-bag.png" fill="blue">
+        <img slot="icon-active" src="../../static/icons/bottom-bag-active.png">
         <span slot="label">我的背包</span>
       </tabbar-item>
 <!--       <tabbar-item badge="2">

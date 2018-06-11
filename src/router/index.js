@@ -14,6 +14,8 @@ import Billing from '@/components/Bill'
 import Guide from '@/components/Guide'
 import FeedBack from '@/components/MyInfo-feedback'
 import Setting from '@/components/MyInfo-setting'
+import Coupon from '@/components/MyInfo-coupon'
+import Question from '@/components/MyInfo-questions'
 
 Vue.use(Router)
 
@@ -134,6 +136,22 @@ export default new Router({
       component: Setting,
       meta: {
         title: '设置'
+      }
+    },
+    {
+      path: '/coupon',
+      name: 'coupon',
+      component: Coupon,
+      meta: {
+        title: '兑换码'
+      }
+    },
+    {
+      path: '/questions',
+      name: 'questions',
+      component: Question,
+      meta: {
+        title: '常见问题'
       }
     }
   ]

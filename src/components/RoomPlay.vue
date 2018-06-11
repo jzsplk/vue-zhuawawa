@@ -70,7 +70,9 @@
           </div> -->
           <!-- 新的正在玩头像 注意这里要用vif不能用v-show-->
           <div v-if="$store.state.isPlaying && roomData.Actor !== undefined" class="overlay-playing">
-            <img :src="roomData.Actor.AvatarUrl" alt="">
+            <div class="avater-wrapper">
+              <img :src="roomData.Actor.AvatarUrl" alt="">
+            </div>
             <p>{{roomData.Actor.NickName}}</p>
             <p class="overlay-playing-title">热玩中</p>
           </div>
@@ -824,7 +826,7 @@ export default {
           .crowd-count {
             color: #fff;
             height: 50%;
-            font-size: 13px;
+            font-size: 12px;
             margin-right: 0.5rem;
             display: block;
             line-height: 1;
@@ -833,7 +835,7 @@ export default {
           .queue-count {
             color: #e67200;
             height: 50%;
-            font-size: 13px;
+            font-size: 12px;
             margin-right: 0.5rem;
             line-height: 1;
             display: block;
@@ -849,7 +851,7 @@ export default {
               overflow: hidden;
               -webkit-box-shadow: 0 0 3px #ccc;
               box-shadow: 0 0 3px #ccc;
-              border: 2px solid white;
+              /*border: 2px solid white;*/
               /*margin-top: 0.2rem;*/
             }
           }
@@ -864,22 +866,26 @@ export default {
         opacity: 0.7;
         width: 120px;
         max-width: 30%;
+        border-radius: 10px;
         .playing_wrapper {
           background-color: #121f32;
         }
         img {
-          display: inline-block;
-          width: 40px;
-          height: 40px;
-          border-radius: 40px;
+          width: 100%;
+          display: block;
+          border: solid 2px #F7CB54;
+          border-radius: 10px;
           overflow: hidden;
           -webkit-box-shadow: 0 0 3px #ccc;
           box-shadow: 0 0 3px #ccc;
-          border: 2px solid white;
-          margin-top: 0.2rem;
+          margin-top: 0;
         }
         p {
-          font-size: 14px;
+          font-size: 12px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          margin: 0;
         }
         .overlay-playing-title {
           color: #e67200;
@@ -1238,20 +1244,21 @@ export default {
       display: flex;
       background-color: white;
       border-bottom: solid 1px #e6e4e5;
+      height: 36px;
       div {
         display: inline-block;
         overflow: hidden;
-        padding: 5px;
+        padding: 8px;
         height: 30px;
       }
       .avatar {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         flex-grow: 0;
         img {
           /*height: 30px;*/
           width: auto;
-          border-radius: 30px;
+          border-radius: 40px;
           border: solid 1px #fff;
         }
       }
@@ -1259,6 +1266,9 @@ export default {
         width: 60%;
         flex-grow: 0;
         text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .count {
         width: 20%;
@@ -1279,20 +1289,21 @@ export default {
       display: flex;
       background-color: white;
       border-bottom: solid 1px #e6e4e5;
+      height: 36px;
       div {
         display: inline-block;
         overflow: hidden;
-        padding: 5px;
+        padding: 8px;
         height: 40px;
       }
       .avatar {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
         flex-grow: 0;
         img {
           /*height: 30px;*/
           width: auto;
-          border-radius: 30px;
+          border-radius: 40px;
           border: solid 1px #fff;
         }
       }
@@ -1300,6 +1311,9 @@ export default {
         width: 40%;
         flex-grow: 0;
         text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .time {
         width: 40%;

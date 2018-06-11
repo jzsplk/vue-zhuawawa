@@ -395,6 +395,25 @@ const apiService = {
           console.log('set def error', error)
         })
     })
+  },
+  updateAddress (json) { // 修改地址
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/addr/update',
+        data: json,
+        headers: {
+          'Authorization': 'Base ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('update def address', response)
+        })
+        .catch(error => {
+          console.log('update def error', error)
+        })
+    })
   }
 }
 

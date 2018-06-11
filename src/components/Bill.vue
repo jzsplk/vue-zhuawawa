@@ -11,7 +11,7 @@
           <div class="vux-1px-r">
             <span>{{bills.Logs.length}}</span>
             <br/>
-            {{ '积分' }}
+            {{ '记录' }}
           </div>
           <div class="vux-1px-r">
             <span>0</span>
@@ -26,7 +26,7 @@
         </div>
       </card>
     </div>
-    <div class="card" v-for="(o, index) in bills.Logs" :key="index">
+    <div class="card" v-for="(o, index) in bills.Logs" :key="index" style="overflow-y: scroll;">
       <el-card class="box-card" bodyStyle="display: flex;width: 100%;align-items:center;">
         <div class="info">
           <div  class="text item">
@@ -103,7 +103,13 @@ export default {
 }
 </script>
 <style scoped lang="scss" type="text/css">
+body {
+  background-color: #EEEEEE;
+}
 .bill-wrapper {
+  background-color: #EEEEEE;
+  height: 100%;
+  display: block;
   padding-bottom: 60px;
   .head {
     background-color: #edc83a;
@@ -138,6 +144,9 @@ export default {
         }
       }
     }
+  }
+  .card:last-child { /* 防止最后一个被topbar遮住*/
+    padding-bottom: 100px;
   }
 }
 </style>

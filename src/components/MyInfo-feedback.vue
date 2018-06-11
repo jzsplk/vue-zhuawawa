@@ -7,7 +7,7 @@
   <h3 class="content">最爱抓娃娃</h3>
   <div class="code">
     <!-- <qrcode value="https://vux.li?x-page=demo_qrcode" type="img"></qrcode> -->
-    <img src="../../static/qrcode_for_gh_e8cc8a901432_860.jpg" alt="" class="qrcode">
+    <img src="../../static/qrcode.jpg" alt="" class="qrcode">
   </div>
   <br>
   <br>

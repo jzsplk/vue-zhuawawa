@@ -7,9 +7,9 @@
   <br>
   <br>
   <group>
-    <x-switch title="背景音乐" v-model="music"></x-switch>
-    <x-switch title="音效" v-model="backsound"></x-switch>
-    <x-switch title="震动" v-model="move"></x-switch>
+    <x-switch title="背景音乐" v-model="music" disabled></x-switch>
+    <x-switch title="音效" v-model="backsound" disabled></x-switch>
+    <x-switch title="震动" v-model="move" disabled></x-switch>
   </group>
 </div>
 </template>
@@ -18,9 +18,9 @@ import { Group, Cell, XSwitch, CellBox, Divider } from 'vux'
 export default {
   data () {
     return {
-      music: true,
-      backsound: true,
-      move: true
+      music: false,
+      backsound: false,
+      move: false
     }
   },
   components: {

@@ -11,7 +11,7 @@
       <el-step title="步骤4" description="选择合适娃娃，立即点击抓取"></el-step>
       <el-step title="步骤5" description="抓到娃娃后，记得到我的娃娃里申请发货哦！"></el-step>
     </el-steps> -->
-    <timeline>
+<!--     <timeline>
       <timeline-item>
         <h4 class="recent">【步骤1】</h4>
         <p class="recent">点击选择你心仪的娃娃</p>
@@ -32,7 +32,10 @@
         <h4> 【步骤5】</h4>
         <p>抓到娃娃后，记得到我的娃娃里申请发货哦！</p>
       </timeline-item>
-    </timeline>
+    </timeline> -->
+    <div class="guide-img">
+      <img src="../../static/pic/game-steps1.png" alt="" style="width: 100%;">
+    </div>
   </div>
 </div>
 </template>
@@ -68,7 +71,7 @@ export default {
   display: block;
   height: 100%;
   width: 100%;
-  background-color: #FAF8FE;
+  background-color: #F7CB54;
   position: absolute;
   overflow-y: scroll;
   .nav {

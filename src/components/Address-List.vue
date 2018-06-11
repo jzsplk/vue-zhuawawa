@@ -15,25 +15,30 @@
         <el-switch
           v-model="address.IsDefault"
           active-text="默认"
-          inactive-text="">
+          inactive-text=""
+          disabled>
         </el-switch>
         <el-button-group>
-          <el-button type="primary" icon="el-icon-edit"></el-button>
+          <el-button type="primary" icon="el-icon-edit" @click="toggleEdit"></el-button>
           <el-button type="primary" icon="el-icon-delete" @click="deleteAddress(address.Id)"></el-button>
         </el-button-group>
       </div>
     </el-card>
+    <address-list-edit v-on:toggleEdit="toggleEdit" :address="address" v-show="isEdit" v-on:update="update"></address-list-edit>
   </div>
 </template>
 
 <script>
 import apiService from '../API.service.js'
+import AddressListEdit from './Address-List-Edit'
 export default {
   components: {
+    'address-list-edit': AddressListEdit
   },
   data () {
     return {
-      list: []
+      list: [],
+      isEdit: false
     }
   },
   props: ['address'],
@@ -48,6 +53,17 @@ export default {
         console.log('remove address success')
         this.$emit('update')
       })
+    },
+    toggleEdit () {
+      if (this.isEdit) {
+        this.isEdit = false
+      } else {
+        this.isEdit = true
+      }
+    },
+    update () {
+      this.$emit('update')
+      this.toggleEdit()
     }
   },
   created () {

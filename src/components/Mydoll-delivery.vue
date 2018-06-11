@@ -29,7 +29,7 @@
         </el-table-column>
       </el-table>
       <br>
-      <el-select v-model="address" clearable placeholder="请选择收货地址">
+      <el-select v-model="address" clearable placeholder="请选择收货地址" style="margin-left: 10px;">
         <el-option
           v-for="item in options"
           :key="item.Id"
@@ -40,16 +40,19 @@
       <el-button type="info" style="float: right">{{"运费：" + moneyTotal + '币'}}</el-button>
       <br>
       <br>
-      <el-button type="primary" @click="onSubmit" round>确认发货</el-button>
+      <!-- <el-button type="primary" @click="onSubmit" round>确认发货</el-button> -->
+      <x-button type="primary" action-type="button" @click.native="onSubmit" style="background-color: #F7CB54; color: #AA852C; border: solid 1px #A8832A;">确认发货</x-button>
     </div>
   </div>
 </template>
 <script>
 import apiService from '../API.service.js'
 import AppFooter from './AppFooter'
+import { XButton } from 'vux'
 export default {
   components: {
-    'app-footer': AppFooter
+    'app-footer': AppFooter,
+    XButton
   },
   data () {
     return {
@@ -171,7 +174,7 @@ export default {
   }
   .my-doll-delivery {
     display: block;
-    background-color: #edc83a;
+    background-color: #EEEEEE;
     width: 100%;
     height: 100%;
     position: absolute;

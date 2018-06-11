@@ -5,8 +5,8 @@
 <!--   <div class="nav">
       首页
   </div> -->
-  <div class="head">
-    <img class="head-img" src="../../static/pic/guide.png" alt="claw-game" @click="showGuide">
+  <div class="head" style="background-color: #F7CB53;">
+    <img class="head-img" src="../../static/pic/guide_new.png" alt="claw-game" @click="showGuide">
   </div>
 </div>
 </template>

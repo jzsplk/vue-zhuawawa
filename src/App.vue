@@ -148,7 +148,7 @@ export default {
 <style lang="scss" type="text/css">
 /*@import '~vux/src/styles/reset.less';*/
 /* 去掉默认body的margin*/
-body { margin: 0; }
+body { margin: 0;}
 /* 修改el-message-box 默认样式*/
 .el-message-box {
   max-width: 100%;
@@ -167,6 +167,16 @@ body { margin: 0; }
   color: #2c3e50;
   /* 解决左右轻微拖动问题 */
   overflow-x:hidden;
+  /* 解决app留白问题*/
+  padding:0px;
+  margin:0px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+  border:hidden;
+  overflow: scroll;
   body {
     /* 去掉margin*/
     /* 禁止微信内置浏览器调整字体大小 */

@@ -1,7 +1,7 @@
 <template>
   <div class="Address-wrapper">
     <div class="address-list" v-for="list in lists" v-bind:key="list.Id">
-      <address-list :address="list" v-on:update="updateAddress"></address-list>
+      <address-list :address="list" v-on:update="updateAddress" v-on:updateList="updateAddress"></address-list>
     </div>
     <p v-if="lists.length === 0">请增加收货地址</p>
 <!--     <el-form ref="form" :model="form" label-width="80px">
@@ -68,9 +68,7 @@ export default {
   methods: {
     onSubmit () {
       console.log(this.addressMessage)
-      console.log('new methods: ', this.selectedOptions.forEach(li => {
-        this.CityConvert(li)
-      }))
+      console.log('new methods: ', this.selectedOptions)
       apiService.appendAddress(this.addressMessage).then(data => {
         console.log('appended', data.data)
       })
