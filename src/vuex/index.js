@@ -87,7 +87,7 @@ const store = new Vuex.Store({
     stopCatching (context) {
       context.commit('stopCatching')
     },
-    InsufficientBalance (context) {
+    InsufficientBalance (context) { // 余额不足的的action
       context.commit('InsufficientBalance')
     },
     // 更新用户数据action，id跟token, 注意这里第二个参数要用obj，把需要操作的变量放到obj中
@@ -216,6 +216,7 @@ const store = new Vuex.Store({
     },
     InsufficientBalance (state) {
       state.roomState = 'InsufficientBalance'
+      // 增加一个弹窗，提示对方余额不足，并可以直接充值
     },
     // 更新用户信息mutation
     updataPlayerInfo (state, obj) {

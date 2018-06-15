@@ -8,9 +8,12 @@ const MQTT = {
   initMqttClient (To) {
     // console.log('MQTT service', Paho)
     // console.log('MQTT store', store)
-    let hostname = '47.97.34.46'
+    // let hostname = '47.97.34.46'
+    // open version mqtt
     // 测试MQTT地址
     // let hostname = '139.199.227.21'
+    let hostname = _global.mqtthost
+    // test version mqtt
     // let hostname = 'http://zhuaww.gongyou.co/weixin/'
     let port = 18000
     // 改为UUID+ 时间戳

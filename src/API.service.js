@@ -3,7 +3,9 @@ import axios from 'axios'
 import store from './vuex/index.js'
 import _global from './components/Global'
 // 新API地址
-axios.defaults.baseURL = 'https://www.liehuo55.com/'
+// axios.defaults.baseURL = 'https://www.liehuo55.com/'
+// axios.defaults.baseURL = 'http://139.199.227.21/'
+axios.defaults.baseURL = _global.hostname
 // axios.defaults.baseURL = 'http://zhuaww.gongyou.co/weixin/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
@@ -121,11 +123,11 @@ const apiService = {
         })
     })
   },
-  getBilling () {
+  getBilling (isLoadmore, countOffset, pageCount) { // need to add offset to support loadmore
     return new Promise((resolve) => {
       axios({
         method: 'get',
-        url: axios.defaults.baseURL + 'api/balance/log',
+        url: axios.defaults.baseURL + 'api/balance/log' + '?Offset=' + countOffset + '&Count=' + pageCount,
         headers: {
           'Authorization': 'Base ' + store._vm.token
         }
@@ -133,9 +135,6 @@ const apiService = {
         .then(response => {
           resolve(response)
           console.log('get billing history list', response)
-        })
-        .catch(error => {
-          console.log('get billing history error', error)
         })
     })
   },
@@ -149,7 +148,7 @@ const apiService = {
       Terminal: 'H5'
     }
     return new Promise((resolve) => {
-      axios.post(axios.defaults.baseURL + 'api/auth/AuthWith?RefSource=visitor', UserInfo)
+      axios.post('api/auth/AuthWith?RefSource=visitor', UserInfo)
         .then(response => {
           resolve(response.data)
           console.log('login response', response)
@@ -213,12 +212,13 @@ const apiService = {
     })
   },
   // 兑换券请求  JSON.parse(JSON.stringify(UserCode))
+  // axios.defaults.baseURL.substring(0, axios.defaults.baseURL.length - 1) + ':15359/exchange/'
   postCoupon (code) {
     // 更改post写法
     return new Promise((resolve) => {
       axios({
         method: 'post',
-        url: axios.defaults.baseURL.substring(0, axios.defaults.baseURL.length - 1) + ':15359/exchange/',
+        url: 'http://zhuaww.gongyou.co/weixin/exchange/',
         data: {
           ExchangeCode: code
         },

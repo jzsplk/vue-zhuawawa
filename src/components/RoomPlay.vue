@@ -164,6 +164,15 @@
         </div>
     <!--     </transition> -->
         <div v-show="roomState == 'InsufficientBalance'">
+          <!-- 增加一个确认余额不足confirm弹窗 -->
+          <div v-transfer-dom>
+            <confirm v-model="show"
+            :title="'余额不足'"
+            @on-cancel="onCancel"
+            @on-confirm="onConfirm">
+              <p style="text-align:center;">{{ '微信充值?' }}</p>
+            </confirm>
+          </div>
           <button class="queueing-button">余额不足</button>
         </div>
         <div  v-show="roomState == 'Catching'" id="operation-panel" class="operation-panel">
@@ -305,10 +314,15 @@ import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
 import CountDown from './CountDown'
 import PlayingCountDown from './PlayingCountDown'
+import {Confirm, TransferDomDirective as TransferDom} from 'vux'
 export default {
+  // directives: {
+  //   TransferDom
+  // },
   components: {
     'roomplay-countdown': CountDown,
-    'roomplay-playing-countdown': PlayingCountDown
+    'roomplay-playing-countdown': PlayingCountDown,
+    Confirm
   },
   data () {
     return {
@@ -321,6 +335,7 @@ export default {
       start: false,
       disabled: false,
       dialogVisible: false,
+      show: false, // 是否显示余额不足弹窗
       helps: [
         {
           query: '抓一次需要多少金币？',
@@ -602,6 +617,25 @@ export default {
     showHelp () {
       console.log('显示帮助')
       this.dialogVisible = true
+    },
+    toggleShow () { // 触发是否显示余额不足窗口
+      if (this.show) {
+        this.show = false
+      } else {
+        this.show = true
+      }
+    },
+    onConfirm (msg) {
+      console.log('on confirm')
+      if (msg) {
+        alert(msg)
+      }
+      // 跳转到充值页面
+      window.location.href = 'http://alicdn.gongyou.co/zhuaww/dist/'
+    },
+    onCancel () {
+      console.log('on cancel')
+      this.$store.dispatch('showStartQueue')
     }
   },
   created () {
@@ -683,6 +717,14 @@ export default {
         }
       },
       deep: true
+    },
+    '$store.state.roomState': {
+      handler: function (newer, older) {
+        if (newer === 'InsufficientBalance') {
+          // 监听到状态变为余额不足，触发函数改变show
+          this.toggleShow()
+        }
+      }
     }
   },
   directives: {
@@ -702,7 +744,8 @@ export default {
         // unbind时断开视频连接
         playVideo.wsDisconnect()
       }
-    }
+    },
+    TransferDom
   }
 }
 </script>
@@ -818,11 +861,12 @@ export default {
           /*display: flex;*/
           background-color: #303133;
           opacity: 0.8;
-          max-width: 95%;
+          max-width: 100%;
           height: 40px;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
           padding-right: 0.3em;
+          margin-right: 0;
           .crowd-count {
             color: #fff;
             height: 50%;
@@ -846,8 +890,8 @@ export default {
             img {
               display: inline-block;
               width: 35px;
-              height: auto;
-              border-radius: 50%;
+              height: 35px;
+              border-radius: 35px;
               overflow: hidden;
               -webkit-box-shadow: 0 0 3px #ccc;
               box-shadow: 0 0 3px #ccc;

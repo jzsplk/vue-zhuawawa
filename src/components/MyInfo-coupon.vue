@@ -9,20 +9,24 @@
     </x-input>
   </group> -->
   <group title="兑换码">
-    <x-input label-width="4em" :title='`<span style="color:red;">兑换码</span>`' placeholder="请输入兑换码" v-model="coupon"></x-input>
+    <x-input label-width="4em" :title='`<span style="color:red;">兑换码</span>`' type="number" placeholder="请输入兑换码" v-model="coupon"></x-input>
   </group>
   <div style="padding:15px;">
-    <x-button @click.native="postCoupon(coupon)" type="primary">发送兑换码</x-button>
+    <x-button @click.native="postCoupon(coupon)" type="primary">
+      <spinner :type="'android'" :size="'40px'" v-show="isLoading"></spinner>
+    发送兑换码
+  </x-button>
   </div>
 </div>
 </template>
 <script>
-import { Group, Cell, CellBox, XInput, XButton } from 'vux'
+import { Group, Cell, CellBox, XInput, XButton, Spinner } from 'vux'
 import apiService from '../API.service.js'
 export default {
   data () {
     return {
-      coupon: ''
+      coupon: '',
+      isLoading: false
     }
   },
   components: {
@@ -30,22 +34,27 @@ export default {
     Cell,
     CellBox,
     XInput,
-    XButton
+    XButton,
+    Spinner
   },
   methods: {
     postCoupon (coupon) {
+      this.isLoading = true
       apiService.postCoupon(coupon).then(data => {
         console.log('user coupon posted', data.data)
         // 增加成功抓到的弹窗
+        this.isLoading = false
         if (data.data.status === '该优惠券可兑换') {
           window.$vm.$message({
             message: data.data.result,
             type: 'success'
           })
         } else {
-          window.$vm.$message({
-            message: '可惜 ' + data.data.status
-          })
+          if (data.data.status === 'EInvalidArg') {
+            window.$vm.$message({
+              message: '可惜 ' + '兑换码无效'
+            })
+          }
         }
       })
     }

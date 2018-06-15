@@ -42,6 +42,7 @@
       <br>
       <!-- <el-button type="primary" @click="onSubmit" round>确认发货</el-button> -->
       <x-button type="primary" action-type="button" @click.native="onSubmit" style="background-color: #F7CB54; color: #AA852C; border: solid 1px #A8832A;">确认发货</x-button>
+      <div class="bottom" style="padding-bottom: 100px;"></div>
     </div>
   </div>
 </template>

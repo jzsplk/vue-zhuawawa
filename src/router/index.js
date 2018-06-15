@@ -16,6 +16,7 @@ import FeedBack from '@/components/MyInfo-feedback'
 import Setting from '@/components/MyInfo-setting'
 import Coupon from '@/components/MyInfo-coupon'
 import Question from '@/components/MyInfo-questions'
+import WxLoading from '@/components/WxLoading'
 
 Vue.use(Router)
 
@@ -152,6 +153,14 @@ export default new Router({
       component: Question,
       meta: {
         title: '常见问题'
+      }
+    },
+    {
+      path: '/wxloading',
+      name: 'wxloading',
+      component: WxLoading,
+      meta: {
+        title: '微信登陆中'
       }
     }
   ]

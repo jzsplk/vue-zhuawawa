@@ -131,12 +131,13 @@ export default {
     },
     logout () {
       // 清理有关微信登陆auth_code
-      window.sessionStorage.removeItem('auth_code')
+      window.localStorage.removeItem('auth_code')
       // 清理微信登陆的token
       window.localStorage.removeItem('access_token')
       this.delCookie('zhuawawa')
       // 暂时不退出微信，等修复微信二次登陆问题
       this.delCookie('wxzhuawawa')
+      this.delCookie('wxlogin')
       // 跳转到主页
       setTimeout(this.$router.push('./'), 2000)
     },

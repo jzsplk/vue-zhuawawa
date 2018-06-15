@@ -82,15 +82,20 @@ export default {
         if (ua.match(/MicroMessenger/i)) {
           if (ua.match(/MicroMessenger/i)[0] === 'micromessenger') {
             console.log('微信浏览器')
-            // 如果不是微信浏览器，游客登陆，检查是否存在session
+            console.log('cookie before check', this.getCookie('wxzhuawawa'))
+            // if wechat broswer, check cookie fo wechat
             if (!this.getCookie('wxzhuawawa')) {
-              // 如果没有登陆状态则跳转到登陆页
-              console.log('no wx cookie found,will jump to login')
+              // check localstorage of access_token
+              console.log('localStorage now: ', window.localStorage.getItem('access_token'))
+              // if no cookie but have localstorage
+              // if no cookie and no localstorage
+              console.log('no wx cookie found and localStorage,will jump to login')
               // 如果是微信浏览器，跳转微信登陆
               this.$router.push('./login')
             } else {
               // this.$router.push('/')
-              // 如果有session把用户数据提取到state中
+              // 如果有session把用户数据提取到state中2
+              console.log('cookie after check', this.getCookie('wxzhuawawa'))
               let data = unescape(this.getCookie('wxzhuawawa'))
               console.log('getCookie parse: ', JSON.parse(data))
               this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
@@ -137,7 +142,7 @@ export default {
     // 执行checklogin
     this.checkLogin()
     this.closeZoom()
-    this.getUserGifts()
+    // this.getUserGifts()
     // 阻止微信长按菜单出现
     document.addEventListener('contextmenu', function (e) {
       e.preventDefault()

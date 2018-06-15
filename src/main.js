@@ -76,25 +76,36 @@ Vue.use(ElementUI)
 // })
 // console.log('router1', router)
 // console.log('router2', router2)
-axios.defaults.baseURL = 'https://www.liehuo55.com/'
-// axios.defaults.baseURL = 'http://139.199.227.21/'
+// axios.defaults.baseURL = 'https://www.liehuo55.com/'
+axios.defaults.baseURL = _global.hostname
+// axios.defaults.baseURL = 'http://139.199.227.21'
 // console.log('新参数', JSON.stringify(window.params))
 // 如果浏览器是微信 请求微信登陆
 // 检查是否是微信浏览器
 Vue.use(WechatAuth, {
   router,
-  appid: 'wx229fb7a27a20b375',
+  // appid: 'wx229fb7a27a20b375', // online version AppId
+  appid: _global.appid, // test version AppId
   responseType: 'code',
   scope: 'snsapi_userinfo',
   getCodeCallback (code, next) {
     window.params = {
-      'AppId': 'wx229fb7a27a20b375',
+      // 'AppId': 'wx229fb7a27a20b375', // online version AppId
+      'AppId': 'wxc73411932a4d884e', // online version AppId
       'Code': code
     }
-    console.log('新参数', JSON.parse(JSON.stringify(window.params)))
+    console.log('微信登陆参数', JSON.parse(JSON.stringify(window.params)))
+    if (code) {
+      console.log('获取到了code， 设定token值阻止再次callback')
+      console.log('改为跳转到loading页面')
+      next(code, {path: './wxloading'})
+    } else {
+      console.log('code 获取失败')
+      next('', {path: './myinfo'})
+    }
     axios.post('api/auth/AuthWith?RefSource=wechat', JSON.parse(JSON.stringify(window.params))).then(response => {
       let data = response.data
-      console.log('微信登陆数据', data)
+      console.log('微信登陆成功,数据: ', data)
       // 获取到微信登陆后的处理
       // 存储得到的数据
       let userData = {
@@ -108,17 +119,16 @@ Vue.use(WechatAuth, {
       let jsonUserData = JSON.stringify(userData)
       let expireDays = 1000 * 60 * 60 * 24 * 15
       $vm.setCookie('wxzhuawawa', jsonUserData, expireDays)
-      // router.push('./')
       // 微信登陆下一步动作
       if (data.Token) {
-        next(data.Token, {path: './'})
+        next(userData, {path: './'})
       } else {
         console.log('未获取到token')
         next('', {path: './myinfo'})
       }
     }).catch((error) => {
       console.log('微信登陆请求失败', error)
-      next('', {path: './feedback'})
+      next('', {path: './'})
     })
   }
 })

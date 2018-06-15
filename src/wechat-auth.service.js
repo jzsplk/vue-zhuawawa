@@ -19,17 +19,24 @@ export default {
     function urlCodeQueryFilter (code) {
       if (code) {
         weChatAuth.setAuthCode(code)
+        // this remove the code and state part then redirect to it
         weChatAuth.removeUrlCodeQuery()
+        // set to router push './'
+        // router.push('./')
       }
     }
 
     function checkRouterAuth (to, from, next) {
       let authCode = weChatAuth.getAuthCode()
+      // to no meta auth and no code store
       if ((!to.meta || !to.meta.auth) && !authCode) return true
+      // no code store and no accessToken store and go to auth
       if (!authCode && !weChatAuth.getAccessToken()) {
+        // redirect to this href as redirectURI
         weChatAuth.openAuthPage(encodeURIComponent(window.location.href))
         return false
       } else if (authCode && !weChatAuth.getAccessToken()) {
+        // have code and no accessToken store
         weChatAuth.getCodeCallback(next)
         return false
       }
@@ -41,6 +48,7 @@ export default {
       let code = query.code
       urlCodeQueryFilter(code)
       if (!code && !checkRouterAuth(to, from, next)) {
+        // if no code and no RouterAuth()
         return false
       }
       next()

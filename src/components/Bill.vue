@@ -9,7 +9,7 @@
             {{ '娃娃币' }}
           </div>
           <div class="vux-1px-r">
-            <span>{{bills.Logs.length}}</span>
+            <span>{{totalCount}}</span>
             <br/>
             {{ '记录' }}
           </div>
@@ -26,7 +26,7 @@
         </div>
       </card>
     </div>
-    <div class="card" v-for="(o, index) in bills.Logs" :key="index" style="overflow-y: scroll;">
+<!--     <div class="card" v-for="(o, index) in bills.Logs" :key="index" style="overflow-y: scroll;">
       <el-card class="box-card" bodyStyle="display: flex;width: 100%;align-items:center;">
         <div class="info">
           <div  class="text item">
@@ -48,30 +48,65 @@
           </div>
         </div>
       </el-card>
-    </div>
+    </div> -->
+    <scroller lock-x height="80%" @on-scroll-bottom="onScrollBottom" ref="scrollerBottom" :scroll-bottom-offst="200">
+      <div class="box2">
+        <div class="card" v-for="(o, index) in bills.Logs" :key="index" style="overflow-y: scroll;">
+          <el-card class="box-card" bodyStyle="display: flex;width: 100%;align-items:center;">
+            <div class="info">
+              <div  class="text item">
+                {{ o.Memo }}
+              </div>
+              <div  class="text item">
+                {{ utcTimeConvert(o.Timestamp) }}
+              </div>
+            </div>
+            <div class="cost">
+              <div v-show="o.Amount < 0" class="lose">
+                <span>{{ o.Amount*10 + '币'}}</span>
+              </div>
+              <div v-show="o.Amount === 0" class="lose">
+                <span>-{{ o.Amount*10 + '币'}}</span>
+              </div>
+              <div v-show="o.Amount > 0" class="get">
+                <span>+{{ o.Amount*10 + '币'}}</span>
+              </div>
+            </div>
+          </el-card>
+        </div>
+        <load-more v-show="isLoadMore" tip="loading"></load-more>
+      </div>
+    </scroller>
   </div>
 </template>
 <script>
 import apiService from '../API.service.js'
-import { Card } from 'vux'
+import { Card, Scroller, LoadMore } from 'vux'
 export default {
   components: {
-    Card
+    Card,
+    Scroller,
+    LoadMore
   },
   data () {
     return {
       bills: {},
-      userInfo: {balance: 100}
+      userInfo: {balance: 100},
+      totalCount: 0,
+      offset: 0,
+      isLoadMore: false
     }
   },
   props: [],
   computed: {
   },
   methods: {
-    getBilling () {
-      apiService.getBilling().then(data => {
+    getBilling (isLoadMore, offset, pagecount) {
+      apiService.getBilling(isLoadMore, offset, pagecount).then(data => {
         console.log('billing: ', data)
         this.bills = data.data
+        console.log('this bills: ', this.bills)
+        this.totalCount = data.data.TotalCount
       })
     },
     // 时间格式转换
@@ -94,11 +129,30 @@ export default {
         console.log('user balance info', data.data)
         this.userInfo.balance = data.data
       })
+    },
+    onScrollBottom () {
+      if (this.isLoadMore) {
+      } else {
+        this.isLoadMore = true
+        this.offset += 5
+        apiService.getBilling(this.isLoadMore, this.offset, 5).then(data => {
+          console.log('loading more bill: ', data)
+          this.bills.Logs = this.bills.Logs.concat(data.data.Logs)
+          console.log('new bill list: ', this.bills.Logs)
+          this.$nextTick(() => {
+            this.$refs.scrollerBottom.reset()
+          })
+          this.isLoadMore = false
+        }).catch(error => {
+          console.log('get billing history error', error)
+          this.isLoadMore = false
+        })
+      }
     }
   },
   created () {
     this.getUserInfo()
-    this.getBilling()
+    this.getBilling(true, 0, 5)
   }
 }
 </script>

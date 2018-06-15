@@ -16,6 +16,33 @@ class WeChatAuth {
     this.config = Object.assign(defaultConfig, config)
   }
 
+  setCookie (cName, value, expiredays) {
+    var exdate = new Date()
+    exdate.setDate(exdate.getDate() + expiredays)
+    document.cookie = cName + '=' + escape(value) + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
+    console.log('set cookie: ', document.cookie)
+  }
+  // 获取cookie、
+  getCookie (name) {
+    let reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
+    // console.log('get cookie', document.cookie.match(reg)[2])
+    let arr = document.cookie.match(reg)
+    if (arr) {
+      return arr[2]
+    } else {
+      return null
+    }
+  }
+  // 删除cookie
+  delCookie (name) {
+    var exp = new Date()
+    exp.setTime(exp.getTime() - 1)
+    var cval = this.getCookie(name)
+    if (cval != null) {
+      document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString()
+    }
+  }
+
   openAuthPage (redirectUri = encodeURIComponent(window.location.href)) {
     this.removeAccessToken()
     this.removeAuthCode()
@@ -26,18 +53,22 @@ class WeChatAuth {
 
   setAuthCode (code) {
     if (!code) return false
-    window.sessionStorage.setItem('auth_code', code)
+    // window.sessionStorage.setItem('auth_code', code)
+    // change sessionStorage to Local
+    window.localStorage.setItem('auth_code', code)
     return true
   }
 
   getAuthCode () {
-    let codeValue = window.sessionStorage.getItem('auth_code')
+    // let codeValue = window.sessionStorage.getItem('auth_code')
+    let codeValue = window.localStorage.getItem('auth_code')
     if (!codeValue) return ''
     return codeValue
   }
 
   removeAuthCode () {
-    window.sessionStorage.removeItem('auth_code')
+    // window.sessionStorage.removeItem('auth_code')
+    window.localStorage.removeItem('auth_code')
   }
 
   removeUrlCodeQuery () {
@@ -72,16 +103,25 @@ class WeChatAuth {
 
   setAccessToken (accessToken) {
     if (!accessToken) return false
-    window.localStorage.setItem('access_token', accessToken)
+    // window.localStorage.setItem('access_token', accessToken)
+    // change to setCookie
+    console.log('$vm: ', window.$vm)
+    let jsonUserData = JSON.stringify(accessToken)
+    let expireDays = 1000 * 60 * 60 * 24 * 15
+    this.setCookie('wxlogin', jsonUserData, expireDays)
     return true
   }
 
   getAccessToken () {
-    return window.localStorage.getItem('access_token')
+    // return window.localStorage.getItem('access_token')
+    // change to get cookie wxlogin
+    return this.getCookie('wxlogin')
   }
 
   removeAccessToken () {
-    window.localStorage.removeItem('access_token')
+    // window.localStorage.removeItem('access_token')
+    // change to remove cookie
+    this.delCookie('wxlogin')
   }
 
   next (next) {
