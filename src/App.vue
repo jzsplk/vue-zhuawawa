@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-bind:class="{ enter: this.$store.state.isEntered}">
 <!--     <div class="header">
       <div class="logo">
         <router-link :to="{path: '/'}" ><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
@@ -9,6 +9,12 @@
         <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
     </div> -->
+    <div class="header" v-bind:class="{ hide: this.$store.state.isEntered}">
+      <x-header :right-options="{showMore: true}" @on-click-more="showMenus = true">最爱抓娃娃</x-header>
+    </div>
+    <div v-transfer-dom>
+      <actionsheet :menus="menus" v-model="showMenus" show-cancel @on-click-menu-menu1="showRecharge"></actionsheet>
+    </div>
     <keep-alive :include="/Keep$/">
         <router-view/>
     </keep-alive>
@@ -23,15 +29,26 @@
 import MQTT from './MQTT.service.js'
 import AppFooter from './components/AppFooter'
 import apiService from './API.service.js'
+import { XHeader, TransferDom, Actionsheet } from 'vux'
 export default {
   name: 'App',
+  directives: {
+    TransferDom
+  },
   components: {
-    'app-footer': AppFooter
+    'app-footer': AppFooter,
+    XHeader,
+    Actionsheet
   },
   data () {
     return {
       isPlaying: true,
-      userGifts: []
+      userGifts: [],
+      showMenus: false,
+      menus: {
+        menu1: '微信充值'
+        // menu2: '微信登陆'
+      }
     }
   },
   computed: {
@@ -136,6 +153,9 @@ export default {
         // 把娃娃数据保存
         this.userGifts = data.data.Gifts
       })
+    },
+    showRecharge () {
+      window.location.href = 'alicdn.gongyou.co.zhuaww/dist/'
     }
   },
   created () {
@@ -158,11 +178,20 @@ body { margin: 0;}
 .el-message-box {
   max-width: 100%;
   font-size: 13px;
+  margin-top: 200px;
 }
 .el-message {
   min-width: 320px;
   max-width: 100%;
   font-size: 13px;
+  margin-top: 50px;
+}
+.hide { /* hide header when enter roomplay */
+  display: none !important;
+  height: 0;
+}
+.enter { /* change margin top of app when enter roomplay */
+  margin-top: 0px !important;
 }
 #app {
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
@@ -182,6 +211,7 @@ body { margin: 0;}
   height:100%;
   border:hidden;
   overflow: scroll;
+  margin-top: 40px;
   body {
     /* 去掉margin*/
     /* 禁止微信内置浏览器调整字体大小 */
@@ -218,6 +248,12 @@ body { margin: 0;}
   }
 }
 .header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 2004;
+}
+.header1 {
   display: flex;
   justify-content: center;
   align-items: center;

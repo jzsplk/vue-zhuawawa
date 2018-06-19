@@ -540,6 +540,8 @@ export default {
       apiService.leaveRoom(id).then(data => {
         console.log('leave room', data)
       })
+      // trigger updata, motify roomTopic of State
+      this.$store.dispatch('initRoomTopic', '')
       this.$router.push('./')
     },
     checkToleave (id) { // 检查房间目前状态，根据状态采取不同动作
@@ -825,7 +827,10 @@ export default {
       width: 360px;
       max-width: 100%;
       height: 480px;
-      max-height: 30%;
+      max-height: 100%;
+      background: url(../../static/pic/video_load.png) no-repeat;
+      background-size: 100% 100%;
+      background-position: 0 0;
       canvas {
         display: block;
         width: 360px;
@@ -1148,7 +1153,8 @@ export default {
         position: relative;
         .operation-arrow {
           position: relative;
-          background-color: #fff;
+          background-color: #FFFFFF;
+          opacity: 0.1;
           width: 100px;
           // max-width: 50%;
           height: 100px;
@@ -1160,11 +1166,11 @@ export default {
           top: 0;
           left: 35px;
           background-color: #e2be46;
-          width: 32px;
-          height: 32px;
+          width: 38px;
+          height: 38px;
           z-index: 999;
           // background-color: transparent;
-          background: url(../../static/pic/up.png) no-repeat;
+          background: url(../../static/icons/direction_top.png) no-repeat;
           background-size: cover;
           .arrow-up {
             border-style: none;
@@ -1178,11 +1184,11 @@ export default {
           top: 70%;
           left: 35px;
           background-color: #e2be46;
-          width: 32px;
-          height: 32px;
+          width: 38px;
+          height: 38px;
           z-index: 999;
           // background-color: transparent;
-          background: url(../../static/pic/down.png) no-repeat;
+          background: url(../../static/icons/direction_button.png) no-repeat;
           background-size: cover;
           .arrow-down {
             border-style: none;
@@ -1196,11 +1202,11 @@ export default {
           top: 35%;
           left: 0px;
           background-color: #e2be46;
-          width: 32px;
-          height: 32px;
+          width: 38px;
+          height: 38px;
           z-index: 999;
           // background-color: transparent;
-          background: url(../../static/pic/left.png) no-repeat;
+          background: url(../../static/icons/direction_left.png) no-repeat;
           background-size: cover;
           .arrow-left {
             border-style: none;
@@ -1214,11 +1220,11 @@ export default {
           top: 35%;
           left: 70px;
           background-color: #e2be46;
-          width: 32px;
-          height: 32px;
+          width: 38px;
+          height: 38px;
           z-index: 999;
           // background-color: transparent;
-          background: url(../../static/pic/right.png) no-repeat;
+          background: url(../../static/icons/direction_right.png) no-repeat;
           background-size: cover;
           .arrow-right {
             border-style: none;
@@ -1235,7 +1241,7 @@ export default {
       height: 90px;
       z-index: 999;
       // background-color: transparent;
-      background: url(../../static/pic/catch_icon.png) no-repeat;
+      background: url(../../static/pic/hand.png) no-repeat;
       background-size: contain;
       margin-right: 30px;
       .space {

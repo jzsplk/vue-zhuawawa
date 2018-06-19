@@ -1,14 +1,14 @@
 <template>
 <!--   <router-link :to="{path:'play',query:{id:room.Id}}"> -->
-  <div class="room" v-bind:class="{ active: room.Actor !== undefined }" @click="$router.push({path: 'play', query: {id:room.Id}})">
+  <div class="room" v-bind:class="{ active: room.Actor !== undefined }" @click="enterPlaying(room.Status)">
     <div class="img-wrapper">
       <div class="img-container">
         <img :src="baseURL + room.Doll.Item.AvatarUrl" :alt="room.Name">
         <p v-show="room.Actor === undefined" class="statusAvailable">空闲中</p>
         <p v-show="room.Actor !== undefined" class="statusPlaying">游戏中({{room.Crowd}}人)</p>
-        <!-- <p v-show="room.Status === 1" class="statusPlaying">训练场</p> -->
-        <!-- <p v-show="room.Status === 2" class="statusPlaying">维护中</p> -->
-        <!-- <p v-show="room.Status === 3" class="statusPlaying">房间异常</p> -->
+        <p v-show="room.Status === 1" class="statusPlaying">训练场</p>
+        <p v-show="room.Status === 2" class="statusPlaying">维护中</p>
+        <p v-show="room.Status === 3" class="statusPlaying">房间异常</p>
         <!-- 0是正常，1是训练场，2是维护，3是异常-->
       </div>
     </div>
@@ -36,7 +36,21 @@ export default {
       // baseURL: 'http://zhuaww.gongyou.co/weixin/'
     }
   },
-  props: ['room']
+  props: ['room'],
+  methods: {
+    enterPlaying (state) {
+      if (state !== 0) {
+        window.$vm.$message({
+          message: '房间维护中',
+          duration: 3000,
+          showClose: true
+        })
+        return false
+      } else {
+        this.$router.push({path: 'play', query: {id: this.room.Id}})
+      }
+    }
+  }
 }
 </script>
 

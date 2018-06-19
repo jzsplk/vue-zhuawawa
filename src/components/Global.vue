@@ -1,10 +1,10 @@
 <script>
 const client = 'new window.Paho.MQTT.client'
 // const hostname = '47.97.34.46' // MQTT open versionip
-// const hostname = 'https://www.liehuo55.com/' // open version api
-const hostname = 'http://139.199.227.21/' // api test versionIP
-// const mqtthost = '47.97.34.46' // MQTT open verion ip
-const mqtthost = '139.199.227.21' // MQTT open verion ip
+const hostname = 'https://www.liehuo55.com/' // open version api
+// const hostname = 'http://139.199.227.21/' // api test versionIP
+const mqtthost = '47.97.34.46' // MQTT open verion ip
+// const mqtthost = '139.199.227.21' // MQTT open verion ip
 const CMD_LEFT = 1
 const CMD_RIGHT = 3
 const CMD_UP = 2

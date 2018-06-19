@@ -143,12 +143,12 @@ const MQTT = {
   },
   onMessageArrived (message) {
     console.log('Message Recieved: Topic: ', message.destinationName, '. Payload: ', message.payloadString, '. QoS: ', message.qos)
-    // console.log(message)
+    console.log(message)
     // 在这里判断destination是否是notify，本房间，如果不是 不做处理
     if (message.destinationName !== store.state.roomTopic) {
       // 只有收到成功消息，显示(即使不在房间内,也能收到玩家抓中的消息哦)
       if (JSON.parse(message.payloadString).action !== undefined && JSON.parse(message.payloadString).action === _global.MQTT_ACTION_SUCCESS) {
-        MQTT.parseMQTTResults(message.payloadString)
+        MQTT.parseMQTTResults(message.payloadString, message)
       }
       console.log('payloadString', JSON.parse(message.payloadString))
       return
@@ -223,18 +223,18 @@ const MQTT = {
         break
     }
   },
-  parseMQTTResults (json) {
+  parseMQTTResults (json, message) {
     let self = this
     let object = JSON.parse(json)
     if (json.indexOf('action') !== -1) {
-      self.parseActionResult(object)
+      self.parseActionResult(object, message)
     } else if (json.indexOf('code') !== -1) {
       self.parseCode(object)
     } else if (json.indexOf('error') !== -1) {
       self.parseError(object)
     }
   },
-  parseActionResult (object) {
+  parseActionResult (object, message) {
     let action = object.action
     console.log('parseMQTTResults action= ' + action)
     // 还原isWaiting的状态
@@ -242,10 +242,20 @@ const MQTT = {
     if (action === _global.MQTT_ACTION_SUCCESS) {
       let id = object.Id
       // 还原isWaiting的状态
+      // 根据roomsInfo 获取娃娃名字,显示成功获取的娃娃名字
+      let DesName = ''
+      store.roomsInfo.forEach(function (li) {
+        if (li.DeviceId.indexOf(message.destinationName) !== -1) {
+          DesName = li.Name
+        }
+        return true
+      })
       // 增加成功抓到的弹窗
       window.$vm.$message({
-        message: '恭喜 ' + object.Name + '抓到了！',
-        type: 'success'
+        message: '恭喜 ' + object.Name + '抓到' + DesName,
+        type: 'success',
+        duration: 4500,
+        showClose: true
       })
       console.log('恭喜 ' + object.Name + ' 抓到了!')
       // 如果是抓娃娃成功，下一步是否是停止抓娃娃？安卓写法如此
@@ -262,7 +272,11 @@ const MQTT = {
       }
       // 增加没有抓中的弹窗
       console.log('可惜了 ' + object.Name + ' 没抓到')
-      window.$vm.$message('可惜了 ' + object.Name + '没抓到')
+      window.$vm.$message({
+        message: '可惜了 ' + object.Name + '没抓到',
+        duration: 3500,
+        showClose: true
+      })
       // 注意这里showFailedConfirm跟stopCatching的命令有冲突，不能一起用
       // if (object.Id === store._vm.playerId) {
       //   store.dispatch('stopCatching')
