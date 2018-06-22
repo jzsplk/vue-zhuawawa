@@ -1,8 +1,8 @@
 <template>
 <div class="guide">
-  <div class="nav">
+<!--   <div class="nav">
       新手教学
-  </div>
+  </div> -->
   <div class="head">
 <!--     <el-steps :active="active" finish-status="finish" direction="vertical" :align-center="true" :space="90">
       <el-step title="步骤1" description="点击选择你心仪的娃娃"></el-step>

@@ -57,7 +57,7 @@
         <img slot="icon-active" src="../../static/icons/bottom-front-active.png">
         <span slot="label">首页</span>
       </tabbar-item>
-      <tabbar-item link="./mydoll" :badge="dolls === 0 ? '' : String(dolls)">
+      <tabbar-item link="./mydoll" :badge="dolls == 0 ? '' : String(dolls)">
         <img slot="icon" src="../../static/icons/bottom-doll.png">
         <img slot="icon-active" src="../../static/icons/bottom-doll-active.png">
         <span slot="label">我的娃娃</span>

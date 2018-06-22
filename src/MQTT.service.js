@@ -153,7 +153,7 @@ const MQTT = {
       console.log('payloadString', JSON.parse(message.payloadString))
       return
     }
-    MQTT.parseMQTTResults(message.payloadString)
+    MQTT.parseMQTTResults(message.payloadString, message)
   },
   onMessageDelivered (token) {
     console.log('deliver complete', token.payloadString)
@@ -244,17 +244,19 @@ const MQTT = {
       // 还原isWaiting的状态
       // 根据roomsInfo 获取娃娃名字,显示成功获取的娃娃名字
       let DesName = ''
-      store.roomsInfo.forEach(function (li) {
-        if (li.DeviceId.indexOf(message.destinationName) !== -1) {
+      console.log(store.state.roomsInfo)
+      store.state.roomsInfo.forEach(function (li) {
+        if (message.destinationName.indexOf(li.DeviceId) !== -1) {
           DesName = li.Name
+          return true
         }
-        return true
       })
+      console.log('wawa now: ', DesName)
       // 增加成功抓到的弹窗
       window.$vm.$message({
-        message: '恭喜 ' + object.Name + '抓到' + DesName,
+        message: '恭喜 大神 ' + object.Name + ' 抓到 ' + DesName + ',好羡慕！',
         type: 'success',
-        duration: 4500,
+        duration: 5500,
         showClose: true
       })
       console.log('恭喜 ' + object.Name + ' 抓到了!')

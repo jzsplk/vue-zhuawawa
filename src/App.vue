@@ -18,6 +18,17 @@
     <keep-alive :include="/Keep$/">
         <router-view/>
     </keep-alive>
+<!--     <div v-transfer-dom>
+      <x-dialog v-model="showPunch" class="dialog-demo" hide-on-blur>
+        <div class="img-box">
+          <img src="https://ws1.sinaimg.cn/large/663d3650gy1fq6824ur1dj20ia0pydlm.jpg" style="max-width:100%">
+        </div>
+        <div @click="showPunch=false">
+          <span class="vux-close"></span>
+        </div>
+        <x-button mini type="primary" @click.native="Punch">签到</x-button>
+      </x-dialog>
+    </div> -->
 <!--     <keep-alive exclude="WechatAuth">
       <router-view/>
     </keep-alive> -->
@@ -29,7 +40,7 @@
 import MQTT from './MQTT.service.js'
 import AppFooter from './components/AppFooter'
 import apiService from './API.service.js'
-import { XHeader, TransferDom, Actionsheet } from 'vux'
+import { XHeader, TransferDom, Actionsheet, XDialog, XButton } from 'vux'
 export default {
   name: 'App',
   directives: {
@@ -38,7 +49,9 @@ export default {
   components: {
     'app-footer': AppFooter,
     XHeader,
-    Actionsheet
+    Actionsheet,
+    XDialog,
+    XButton
   },
   data () {
     return {
@@ -48,7 +61,9 @@ export default {
       menus: {
         menu1: '微信充值'
         // menu2: '微信登陆'
-      }
+      },
+      isPunched: false,
+      showPunch: false
     }
   },
   computed: {
@@ -115,6 +130,9 @@ export default {
               console.log('cookie after check', this.getCookie('wxzhuawawa'))
               let data = unescape(this.getCookie('wxzhuawawa'))
               console.log('getCookie parse: ', JSON.parse(data))
+              // dispatch login state
+              this.$store.dispatch('toggleLoginState')
+              // update user data
               this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
             }
           }
@@ -129,6 +147,9 @@ export default {
             // 如果有session把用户数据提取到state中
             let data = unescape(this.getCookie('zhuawawa'))
             console.log('getCookie parse: ', JSON.parse(data))
+            // dispatch login state
+            this.$store.dispatch('toggleLoginState')
+            // update user info
             this.$store.dispatch('updataPlayerInfo', JSON.parse(data))
           }
         }
@@ -155,7 +176,33 @@ export default {
       })
     },
     showRecharge () {
-      window.location.href = 'alicdn.gongyou.co.zhuaww/dist/'
+      window.location.href = 'http://alicdn.gongyou.co/zhuaww/dist/'
+    },
+    checkPunchin () {
+      apiService.getPunchin().then(data => {
+        console.log('punchin data: ', data.data)
+        if (data.data.Flag) {
+          this.isPunched = false
+          console.log('not punched yet ')
+          // show the punchin window
+          this.showPunch = true
+        } else {
+          this.isPunched = true
+          console.log('is punch in ')
+          // dont show the punchin window
+        }
+      })
+    },
+    Punch () { // request Punch in
+      this.$vux.toast.show({
+        text: '已签到'
+      })
+      // apiService.Punchin().then(data => {
+      //   console.log('Punched info: ', data)
+      // })
+      //   .catch(error => {
+      //     console.log('punch error', error)
+      //   })
     }
   },
   created () {
@@ -167,6 +214,9 @@ export default {
     document.addEventListener('contextmenu', function (e) {
       e.preventDefault()
     })
+  },
+  mounted () {
+    this.checkPunchin()
   }
 }
 </script>
@@ -298,4 +348,24 @@ body { margin: 0;}
 </style>
 <style lang="less">
 @import '~vux/src/styles/reset.less';
+@import '~vux/src/styles/close';
+
+.dialog-demo {
+  .weui-dialog{
+    border-radius: 8px;
+    padding-bottom: 8px;
+  }
+  .dialog-title {
+    line-height: 30px;
+    color: #666;
+  }
+  .img-box {
+    height: 350px;
+    overflow: hidden;
+  }
+  .vux-close {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+}
 </style>

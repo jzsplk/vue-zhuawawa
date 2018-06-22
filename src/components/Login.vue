@@ -59,6 +59,8 @@ export default {
         let jsonUserData = JSON.stringify(userData)
         let expireDays = 1000 * 60 * 60 * 24 * 15
         this.setCookie('zhuawawa', jsonUserData, expireDays)
+        // dispatch login state
+        this.$store.dispatch('toggleLoginState')
         this.$router.push('/')
       })
     }

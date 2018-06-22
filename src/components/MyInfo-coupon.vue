@@ -54,6 +54,10 @@ export default {
             window.$vm.$message({
               message: '可惜 ' + '兑换码无效'
             })
+          } else {
+            window.$vm.$message({
+              message: data.data.status
+            })
           }
         }
       })

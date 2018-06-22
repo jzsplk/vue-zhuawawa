@@ -53,9 +53,13 @@
     </el-collapse> -->
     <div class="cells">
       <group :title="''">
+        <cell is-link @click.native="goToPay">
+          <span slot="title" style=""><span style="vertical-align:middle;">{{ '微信充值' }}</span></span>
+          <x-icon slot="icon" type="social-usd" size="20" class="cell-x-icon"></x-icon>
+        </cell>
        <cell is-link @click.native="goToBill">
          <span slot="title" style=""><span style="vertical-align:middle;">{{ '娃娃币账单' }}</span></span>
-         <x-icon slot="icon" type="_ionicons_svg_ios-document" size="20" class="cell-x-icon"></x-icon>
+         <x-icon slot="icon" type="android-document" size="20" class="cell-x-icon"></x-icon>
        </cell>
        <cell :title="'常见问题'" is-link @click.native="$router.push('./questions')">
           <x-icon slot="icon" type="_ionicons_svg_ios-megaphone" size="20" class="cell-x-icon"></x-icon>
@@ -65,7 +69,7 @@
           <!-- <i slot="icon" class="header-icon el-icon-star-off"></i> -->
        </cell>
        <cell :title="'问题反馈'" is-link @click.native="goToFeed">
-          <x-icon slot="icon" type="_ionicons_svg_ios-chatbubbles" size="20" class="cell-x-icon"></x-icon>
+          <x-icon slot="icon" type="chatbubbles" size="20" class="cell-x-icon"></x-icon>
        </cell>
        <cell :title="'设置'" is-link @click.native="$router.push('./setting')">
           <x-icon slot="icon" type="ios-settings" size="20" class="cell-x-icon"></x-icon>
@@ -80,7 +84,7 @@
       <x-button mini plain type="primary" @click.native="logout" style="color: #B29036;background-color: #F9DC3D; border-color: #B29036;">退出登陆</x-button>
       <!-- <el-button type="warning" @click="logout">退出登陆</el-button> -->
       <!-- <button @click="logout">退出登陆</button> -->
-      <p>版本号： 0.5.9</p>
+      <p>版本号： 1.0.0</p>
     </div>
     <div class="main">
     </div>
@@ -165,6 +169,9 @@ export default {
     },
     goToFeed () {
       this.$router.push('./feedback')
+    },
+    goToPay () {
+      window.location.href = 'http://alicdn.gongyou.co/zhuaww/dist/'
     }
   },
   created () {

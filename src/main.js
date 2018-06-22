@@ -22,6 +22,8 @@ import touch from 'vue-directive-touch' // 引入vue2-touch-evnets
 import _global from './components/Global'
 import 'babel-polyfill' // polyfill
 import WechatAuth from './wechat-auth.service.js' // 引入微信登陆模块
+import { ToastPlugin } from 'vux' // ToastPlugin from vux
+Vue.use(ToastPlugin)
 
 // vux 设置
 const FastClick = require('fastclick')
@@ -91,7 +93,7 @@ Vue.use(WechatAuth, {
   getCodeCallback (code, next) {
     window.params = {
       // 'AppId': 'wx229fb7a27a20b375', // online version AppId
-      'AppId': 'wxc73411932a4d884e', // online version AppId
+      'AppId': _global.appid, // online version AppId
       'Code': code
     }
     console.log('微信登陆参数', JSON.parse(JSON.stringify(window.params)))
@@ -128,7 +130,7 @@ Vue.use(WechatAuth, {
       }
     }).catch((error) => {
       console.log('微信登陆请求失败', error)
-      next('', {path: './'})
+      next('', {path: './myinfo'})
     })
   }
 })

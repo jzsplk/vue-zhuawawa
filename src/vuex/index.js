@@ -154,6 +154,9 @@ const store = new Vuex.Store({
     },
     resetWaiting (context) {
       context.commit('resetWaiting')
+    },
+    toggleLoginState (context) { // change login state
+      context.commit('toggleLoginState')
     }
   },
   mutations: {
@@ -300,6 +303,10 @@ const store = new Vuex.Store({
     },
     resetWaiting (state) {
       state.isWaiting = false
+    },
+    toggleLoginState (state) { // change login state
+      state.isLogin = true
+      // check puchin, if not, show puchin window
     }
   }
 })

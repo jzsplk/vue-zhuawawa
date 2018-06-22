@@ -44,10 +44,8 @@
               </div>
             </div>
 
-            <div v-for="user in roomData.Crowd" v-bind:key="user.Id">
-              <div class="crowd">
-                <img class="crowd_Avatar" :src="user.AvatarUrl" alt="">
-              </div>
+            <div v-for="(user, index) in roomData.Crowd" v-bind:key="user.Id" class="crowd" :style="{width: avaterHeight + 'px', height: avaterHeight + 'px'}">
+                <img v-if="index < 5" class="crowd_Avatar" :src="user.AvatarUrl" alt="" :style="{width: avaterHeight + 'px', height: avaterHeight + 'px'}">
             </div>
           </div>
         </div>
@@ -70,7 +68,7 @@
           </div> -->
           <!-- 新的正在玩头像 注意这里要用vif不能用v-show-->
           <div v-if="$store.state.isPlaying && roomData.Actor !== undefined" class="overlay-playing">
-            <div class="avater-wrapper">
+            <div class="avater-wrapper" ref="avater" id="avater">
               <img :src="roomData.Actor.AvatarUrl" alt="">
             </div>
             <p>{{roomData.Actor.NickName}}</p>
@@ -160,7 +158,9 @@
           </el-button-group>
 <!--           <button class="confirm-button" @click="sendReady(true, roomTopic)">赶紧开始</button>
           <button class="confirm-button" @click="sendReady(false, roomTopic)">我放弃</button> -->
-          <roomplay-countdown class="prepare-countdown" :rTime="7"></roomplay-countdown>
+          <div class="prepare-countdown-wrapper">
+            <roomplay-countdown class="prepare-countdown" :rTime="7"></roomplay-countdown>
+          </div>
         </div>
     <!--     </transition> -->
         <div v-show="roomState == 'InsufficientBalance'">
@@ -208,8 +208,55 @@
             <!-- <roomplay-playing-countdown :rTime="20"></roomplay-playing-countdown> -->
         </div>
     </div>
+    <div class="vux-tabs">
+      <tab :line-width=2 active-color='#fc378c' v-model="index" style="border-radius: 10px 10px 0 0">
+        <tab-item class="vux-center" :selected="demo2 == item" v-for="(item, index) in list2" @click="demo2 = item" :key="index" style="border-radius: 10px 10px 0 0">{{item}}</tab-item>
+      </tab>
+      <swiper v-model="index" height="650px" :show-dots="false">
+        <swiper-item>
+          <!-- <div class="tab-swiper vux-center">{{item}} Container</div> -->
+          <div class="pic tab-swiper vux-center">
+            <ul class="pic_ul">
+              <li v-for="pic in roomData.Doll.Item.Pictures" v-bind:key="pic.Path" class="pic_li">
+                <img :src="'http://zhua.liehuo55.com' + pic.Path" alt="" style="width: 100%;">
+              </li>
+            </ul>
+          </div>
+        </swiper-item>
+        <swiper-item>
+          <div class="tab-swiper vux-center rank_wrapper">
+            <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
+              <div class="avatar">
+                <img class="rankAvater" :src="rank.AvatarUrl" alt="">
+              </div>
+              <div class="name">
+                <span>{{rank.NickName}}</span>
+              </div>
+              <div class="count">
+                <span class="count">{{rank.CaughtCount}}</span>
+              </div>
+            </li>
+          </div>
+        </swiper-item>
+        <swiper-item>
+          <div class="logs_wrapper tab-swiper vux-center">
+            <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
+              <div class="avatar">
+                <img class="rankAvater" :src="log.AvatarUrl" alt="">
+              </div>
+              <div class="name">
+                <span>{{log.NickName}}</span>
+              </div>
+              <div class="time">
+                <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
+              </div>
+            </li>
+          </div>
+        </swiper-item>
+      </swiper>
+    </div>
     <!-- detailTab -->
-    <el-tabs v-model="activeName" >
+<!--     <el-tabs v-model="activeName" >
       <el-tab-pane label="娃娃详情" name="first">
         <div v-show="roomData.Doll" class="pic">
           <ul class="pic_ul">
@@ -249,61 +296,7 @@
           </li>
         </div>
       </el-tab-pane>
-    </el-tabs>
-    <!-- 详细信息 -->
-    <div v-show="false" class="details">
-        <div v-if="false" class="test">
-          <p id="connectionStatus"></p>
-          <button @click="initMqttClient">connect</button>
-          <button @click="disconnect">disconnect</button>
-          <button @click="subscribe('ctrl/22143')">subscribe</button>
-          <button @click="publishTopic">publish</button>
-          <button @click="sendReady(true, roomTopic)">sendReady</button>
-          <button @click="PrepareTopic">prepare</button>
-          <button @click="playerStart">playerStart</button>
-          <button @click="event => { queue() }">排队</button>
-          <button @click="login">登陆</button>
-          <span v-if="isReady">State Ready</span>
-        </div>
-        <div class="detail-nav">
-          <button @click="changeDetailState('Pic')">娃娃详情</button>
-          <button @click="changeDetailState('Rank')">排行榜</button>
-          <button @click="changeDetailState('Log')">抓中记录</button>
-        </div>
-        <transition name="el-zoom-in-top">
-          <img v-if="this.$store.state.detailState === 'Pic'" src="https://www.liehuo55.com/uploads/301bbe4ae1dbf3e88a858c814fca07129cecbce5.jpg" alt="">
-        </transition>
-        <transition name="el-zoom-in-top">
-          <div v-if="this.$store.state.detailState === 'Rank'" class="rank_wrapper">
-            <li v-for="rank in roomRank.Rank" v-bind:key="rank.Id" class="rank">
-              <div class="avatar">
-                <img class="rankAvater" :src="rank.AvatarUrl" alt="">
-              </div>
-              <div class="name">
-                <span>{{rank.NickName}}</span>
-              </div>
-              <div class="count">
-                <span class="count">{{rank.CaughtCount}}</span>
-              </div>
-            </li>
-          </div>
-        </transition>
-        <transition name="el-zoom-in-top">
-          <div v-if="this.$store.state.detailState === 'Log'" class="logs_wrapper">
-            <li v-for="log in roomRank.Logs" v-bind:key="log.Timestamp" class="logs">
-              <div class="avatar">
-                <img class="rankAvater" :src="log.AvatarUrl" alt="">
-              </div>
-              <div class="name">
-                <span>{{log.NickName}}</span>
-              </div>
-              <div class="time">
-                <span class="count">{{utcTimeConvert(log.Timestamp)}}</span>
-              </div>
-            </li>
-          </div>
-        </transition>
-    </div>
+    </el-tabs> -->
   </div>
 </template>
 
@@ -314,7 +307,8 @@ import MQTT from '../MQTT.service.js'
 import { mapGetters, mapActions } from 'vuex'
 import CountDown from './CountDown'
 import PlayingCountDown from './PlayingCountDown'
-import {Confirm, TransferDomDirective as TransferDom} from 'vux'
+import { Confirm, TransferDomDirective as TransferDom, Tab, TabItem, Swiper, SwiperItem } from 'vux'
+const list = () => ['娃娃详情', '排行榜', '抓中记录']
 export default {
   // directives: {
   //   TransferDom
@@ -322,7 +316,11 @@ export default {
   components: {
     'roomplay-countdown': CountDown,
     'roomplay-playing-countdown': PlayingCountDown,
-    Confirm
+    Confirm,
+    Tab,
+    TabItem,
+    Swiper,
+    SwiperItem
   },
   data () {
     return {
@@ -336,6 +334,9 @@ export default {
       disabled: false,
       dialogVisible: false,
       show: false, // 是否显示余额不足弹窗
+      list2: list(),
+      index: ['娃娃详情', '排行榜', '抓中记录'],
+      demo2: '娃娃详情',
       helps: [
         {
           query: '抓一次需要多少金币？',
@@ -638,6 +639,9 @@ export default {
     onCancel () {
       console.log('on cancel')
       this.$store.dispatch('showStartQueue')
+    },
+    onItemClick (index) {
+      console.log('on item click:', index)
     }
   },
   created () {
@@ -652,7 +656,6 @@ export default {
     console.log('DeviceId', this.roomData)
     // playVideo.wsPlay('video.liehuo55.com:29001')
     // 打印动态获取的div css
-    console.log('css of canvas', this.$refs)
   },
   mounted () {
     // 这里有下面函数都移到created中
@@ -663,6 +666,9 @@ export default {
     // // playVideo.wsPlay('video.liehuo55.com:29001')
     // // 打印动态获取的div css
     // console.log('css of canvas', this.$refs)
+    console.log('css abc height', this.$refs.abc.clientHeight)
+    console.log('css of canvas', this.$refs)
+    console.log('css of canvas of abc', this.$refs.abc)
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState']),
@@ -698,6 +704,16 @@ export default {
           return 480
         } else {
           return window.innerWidth * 0.95 * 480 / 360
+        }
+      }
+    },
+    // set avater width dynamic
+    avaterHeight: {
+      get: function () {
+        if (this.roomData.CrowdCount > 3) {
+          return 23
+        } else {
+          return 35
         }
       }
     }
@@ -757,13 +773,132 @@ export default {
   opacity: 1;
   height: 200px;
 }
-.el-tabs__nav {
-  float: right;
-  .el-tabs__active-bar {
-    left: 16%;
-  }
-}
 .player-view {
+  .vux-tabs {
+    background-color: #FFFFFF;
+    width: 350px;
+    max-width: 95%;
+    height: 650px;
+    border-radius: 10px;
+    margin: 10px auto;
+    .tab-swiper {
+      height: 650px;
+    }
+    .pic {
+      .pic_ul {
+        display: block;
+        padding: 0;
+        .pic_li {
+          list-style: none;
+          img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            text-align: center;
+          }
+        }
+      }
+    }
+    /* 排行榜 */
+    .rank_wrapper {
+      background-color: white;
+      display: block;
+      width: 360px;
+      max-width: 100%;
+      position: relative;
+      height: 100%;
+      max-height: 90%;
+      overflow: hidden;
+      box-sizing: border-box;
+      /*border: 0 0 10px 10px;*/
+      margin-bottom: 10px;
+      margin-top: 0;
+      font-size: 12px;
+      .rank {
+        display: flex;
+        background-color: white;
+        border-bottom: solid 1px #e6e4e5;
+        height: 36px;
+        div {
+          display: inline-block;
+          overflow: hidden;
+          padding: 8px;
+          height: 30px;
+        }
+        .avatar {
+          width: 40px;
+          height: 40px;
+          flex-grow: 0;
+          img {
+            /*height: 30px;*/
+            height: 24px;
+            width: 24px;
+            border-radius: 40px;
+            /*border: solid 1px #fff;*/
+          }
+        }
+        .name {
+          width: 60%;
+          flex-grow: 0;
+          text-align: left;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .count {
+          width: 20%;
+          flex-grow: 1;
+        }
+      }
+    }
+    /* 抓中记录 */
+    .logs_wrapper {
+      background-color: white;
+      display: block;
+      width: 360px;
+      max-width: 100%;
+      position: relative;
+      overflow: scroll;
+      box-sizing: border-box;
+      font-size: 12px;
+      .logs {
+        display: flex;
+        background-color: white;
+        border-bottom: solid 1px #e6e4e5;
+        height: 36px;
+        div {
+          display: inline-block;
+          overflow: hidden;
+          padding: 8px;
+          height: 40px;
+        }
+        .avatar {
+          width: 40px;
+          height: 40px;
+          flex-grow: 0;
+          img {
+            /*height: 30px;*/
+            height: 24px;
+            width: 24px;
+            border-radius: 40px;
+            /*border: solid 1px #edc83a;*/
+          }
+        }
+        .name {
+          width: 40%;
+          flex-grow: 0;
+          text-align: left;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .time {
+          width: 40%;
+          flex-grow: 1;
+        }
+      }
+    }
+  }
   /*  测试tabs */
   .el-tabs {
     background-color: #FFFFFF;
@@ -859,14 +994,18 @@ export default {
         position: absolute;
         top: 0;
         right: 0;
+        max-width: 60%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
         /* 围观信息*/
         .crowd-info {
           /* 这里disply开始是flex,后安装matiral 后改为webkit-box */
           display: flex;
+          flex-wrap: nowrap;
           /*display: flex;*/
           background-color: #303133;
           opacity: 0.8;
-          max-width: 100%;
           height: 40px;
           border-radius: 30px 0 0 30px;
           padding: 0.2em 1.32em;
@@ -891,7 +1030,7 @@ export default {
             white-space:nowrap;
           }
           .crowd {
-            overflow: hidden;
+            /*overflow: hidden;*/
             img {
               display: inline-block;
               width: 35px;
@@ -912,22 +1051,35 @@ export default {
         left: 0;
         color: #fff;
         background-color: #303133;
-        opacity: 0.7;
+        opacity: 0.9;
         width: 120px;
         max-width: 30%;
         border-radius: 10px;
         .playing_wrapper {
           background-color: #121f32;
         }
-        img {
-          width: 100%;
-          display: block;
-          border: solid 2px #F7CB54;
-          border-radius: 10px;
-          overflow: hidden;
-          -webkit-box-shadow: 0 0 3px #ccc;
-          box-shadow: 0 0 3px #ccc;
-          margin-top: 0;
+        .avater-wrapper {
+          padding-bottom: 100%;
+          img {
+            position:absolute;
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
+            width:100%;
+            margin-top: 0;
+            border-radius: 10px;
+            max-height: 66%;
+/*            width: 100%;
+            display: block;
+            border: solid 2px #F7CB54;
+            border-radius: 10px;
+            overflow: hidden;
+            -webkit-box-shadow: 0 0 3px #ccc;
+            box-shadow: 0 0 3px #ccc;
+            margin-top: 0;
+            opacity: 1;*/
+          }
         }
         p {
           font-size: 12px;
@@ -1125,13 +1277,28 @@ export default {
       background-color: #fff;
       color: #4d2d05;
     }
-    /* 准备状态倒计时*/
-    .prepare-countdown {
-      font-size: 9rem;
+    .prepare-countdown-wrapper {
+      /* 准备状态倒计时*/
       position: absolute;
-      top: 10%;
+      top: 35%;
       left: 40%;
-      color: #409EFF;
+      background-color: #303133;
+      opacity: 0.8;
+      max-width: 55%;
+      height: 6rem;
+      width: 6rem;
+      border-radius: 6rem;
+      padding: 0.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .prepare-countdown {
+        font-size: 5rem;
+/*        position: absolute;
+        top: 25%;
+        left: 40%;*/
+        color: #409EFF;
+      }
     }
     /* 移动设备触摸板*/
     .operation-panel {
@@ -1307,9 +1474,10 @@ export default {
         flex-grow: 0;
         img {
           /*height: 30px;*/
-          width: auto;
+          height: 24px;
+          width: 24px;
           border-radius: 40px;
-          border: solid 1px #fff;
+          /*border: solid 1px #fff;*/
         }
       }
       .name {
@@ -1329,6 +1497,7 @@ export default {
   /* 抓中记录 */
   .logs_wrapper {
     background-color: white;
+    display: block;
     width: 360px;
     max-width: 100%;
     position: relative;
@@ -1352,9 +1521,10 @@ export default {
         flex-grow: 0;
         img {
           /*height: 30px;*/
-          width: auto;
+          height: 24px;
+          width: 24px;
           border-radius: 40px;
-          border: solid 1px #fff;
+          /*border: solid 1px #edc83a;*/
         }
       }
       .name {
@@ -1372,4 +1542,9 @@ export default {
     }
   }
 }
+</style>
+
+<style lang="less" scoped>
+@import '~vux/src/styles/1px.less';
+@import '~vux/src/styles/center.less';
 </style>

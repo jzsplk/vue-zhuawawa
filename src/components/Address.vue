@@ -98,6 +98,8 @@ export default {
 
 <style scoped lang="scss" type="text/css">
 .Address-wrapper {
+  margin-top: 10px;
   text-align: center;
+  padding-bottom: 80px;
 }
 </style>

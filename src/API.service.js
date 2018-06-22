@@ -2,10 +2,12 @@ import axios from 'axios'
 // import _global from './components/Global'
 import store from './vuex/index.js'
 import _global from './components/Global'
+// import qs from 'qs'
 // 新API地址
 // axios.defaults.baseURL = 'https://www.liehuo55.com/'
 // axios.defaults.baseURL = 'http://139.199.227.21/'
 axios.defaults.baseURL = _global.hostname
+// axios.defaults.headers.common['Authorization'] = 'Base ' + store._vm.token
 // axios.defaults.baseURL = 'http://zhuaww.gongyou.co/weixin/'
 // 旧API地址
 // axios.defaults.baseURL = 'https://www.iqi1.com/'
@@ -216,22 +218,47 @@ const apiService = {
   postCoupon (code) {
     // 更改post写法
     return new Promise((resolve) => {
-      axios({
-        method: 'post',
-        url: 'http://zhuaww.gongyou.co/weixin/exchange/',
-        data: {
-          ExchangeCode: code
-        },
-        headers: {
-          'Authorization': 'Base ' + store._vm.token
-        }
+      // let param = qs.stringify({
+      //   ExchangeCode: code
+      // })
+      let param = JSON.stringify({
+        ExchangeCode: code
       })
+      // axios({
+      //   method: 'post',
+      //   url: 'http://139.199.227.21:15359/exchange/',
+      //   // url: 'http://zhuaww.gongyou.co/weixin/exchange/',
+      //   data: param,
+      //   headers: {
+      //     'Authorization': 'Base ' + store._vm.token,
+      //     'Content-Type': 'application/x-www-form-urlencoded'
+      //   }
+      // })
+      //   .then(response => {
+      //     resolve(response)
+      //     console.log('post Coupon response', response)
+      //   })
+      //   .catch(error => {
+      //     console.log('coupen error', error)
+      //   })
+      // {
+      //   headers: {
+      //     // 改为由state获取token
+      //     'Authorization': 'Base ' + store._vm.token
+      //   }
+      // }
+      axios.post('http://zhuaww.gongyou.co/weixin/exchange/', param,
+        {
+          headers: {
+            'Authorization': 'Base ' + store._vm.token
+          }
+        })
         .then(response => {
           resolve(response)
-          console.log('post Coupon response', response)
+          console.log(response.data)
         })
-        .catch(error => {
-          console.log('coupen error', error)
+        .catch(err => {
+          console.log(err)
         })
     })
   },
@@ -413,6 +440,42 @@ const apiService = {
         .catch(error => {
           console.log('update def error', error)
         })
+    })
+  },
+  getPunchin () { // get punchin in info notice here is Basic
+    return new Promise((resolve) => {
+      axios({
+        method: 'get',
+        url: axios.defaults.baseURL + 'api/punchin',
+        headers: {
+          'Authorization': 'Basic ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('get punchin info: ', response)
+        })
+        .catch(error => {
+          console.log('get punchin info error', error)
+        })
+    })
+  },
+  Punchin () { // request punchin
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/punchin/punched',
+        headers: {
+          'Authorization': 'Basic ' + store._vm.token
+        }
+      })
+        .then(response => {
+          resolve(response)
+          // console.log('get punchined in: ', response)
+        })
+        // .catch(error => {
+        //   console.log('get punchin error', error)
+        // })
     })
   }
 }
