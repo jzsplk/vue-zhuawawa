@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-bind:class="{ enter: this.$store.state.isEntered}">
+  <div id="app" v-bind:class="{ enter: this.$store.state.isEntered || this.$store.state.isHome}">
 <!--     <div class="header">
       <div class="logo">
         <router-link :to="{path: '/'}" ><img class="login-img" src="/static/pic/logo.png" @click="leaveRoom"></router-link>
@@ -9,7 +9,7 @@
         <router-link :to="{ path: '/Tulogin'}" append><button>登陆</button></router-link>
       </div>
     </div> -->
-    <div class="header" v-bind:class="{ hide: this.$store.state.isEntered}">
+    <div class="header" v-bind:class="{ hide: this.$store.state.isEntered || this.$store.state.isHome}">
       <x-header :right-options="{showMore: true}" @on-click-more="showMenus = true">最爱抓娃娃</x-header>
     </div>
     <div v-transfer-dom>
@@ -18,17 +18,33 @@
     <keep-alive :include="/Keep$/">
         <router-view/>
     </keep-alive>
-<!--     <div v-transfer-dom>
+    <div v-transfer-dom>
       <x-dialog v-model="showPunch" class="dialog-demo" hide-on-blur>
         <div class="img-box">
-          <img src="https://ws1.sinaimg.cn/large/663d3650gy1fq6824ur1dj20ia0pydlm.jpg" style="max-width:100%">
+<!--           <img src="https://ws1.sinaimg.cn/large/663d3650gy1fq6824ur1dj20ia0pydlm.jpg" style="max-width:100%"> -->
+<!--         <img src="http://alicdn.gongyou.co/zhuaww/static/pic/logo.png" style="width: 150px;max-width:100%"> -->
         </div>
-        <div @click="showPunch=false">
+        <div class="content-box">
+          <div class="overlay">
+<!--             <img src="http://alicdn.gongyou.co/zhuaww/static/pic/icon_29pt@3x@2x.png" alt="" style="{width: 260px; height: 100px;}"> -->
+          <img src="http://ddz5.zz.gongyou.co/h5/static/pic/icon_29pt@3x@2x.png" alt="" style="{width: 260px; height: 130px;}">
+          </div>
+          <div class="count1">
+            每日签到赠送 10 娃娃币
+          </div>
+<!--           <div class="count">
+            已签到{{Punched}}天
+          </div>
+          <div class="count">
+            连续签到{{Continued}}天
+          </div> -->
+          <x-button type="primary" @click.native="Punch">签到</x-button>
+        </div>
+        <div @click="showPunch=false" class="close">
           <span class="vux-close"></span>
         </div>
-        <x-button mini type="primary" @click.native="Punch">签到</x-button>
       </x-dialog>
-    </div> -->
+    </div>
 <!--     <keep-alive exclude="WechatAuth">
       <router-view/>
     </keep-alive> -->
@@ -41,6 +57,7 @@ import MQTT from './MQTT.service.js'
 import AppFooter from './components/AppFooter'
 import apiService from './API.service.js'
 import { XHeader, TransferDom, Actionsheet, XDialog, XButton } from 'vux'
+// import Punch from './components/Punch'
 export default {
   name: 'App',
   directives: {
@@ -63,7 +80,9 @@ export default {
         // menu2: '微信登陆'
       },
       isPunched: false,
-      showPunch: false
+      showPunch: false,
+      Punched: 0,
+      Continued: 0
     }
   },
   computed: {
@@ -186,23 +205,30 @@ export default {
           console.log('not punched yet ')
           // show the punchin window
           this.showPunch = true
+          this.Punched = data.data.Punched
+          this.Continued = data.data.Continued
         } else {
           this.isPunched = true
           console.log('is punch in ')
+          this.Punched = data.data.Punched
+          this.Continued = data.data.Continued
           // dont show the punchin window
         }
       })
     },
     Punch () { // request Punch in
-      this.$vux.toast.show({
-        text: '已签到'
+      this.showPunch = false
+      apiService.Punchin().then(data => {
+        console.log('Punched info: ', data)
+        this.$vux.toast.show({
+          text: `已签到 得到 ${data.data * 10} 娃娃币`
+        })
+        this.Punched += 1
+        this.Continued += 1
       })
-      // apiService.Punchin().then(data => {
-      //   console.log('Punched info: ', data)
-      // })
-      //   .catch(error => {
-      //     console.log('punch error', error)
-      //   })
+        .catch(error => {
+          console.log('punch error', error.response)
+        })
     }
   },
   created () {
@@ -216,7 +242,14 @@ export default {
     })
   },
   mounted () {
+    /**
+    * @description check if Punched
+    * @constructor
+    * @param {string} title - 书的标题
+    * @param {string} author - 书的作者
+    */
     this.checkPunchin()
+    document.getElementById('app').scrollIntoView()
   }
 }
 </script>
@@ -240,8 +273,18 @@ body { margin: 0;}
   display: none !important;
   height: 0;
 }
-.enter { /* change margin top of app when enter roomplay */
-  margin-top: 0px !important;
+/* may cause the scoll top error */
+.enter {  /* change margin top of app when enter roomplay */
+  margin-top: 0px !important;;
+}
+.close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: #FFFFFF;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
 }
 #app {
   font-family: -apple-system-font,Helvetica Neue,Helvetica,sans-serif;
@@ -257,8 +300,11 @@ body { margin: 0;}
   position:absolute;
   top:0px;
   left:0px;
-  width:100%;
-  height:100%;
+  width: 100%;
+/*  height: 100%;*/
+  /* this will cause scroll Top error*/
+/*  width:100%;
+  height:100%;*/
   border:hidden;
   overflow: scroll;
   margin-top: 40px;
@@ -271,6 +317,7 @@ body { margin: 0;}
     -ms-user-select: none; /*IE10*/
     -khtml-user-select: none; /*早期浏览器*/
     user-select: none; /* 禁止用户选中文字 */
+    height: 100%;
   }
   button {
     /*border-width: 0;*/
@@ -345,6 +392,29 @@ body { margin: 0;}
 ));
 
 @import "~vue-material/dist/theme/all"; // Apply the theme
+.img-box {
+  height: 150px;
+  overflow: hidden;
+}
+.content-box {
+  position: relative;
+  height: 160px;
+  .overlay {
+    position: absolute;
+    top: -100px;
+    left: 29%;
+    z-index: 999;
+  }
+  .count1 {
+    padding-top: 60px;
+    margin-bottom: 40px;
+    font-size: 1.2rem;
+  }
+  .count {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
 </style>
 <style lang="less">
 @import '~vux/src/styles/reset.less';
@@ -358,10 +428,6 @@ body { margin: 0;}
   .dialog-title {
     line-height: 30px;
     color: #666;
-  }
-  .img-box {
-    height: 350px;
-    overflow: hidden;
   }
   .vux-close {
     margin-top: 8px;

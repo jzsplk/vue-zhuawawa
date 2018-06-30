@@ -17,6 +17,7 @@ import Setting from '@/components/MyInfo-setting'
 import Coupon from '@/components/MyInfo-coupon'
 import Question from '@/components/MyInfo-questions'
 import WxLoading from '@/components/WxLoading'
+import ChargeRank from '@/components/ChargeRank'
 
 Vue.use(Router)
 
@@ -30,6 +31,9 @@ function getAbsolutePath () {
 export default new Router({
   mode: 'history',
   base: getAbsolutePath(), // 设置获取的绝对路由
+  // scrollBehavior (to, from, savedPosition) {
+  //   return { x: 0, y: 0 }
+  // },
   routes: [
     {
       path: '/',
@@ -161,6 +165,14 @@ export default new Router({
       component: WxLoading,
       meta: {
         title: '微信登陆中'
+      }
+    },
+    {
+      path: '/chargeRank',
+      name: 'chargeRank',
+      component: ChargeRank,
+      meta: {
+        title: '充值排行榜'
       }
     }
   ]

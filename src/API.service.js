@@ -199,9 +199,9 @@ const apiService = {
         })
     })
   },
-  getUserGifts () {
+  getUserGifts (isLoadmore, countOffset, pageCount) { // add offset
     return new Promise((resolve) => {
-      axios.get('api/gift', {
+      axios.get('api/gift' + '?Offset=' + countOffset + '&Count=' + pageCount, {
         headers: {
           // 改为由state获取token
           'Authorization': 'Base ' + store._vm.token
@@ -322,6 +322,38 @@ const apiService = {
         })
         .catch(error => {
           console.log('request delivery error', error)
+          this.$message('余额不足请充值')
+        })
+    })
+  },
+  /**
+  * @description delivery by free
+  * @constructor xc
+  * @param {array} gifts
+  * @param {number} address id
+  * @param {number} coupon code
+  */
+  deliverGiftsByCoupon (gifts, address, code) {
+    return new Promise((resolve) => {
+      axios({
+        method: 'post',
+        url: axios.defaults.baseURL + 'api/receipt/importgiftbycoupon',
+        data: {
+          Gifts: gifts,
+          ToAddress: address,
+          Code: code
+        },
+        headers: {
+          'Authorization': 'Base ' + store._vm.token,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          resolve(response)
+          console.log('request delivery for free success', response)
+        })
+        .catch(error => {
+          console.log('request delivery for free error', error)
           this.$message('余额不足请充值')
         })
     })
@@ -473,9 +505,39 @@ const apiService = {
           resolve(response)
           // console.log('get punchined in: ', response)
         })
-        // .catch(error => {
-        //   console.log('get punchin error', error)
-        // })
+        .catch(error => {
+          console.log('get punchin error', error.response)
+          console.log(error.response.data)
+          if (error.response.data.err === 'had_punched_in') {
+            window.$vm.$vux.toast.show({
+              text: `您今天已签到`
+            })
+          }
+        })
+    })
+  },
+  /**
+  * @description query coupon for free delivery
+  * @constructor xc
+  */
+  querycoupon () {
+    return new Promise((resolve) => {
+      // let param = JSON.stringify({
+      //   ExchangeCode: code
+      // })
+      axios.get('api/balance/querycoupon',
+        {
+          headers: {
+            'Authorization': 'Base ' + store._vm.token
+          }
+        })
+        .then(response => {
+          resolve(response)
+          console.log('query coupon results: ', response.data)
+        })
+        .catch(err => {
+          console.log('querycoupon err: ', err.response)
+        })
     })
   }
 }

@@ -16,8 +16,8 @@
 <!--         <el-table  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="height: 600px position: absolute;">
         </el-table> -->
         <el-row  v-loading="$store.state.isLoading == true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" target=".canvas-video" :style="{height: loaderHeight + 'px'}">
-          <div class="canvas-wrapper" ref="abc">
-            <canvas id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream"></canvas>
+          <div class="canvas-wrapper" ref="abc" v-cloak>
+            <canvas v-if="roomData.WStreams !== undefined" id="video-canvas" class="canvas-video" v-insert-video:once="mainWsStream" v-cloak></canvas>
           </div>
         </el-row>
         <!-- 用一个跟canvas等大的div 占住canvas位置-->
@@ -75,12 +75,13 @@
             <p class="overlay-playing-title">热玩中</p>
           </div>
         </transition>
-        <!-- 切换摄像头按钮 -->
+        <!-- toggle camera -->
         <div class="overlay-camera">
-<!--           <el-tooltip content="切换镜头" placement="top" :disabled="disabled">
-            <button class="camera_toggle" @click="toggleCamera"></button>
-          </el-tooltip> -->
           <button class="camera_toggle" @click="toggleCamera"></button>
+        </div>
+        <!-- toggle music -->
+        <div class="overlay-music"  v-bind:class="{ overlayMusicOpen: isBgMusic }">
+          <button class="camera_toggle" @click="toggleMusic"></button>
         </div>
         <!-- 倒计时roomState == 'Catching' -->
         <div class="overlay-counting" v-show="roomState == 'Catching' && $store.state.isPlayingCountDown && !$store.state.isWaiting">
@@ -100,7 +101,7 @@
 <!--             <p>本次:<span>{{roomData.Coin}}币</span></p>
             <p>余额:<span>{{balance * 10}}币</span></p> -->
             <!-- <el-button type="warning" icon="el-icon-star-off" round>如何领回家？</el-button> -->
-            <el-button type="info" size="mini" round @click="showHelp">如何领回家</el-button>
+            <el-button class="howButton" type="info" size="mini" round @click="showHelp"></el-button>
             <el-dialog title="如何领萌物？" :visible.sync="dialogVisible" width="90%">
               <el-card class="box-card">
                 <div v-for="(o, index) in helps" :key="index" class="text item">
@@ -117,9 +118,12 @@
             </el-dialog>
           </div>
           <div class="queue">
-            <el-button type="primary" round @click="queue">预约抓娃娃
-              <div>
-                <img src="../../static/pic/coin.png" alt=""> <span> X {{roomData.Coin}}币</span>
+            <el-button type="primary" round @click="queue">
+              <div class="start">
+                <span>开始游戏</span>
+              </div>
+              <div class="start-price">
+                <span>本次: {{roomData.Coin}} </span><img src="../../static/pic/coin.png" alt="">
               </div>
             </el-button>
 <!--             <button @click="queue" class="queue-button">
@@ -131,7 +135,7 @@
           </div>
           <div class="charge">
             <div class="balance">
-              <img src="../../static/pic/coin.png" alt="">
+              <img src="../../static/pic/coin.png" alt="" style="margin-top: -3px;">
                 <button>  {{balance * 10}}币</button>
             </div>
             <div class="charge-button">
@@ -209,15 +213,16 @@
         </div>
     </div>
     <div class="vux-tabs">
-      <tab :line-width=2 active-color='#fc378c' v-model="index" style="border-radius: 10px 10px 0 0">
-        <tab-item class="vux-center" :selected="demo2 == item" v-for="(item, index) in list2" @click="demo2 = item" :key="index" style="border-radius: 10px 10px 0 0">{{item}}</tab-item>
+      <tab active-color='#fc378c' v-model="index" style="border-radius: 10px 10px 0 0">
+        <tab-item class="vux-center" :selected="demo2 === item" v-for="(item, index) in list2" @click="demo2 = item" :key="index" style="border-radius: 10px 10px 0 0">{{item}}</tab-item>
       </tab>
       <swiper v-model="index" height="650px" :show-dots="false">
         <swiper-item>
           <!-- <div class="tab-swiper vux-center">{{item}} Container</div> -->
+          <!-- roomData.Doll.Item.Pictures -->
           <div class="pic tab-swiper vux-center">
             <ul class="pic_ul">
-              <li v-for="pic in roomData.Doll.Item.Pictures" v-bind:key="pic.Path" class="pic_li">
+              <li v-for="pic in dolls" v-bind:key="pic.Path" class="pic_li">
                 <img :src="'http://zhua.liehuo55.com' + pic.Path" alt="" style="width: 100%;">
               </li>
             </ul>
@@ -308,7 +313,7 @@ import { mapGetters, mapActions } from 'vuex'
 import CountDown from './CountDown'
 import PlayingCountDown from './PlayingCountDown'
 import { Confirm, TransferDomDirective as TransferDom, Tab, TabItem, Swiper, SwiperItem } from 'vux'
-const list = () => ['娃娃详情', '排行榜', '抓中记录']
+// const list = () => ['娃娃详情', '排行榜', '抓中记录']
 export default {
   // directives: {
   //   TransferDom
@@ -325,17 +330,28 @@ export default {
   data () {
     return {
       videocanvas: 'video-canvas',
-      roomData: {},
+      roomData: {
+        // Doll: {
+        //   Item: {
+        //     Pictures: [
+        //       {Path: '/uploads/1e930c9af582c33864a7919388b10f9b90c33dbd.jpg'}
+        //     ]
+        //   }
+        // }
+      },
+      dolls: [],
       roomRank: [],
       balance: 0, // 存储房间排名信息的data.
       activeName: 'first',
       isMainCamera: true,
+      isBgMusic: false,
       start: false,
       disabled: false,
       dialogVisible: false,
       show: false, // 是否显示余额不足弹窗
-      list2: list(),
-      index: ['娃娃详情', '排行榜', '抓中记录'],
+      index: 0,
+      list2: ['娃娃详情', '排行榜', '抓中记录'],
+      detail: ['娃娃详情', '排行榜', '抓中记录'],
       demo2: '娃娃详情',
       helps: [
         {
@@ -406,6 +422,7 @@ export default {
       apiService.getRoomInfo(this.$route.query.id).then(data => {
         console.log('room info', data)
         this.roomData = data
+        this.dolls = data.Doll.Item.Pictures
         console.log('ROOM data init')
         console.log('get Room DeviceId: ', this.roomData.DeviceId)
         // 把State中roomTopic 更新为‘notify/’ + roomData.DeviceId
@@ -462,6 +479,9 @@ export default {
     longTapControlEventHandler (type, param, topic) {
       // 先清除掉interval
       clearInterval(window.tap)
+      // if (this.isBgMusic) {
+      //   window.click_clip.play()
+      // }
       MQTT.sendControlEvent(type, param, topic)
       // 持续定时输出控制命令
       window.tap = setInterval(function () {
@@ -507,6 +527,7 @@ export default {
       apiService.getRoomInfo(id).then(data => {
         console.log('room info', data)
         this.roomData = data
+        this.dolls = data.Doll.Item.Pictures
         console.log('ROOM data updateing')
         console.log('updated data', this.roomData)
         // 改变状态为roomUpdating false
@@ -613,6 +634,15 @@ export default {
         this.$store.dispatch('showLoading')
       }
     },
+    toggleMusic () {
+      if (this.isBgMusic) {
+        window.bgm.pause()
+        this.isBgMusic = false
+      } else {
+        window.bgm.play()
+        this.isBgMusic = true
+      }
+    },
     goToPay () {
       // this.$router.push('alicdn.gongyou.co.zhuaww/dist/')
       window.location.href = 'alicdn.gongyou.co.zhuaww/dist/'
@@ -648,14 +678,22 @@ export default {
     // 阻止移动端缩放屏幕
     // this.closeZoom()
     // 获取房间排名数据
+    window.scrollTo(0, 0)
+    this.getRoomInfo(this.$route.query.id)
     this.getRoomRank(this.$route.query.id)
     this.$store.dispatch('startPlaying')
     this.initMqttClient()
     this.enterRoom(this.$route.query.id)
-    this.getRoomInfo(this.$route.query.id)
+    // getRoominfo
     console.log('DeviceId', this.roomData)
     // playVideo.wsPlay('video.liehuo55.com:29001')
     // 打印动态获取的div css
+    apiService.getRoomInfo(this.$route.query.id).then(data => {
+      this.$nextTick(() => {
+        console.log('nextTick', data)
+        this.roomData = data
+      })
+    })
   },
   mounted () {
     // 这里有下面函数都移到created中
@@ -666,9 +704,20 @@ export default {
     // // playVideo.wsPlay('video.liehuo55.com:29001')
     // // 打印动态获取的div css
     // console.log('css of canvas', this.$refs)
-    console.log('css abc height', this.$refs.abc.clientHeight)
     console.log('css of canvas', this.$refs)
-    console.log('css of canvas of abc', this.$refs.abc)
+    window.bgm = new Audio('http://ddz5.zz.gongyou.co/h5/static/music/bg_music.mp3')
+    window.bgm.addEventListener('ended', function () {
+      this.currentTime = 0
+      this.play()
+    }, false)
+    // window.bgm.play()
+    window.click_clip = new Audio('http://ddz5.zz.gongyou.co/h5/static/music/click_clip.mp3')
+  },
+  destroyed () {
+    console.log('destroyed')
+    window.bgm.pause()
+    // check to leave
+    this.checkToleave(this.$route.query.id)
   },
   computed: {
     ...mapGetters(['isReady', 'isPlaying', 'roomTopic', 'roomState']),
@@ -714,6 +763,16 @@ export default {
           return 23
         } else {
           return 35
+        }
+      }
+    },
+    // get Doll pic of room dynamic
+    DollPic: {
+      get: function () {
+        if (this.roomData.Doll !== undefined) {
+          return this.roomData.Doll.Item.Pictures
+        } else {
+          return []
         }
       }
     }
@@ -1111,6 +1170,30 @@ export default {
           height: 48px;
         }
       }
+      .overlay-music {
+        position: absolute;
+        top: 60%;
+        right: -2px;
+        background-color: #e2be46;
+        height: 32px;
+        width: 32px;
+        border-right: none;
+        z-index: 999;
+        background: url(../../static/pic/voice_close.png) no-repeat scroll top
+          right transparent;
+        background-size: cover;
+        .camera_toggle {
+          border-style: none;
+          background: none;
+          width: 48px;
+          height: 48px;
+        }
+      }
+      .overlayMusicOpen {
+        background: url(../../static/pic/voice_open.png) no-repeat scroll top
+          right transparent;
+        background-size: cover;
+      }
       .overlay-counting {
         position: absolute;
         bottom: 7%;
@@ -1160,9 +1243,17 @@ export default {
         font-size: 13px;
         margin: 0;
         text-align: left;
+        z-index: 9999;
         p {
           padding: 0;
           margin: 0;
+        }
+        .howButton {
+          width: 50px;
+          height: 50px;
+          background: url(../../static/pic/howToGet.png) no-repeat;
+          background-size: cover;
+          border: none;
         }
         span {
           color: #FFFFFF;
@@ -1182,9 +1273,20 @@ export default {
         margin: 0;
         padding: 0;
         .el-button {
-          img {
-            width: 13px;
-            height: 13px;
+          background-color: #E64D4E;
+          border-color: #E64D4E;
+          .start {
+            display: block;
+            margin-bottom: 5px;
+          }
+          .start-price {
+            vertical-align: middle;
+            margin-top: 10px;
+            img {
+              margin-top: -2px;
+              width: 15px;
+              height: 15px;
+            }
           }
         }
         .queue-button {
@@ -1280,7 +1382,7 @@ export default {
     .prepare-countdown-wrapper {
       /* 准备状态倒计时*/
       position: absolute;
-      top: 35%;
+      top: 15%;
       left: 40%;
       background-color: #303133;
       opacity: 0.8;
@@ -1297,7 +1399,7 @@ export default {
 /*        position: absolute;
         top: 25%;
         left: 40%;*/
-        color: #409EFF;
+        color: #F7CB53;
       }
     }
     /* 移动设备触摸板*/
@@ -1321,7 +1423,7 @@ export default {
         .operation-arrow {
           position: relative;
           background-color: #FFFFFF;
-          opacity: 0.1;
+          opacity: 0;
           width: 100px;
           // max-width: 50%;
           height: 100px;
@@ -1333,8 +1435,8 @@ export default {
           top: 0;
           left: 35px;
           background-color: #e2be46;
-          width: 38px;
-          height: 38px;
+          width: 48px;
+          height: 48px;
           z-index: 999;
           // background-color: transparent;
           background: url(../../static/icons/direction_top.png) no-repeat;
@@ -1351,8 +1453,8 @@ export default {
           top: 70%;
           left: 35px;
           background-color: #e2be46;
-          width: 38px;
-          height: 38px;
+          width: 48px;
+          height: 48px;
           z-index: 999;
           // background-color: transparent;
           background: url(../../static/icons/direction_button.png) no-repeat;
@@ -1369,8 +1471,8 @@ export default {
           top: 35%;
           left: 0px;
           background-color: #e2be46;
-          width: 38px;
-          height: 38px;
+          width: 48px;
+          height: 48px;
           z-index: 999;
           // background-color: transparent;
           background: url(../../static/icons/direction_left.png) no-repeat;
@@ -1387,8 +1489,8 @@ export default {
           top: 35%;
           left: 70px;
           background-color: #e2be46;
-          width: 38px;
-          height: 38px;
+          width: 48px;
+          height: 48px;
           z-index: 999;
           // background-color: transparent;
           background: url(../../static/icons/direction_right.png) no-repeat;

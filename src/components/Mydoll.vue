@@ -24,22 +24,25 @@
         <img src="../../static/pic/crying1.png" alt="" style="width: 50%;">
         <p style="width: 70%;margin: 0 auto;">暂时还没有娃娃，快去抓捕吧！</p>
       </div>
-      <div class="grid-wrapper">
-        <grid :show-vertical-dividers="false" v-for="li in list" :key="li.Id" style="display: flex; align-items: center; border-radius: 10px;margin: 10px 5px;">
-          <grid-item style="padding: 0; width: 25%;">
-            <img class="grid-center" :src="li.src" style="width:100%;">
-          </grid-item>
-          <grid-item style="flex-grow: 1;text-align: left;border-bottom: none;padding: 20px 20px;">
-            <span class="grid-center" style="text-align: left;color: #444444">{{li.Name}}</span>
-            <span class="grid-date" style="text-align: left;color: #969696">{{li.desc}}</span>
-          </grid-item>
-          <grid-item style="flex-grow: 0;width: 20%;">
-            <span v-show="li.Status === 0" class="grid-center" >可兑换</span>
-            <span v-show="li.Status === 1" class="grid-center" >已申请发货</span>
-            <span v-show="li.Status === 2" class="grid-center" >已发货</span>
-          </grid-item>
-        </grid>
-      </div>
+      <scroller lock-x height="80%" @on-scroll-bottom="onScrollBottom" ref="scrollerBottom" :scroll-bottom-offst="200">
+        <div class="grid-wrapper">
+          <grid :show-vertical-dividers="false" v-for="li in list" :key="li.Id" style="display: flex; align-items: center; border-radius: 10px;margin: 10px 5px;">
+            <grid-item style="padding: 0; width: 25%;">
+              <img class="grid-center" :src="li.src" style="width:100%;">
+            </grid-item>
+            <grid-item style="flex-grow: 1;text-align: left;border-bottom: none;padding: 20px 20px;">
+              <span class="grid-center" style="text-align: left;color: #444444">{{li.Name}}</span>
+              <span class="grid-date" style="text-align: left;color: #969696">{{li.desc}}</span>
+            </grid-item>
+            <grid-item style="flex-grow: 0;width: 20%;">
+              <span v-show="li.Status === 0" class="grid-center" >可兑换</span>
+              <span v-show="li.Status === 1" class="grid-center" >已申请发货</span>
+              <span v-show="li.Status === 2" class="grid-center" >已发货</span>
+            </grid-item>
+          </grid>
+          <load-more v-show="isLoadMore" tip="loading"></load-more>
+        </div>
+      </scroller>
       <br>
       <br>
       <div class="stick" style="position: fixed;bottom: 60px;width: 100%;">
@@ -56,7 +59,7 @@
 <script>
 import apiService from '../API.service.js'
 import AppFooter from './AppFooter'
-import { Panel, Grid, GridItem, GroupTitle, Cell, XButton } from 'vux'
+import { Panel, Grid, GridItem, GroupTitle, Cell, XButton, Scroller, LoadMore } from 'vux'
 export default {
   components: {
     'app-footer': AppFooter,
@@ -65,7 +68,9 @@ export default {
     GridItem,
     GroupTitle,
     Cell,
-    XButton
+    XButton,
+    Scroller,
+    LoadMore
   },
   data () {
     return {
@@ -74,7 +79,9 @@ export default {
       baseURL: 'https://www.liehuo55.com/',
       checked3: false,
       list: [],
-      list1: []
+      list1: [],
+      offset: 0,
+      isLoadMore: false
     }
   },
   // computed: {
@@ -106,12 +113,12 @@ export default {
         this.userInfo.balance = data.data
       })
     },
-    getUserGifts () {
-      apiService.getUserGifts().then(data => {
+    getUserGifts (isLoadmore, countOffset, pageCount) {
+      apiService.getUserGifts(isLoadmore, countOffset, pageCount).then(data => {
         console.log('user gifts 1111', data.data.Gifts)
         let self = this
         // 把娃娃数据保存
-        this.userGifts = data.data.Gifts
+        // this.userGifts = data.data.Gifts
         this.list = data.data.Gifts.map(function (item) {
           item.src = self.baseURL + item.AvatarUrl
           item.fallbackSrc = 'http://placeholder.qiniudn.com/60x60/3cc51f/ffffff'
@@ -133,14 +140,44 @@ export default {
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
+        hour12: false,
+        offset: 0,
+        isLoadMore: false
       }
       return date.toLocaleDateString('zh-cn', options)
       // return date
+    },
+    onScrollBottom () {
+      if (this.isLoadMore) {
+      } else {
+        this.isLoadMore = true
+        this.offset += 10
+        apiService.getUserGifts(this.isLoadMore, this.offset, 10).then(data => {
+          console.log('loading more gifts: ', data)
+          let self = this
+          this.list = this.list.concat(data.data.Gifts.map(function (item) {
+            item.src = self.baseURL + item.AvatarUrl
+            item.fallbackSrc = 'http://placeholder.qiniudn.com/60x60/3cc51f/ffffff'
+            item.title = item.Name
+            item.desc = self.utcTimeConvert(item.ReceivedDT)
+            // item.url = '/component/Home'
+            return item
+          }))
+          // this.userGifts = data.data.Gifts.filter(gift => gift.Status === 0)
+          console.log('new gifts list: ', this.list)
+          this.$nextTick(() => {
+            this.$refs.scrollerBottom.reset()
+          })
+          this.isLoadMore = false
+        }).catch(error => {
+          console.log('get gifts history error', error)
+          this.isLoadMore = false
+        })
+      }
     }
   },
   created () {
-    this.getUserGifts()
+    this.getUserGifts(true, 0, 10)
     console.log('list1', this.list)
   },
   mounted () {
@@ -174,8 +211,7 @@ export default {
     display: block;
     background-color: #EEEEEE;
     width: 100%;
-    height: 100%;
-    position: absolute;
+    /*height: 100%;*/
     overflow-y: scroll;
     /*margin: 0 auto;*/
     .card-wrapper {

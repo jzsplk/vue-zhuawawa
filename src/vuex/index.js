@@ -25,7 +25,8 @@ const state = {
   isLoading: false,
   isFailed: false,
   isEntered: false,
-  isWaiting: false
+  isWaiting: false,
+  isHome: true
 }
 
 const store = new Vuex.Store({
@@ -157,6 +158,12 @@ const store = new Vuex.Store({
     },
     toggleLoginState (context) { // change login state
       context.commit('toggleLoginState')
+    },
+    backToHome (context) { // change when back to home
+      context.commit('backToHome')
+    },
+    leaveHome (context) { // change when leave home
+      context.commit('leaveHome')
     }
   },
   mutations: {
@@ -307,6 +314,12 @@ const store = new Vuex.Store({
     toggleLoginState (state) { // change login state
       state.isLogin = true
       // check puchin, if not, show puchin window
+    },
+    backToHome (state) {
+      state.isHome = true
+    },
+    leaveHome (state) {
+      state.isHome = false
     }
   }
 })

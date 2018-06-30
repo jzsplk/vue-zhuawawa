@@ -12,6 +12,7 @@ import AppFooter from './AppFooter'
 import Room from './Room'
 import Category from './Category'
 import MQTT from '../MQTT.service.js'
+import apiService from '../API.service.js'
 // import { Group, Cell } from 'vux'
 
 export default {
@@ -68,10 +69,19 @@ export default {
     onStart () {
       // 初始化，连接MQTT
       MQTT.initMqttClient()
+    },
+    loadRooms () {
+      apiService.getRooms().then(data => {
+        // this.rooms = data
+        console.log('get Rooms data for mqtt', data)
+        // 这里把房间数据传到state中，用于mqtt一次注册所有房间
+        this.$store.dispatch('getRoomsInfo', data)
+        this.onStart()
+      })
     }
   },
   created () {
-    this.onStart()
+    this.loadRooms()
   },
   watch: {
     // 监听路由变化，检查登陆状态

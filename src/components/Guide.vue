@@ -72,7 +72,6 @@ export default {
   height: 100%;
   width: 100%;
   background-color: #F7CB54;
-  position: absolute;
   overflow-y: scroll;
   .nav {
     color: #000000;

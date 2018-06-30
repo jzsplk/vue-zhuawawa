@@ -28,7 +28,11 @@
 </template>
 
 <script>
+import { WechatEmotion as Emotion } from 'vux'
 export default {
+  components: {
+    Emotion
+  },
   data () {
     return {
       baseURL: 'https://www.liehuo55.com/'
@@ -40,10 +44,8 @@ export default {
   methods: {
     enterPlaying (state) {
       if (state !== 0) {
-        window.$vm.$message({
-          message: '房间维护中',
-          duration: 3000,
-          showClose: true
+        this.$vux.toast.show({
+          text: '房间维护中'
         })
         return false
       } else {

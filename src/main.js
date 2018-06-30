@@ -148,9 +148,23 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
-// 让页面跳转后回到页面顶部
+// let scorll to top when change router
+// if (to.path === '/') { // back to home hide top nav
+//   console.log('back to home')
+//   store.dispatch('backToHome')
+//   window.scrollTo(0, 0)
+// } else {
+//   window.scrollTo(0, 0)
+//   store.dispatch('leaveHome')
+// }
 router.afterEach((to, from, next) => {
   window.scrollTo(0, 0)
+  if (to.path === '/') { // back to home hide top nav
+    console.log('back to home')
+    store.dispatch('backToHome')
+  } else {
+    store.dispatch('leaveHome')
+  }
 })
 
 /* eslint-disable no-new */

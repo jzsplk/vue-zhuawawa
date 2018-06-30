@@ -84,7 +84,7 @@
       <x-button mini plain type="primary" @click.native="logout" style="color: #B29036;background-color: #F9DC3D; border-color: #B29036;">退出登陆</x-button>
       <!-- <el-button type="warning" @click="logout">退出登陆</el-button> -->
       <!-- <button @click="logout">退出登陆</button> -->
-      <p>版本号： 1.0.0</p>
+      <p>版本号: 1.0.1</p>
     </div>
     <div class="main">
     </div>

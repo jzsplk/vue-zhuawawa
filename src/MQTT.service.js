@@ -17,14 +17,16 @@ const MQTT = {
     // let hostname = 'http://zhuaww.gongyou.co/weixin/'
     let port = 18000
     // 改为UUID+ 时间戳
-    let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
+    // let clientId = 'ult' + String(Math.round(Math.random() * 1000000))
+    // UUID change to fix Id
+    let clientId = String(store.state.token)
     let path = '/'
     let user = 'ultracreation'
     let pass = 'dasboot121212'
     let keepAlive = Number(5)
     let timeout = Number(5)
     let tls = false
-    let cleanSession = true
+    let cleanSession = false
     // let lastWillTopic = ''
     // let lastWillQos = 0
     // let lastWillRetain = false

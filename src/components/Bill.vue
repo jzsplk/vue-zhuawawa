@@ -162,7 +162,7 @@ body {
 }
 .bill-wrapper {
   background-color: #EEEEEE;
-  height: 100%;
+/*  height: 100%;*/
   display: block;
   padding-bottom: 60px;
   .head {

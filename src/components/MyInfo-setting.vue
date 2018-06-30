@@ -4,6 +4,16 @@
   <group>
     <cell title="收货地址" value="" is-link @click.native="$router.push('./address')"></cell>
   </group>
+  <!-- test modity mqtt api address -->
+<!--   <group title="set mqtt address">
+    <x-input title="MQTT" name="username" :placeholder="address.mqtt" v-model="address.mqtt"></x-input>
+  </group>
+  <group title="set api address">
+    <x-input title="API" name="username" :placeholder="address.api" v-model="address.api"></x-input>
+  </group>
+  <div style="padding:15px;">
+    <x-button @click.native="modifyAddress" type="primary"> 修改 </x-button>
+  </div> -->
   <br>
   <br>
   <group>
@@ -14,13 +24,17 @@
 </div>
 </template>
 <script>
-import { Group, Cell, XSwitch, CellBox, Divider } from 'vux'
+import { Group, Cell, XSwitch, CellBox, Divider, XInput, XButton } from 'vux'
 export default {
   data () {
     return {
       music: false,
       backsound: false,
-      move: false
+      move: false,
+      address: {
+        mqtt: '',
+        api: ''
+      }
     }
   },
   components: {
@@ -28,7 +42,9 @@ export default {
     Cell,
     CellBox,
     XSwitch,
-    Divider
+    Divider,
+    XInput,
+    XButton
   },
   methods: {
     next () { // 下一步
@@ -37,7 +53,23 @@ export default {
       }
     },
     showGuide () { // 增加一个帮助界面
+    },
+    modifyAddress () {
+      window.localStorage.setItem('hostname', JSON.stringify(this.address))
+      // 暂时不退出微信，等修复微信二次登陆问题
+      this.delCookie('zhuawawa')
+      this.delCookie('wxzhuawawa')
+      this.delCookie('wxlogin')
+      // 跳转到主页
+      setTimeout(this.$router.push('./'), 2000)
+    },
+    initAddress () {
+      this.address.mqtt = JSON.parse(window.localStorage.getItem('hostname')).mqtt
+      this.address.api = JSON.parse(window.localStorage.getItem('hostname')).api
     }
+  },
+  created () {
+    // this.initAddress()
   },
   mounted () {
   }
